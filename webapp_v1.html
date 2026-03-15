@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDA Approval Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f0f; --paper: #f5f0e8; --card: #faf7f2;
+  --accent: #c8401a; --accent2: #1a4fc8; --muted: #8a8070;
+  --border: #ddd8cc; --success: #1a6e3a; --warning: #8a5a00; --danger: #c8401a;
+  --mono: 'DM Mono', monospace; --serif: 'Playfair Display', serif; --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); min-height: 100vh; position: relative; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px);
+  pointer-events: none; z-index: 0;
+}
+.page-wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* HEADER */
+header { padding: 48px 0 36px; border-bottom: 2px solid var(--ink); margin-bottom: 40px; }
+.header-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 3px 8px; margin-right: 8px; }
+h1 { font-family: var(--serif); font-size: clamp(28px, 5vw, 48px); font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; margin-top: 8px; }
+h1 span { color: var(--accent); }
+.subtitle { margin-top: 10px; font-size: 13px; color: var(--muted); font-family: var(--mono); }
+
+/* CARDS */
+.card { background: var(--card); border: 1px solid var(--border); padding: 28px 32px; margin-bottom: 20px; }
+.card-title { font-family: var(--serif); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.card-step { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+/* FIELDS */
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+label .req { color: var(--accent); }
+input[type="text"], input[type="number"], select, textarea {
+  font-family: var(--mono); font-size: 13px; padding: 9px 12px;
+  border: 1px solid var(--border); background: white; color: var(--ink);
+  outline: none; transition: border-color 0.15s; width: 100%;
+  -webkit-appearance: none; appearance: none;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--ink); }
+textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8070'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer;
+}
+
+/* TOGGLE BUTTONS */
+.toggle-group { display: flex; }
+.toggle-btn { flex: 1; padding: 9px; border: 1px solid var(--border); border-right: none; background: white; font-family: var(--mono); font-size: 12px; cursor: pointer; text-align: center; transition: all 0.15s; color: var(--muted); }
+.toggle-btn:last-child { border-right: 1px solid var(--border); }
+.toggle-btn.selected { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* BUTTONS */
+.btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 11px 24px; cursor: pointer; border: 1px solid var(--ink); transition: all 0.15s; background: transparent; color: var(--ink); }
+.btn:hover { background: var(--ink); color: var(--paper); }
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.primary:hover { background: #333; }
+.btn.run { background: var(--accent); border-color: var(--accent); color: white; }
+.btn.run:hover { background: #a83516; }
+
+.btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+
+/* PROMPT BOX */
+.prompt-box { position: relative; margin: 16px 0; }
+.prompt-box textarea { font-size: 12px; line-height: 1.6; min-height: 280px; background: white; padding: 16px; font-family: var(--mono); border: 1px solid var(--border); }
+.copy-btn { position: absolute; top: 10px; right: 10px; padding: 6px 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--border); background: var(--card); cursor: pointer; transition: all 0.15s; }
+.copy-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* AI TOOLS HINT */
+.ai-hint { background: white; border: 1px solid var(--border); border-left: 3px solid var(--accent2); padding: 14px 16px; font-family: var(--mono); font-size: 11px; line-height: 1.8; margin-bottom: 20px; }
+.ai-hint strong { color: var(--ink); }
+
+/* UPLOAD ZONE */
+.upload-area { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.upload-label-btn { display: inline-block; padding: 11px 24px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--ink); cursor: pointer; background: var(--card); color: var(--ink); transition: all 0.15s; }
+.upload-label-btn:hover { background: var(--ink); color: var(--paper); }
+.or-divider { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.paste-area { margin-top: 16px; display: none; }
+.paste-area textarea { min-height: 160px; font-size: 12px; }
+
+/* ERROR */
+.error-box { display: none; background: #fff5f3; border-left: 3px solid var(--danger); padding: 12px 16px; font-family: var(--mono); font-size: 11px; margin-top: 12px; line-height: 1.6; }
+.error-box.visible { display: block; }
+.error-title { font-weight: 500; color: var(--danger); margin-bottom: 2px; }
+
+/* SPINNER */
+.spinner-wrap { display: none; text-align: center; padding: 60px 0; }
+.spinner-wrap.visible { display: block; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--ink); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+/* PREVIEW CARD */
+.preview-card { display: none; }
+.preview-card.visible { display: block; }
+.preview-confidence { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+.conf-dot { width: 8px; height: 8px; border-radius: 50%; }
+.adcom-note { background: #fffbf0; border: 1px solid #d4920a; border-left: 3px solid #d4920a; padding: 10px 14px; font-family: var(--mono); font-size: 11px; line-height: 1.6; margin-bottom: 16px; }
+
+/* RESULTS */
+#results-panel { display: none; }
+#results-panel.visible { display: block; }
+.result-header { background: var(--ink); color: var(--paper); padding: 28px 32px; margin-bottom: 2px; }
+.result-header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.result-drug { font-family: var(--serif); font-size: 24px; font-weight: 700; }
+.result-indication { font-family: var(--mono); font-size: 11px; color: #aaa; margin-top: 2px; }
+.prob-display { text-align: right; }
+.prob-number { font-family: var(--serif); font-size: 52px; font-weight: 900; line-height: 1; }
+.prob-number.high { color: #6ee89a; } .prob-number.medium { color: #f5c842; } .prob-number.low { color: #ff6b4a; }
+.prob-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin-top: 2px; }
+.result-ci { font-family: var(--mono); font-size: 11px; color: #aaa; margin-top: 3px; }
+.conf-bar-wrap { margin-top: 20px; }
+.conf-bar-track { height: 6px; background: rgba(255,255,255,0.15); position: relative; }
+.conf-bar-fill { height: 100%; background: linear-gradient(90deg, #ff6b4a, #f5c842, #6ee89a); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.conf-bar-marker { position: absolute; top: -4px; width: 2px; height: 14px; background: white; transform: translateX(-50%); }
+.confidence-badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-top: 8px; }
+.confidence-dot { width: 6px; height: 6px; border-radius: 50%; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+.result-cell { background: var(--card); border: 1px solid var(--border); padding: 20px 24px; }
+.result-cell-title { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.result-cell-title::before { content: ''; display: inline-block; width: 8px; height: 2px; background: var(--accent); }
+.driver-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.driver-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.driver-text { font-size: 12px; line-height: 1.4; }
+.driver-label { font-weight: 500; }
+.driver-expl { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+.flag-item { font-family: var(--mono); font-size: 11px; padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid var(--border); background: white; line-height: 1.4; }
+.flag-item.crit { border-color: var(--danger); background: #fff5f3; }
+.flag-item.warn { border-color: #d4920a; background: #fffbf0; }
+.flag-item.info { border-color: var(--accent2); background: #f3f6ff; }
+.feat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.feat-name { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 200px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.feat-bar-bg { flex: 1; height: 4px; background: var(--border); }
+.feat-bar-fill { height: 100%; background: var(--accent); transition: width 0.6s ease; }
+.feat-val { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 36px; text-align: right; flex-shrink: 0; }
+.memo-box { background: white; border: 1px solid var(--border); border-left: 3px solid var(--accent2); padding: 20px 24px; font-family: var(--mono); font-size: 11px; line-height: 1.7; white-space: pre-wrap; max-height: 320px; overflow-y: auto; }
+.code-section { background: var(--card); border: 1px solid var(--border); padding: 20px 24px; margin-top: 2px; }
+.code-section-title { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+pre { font-family: var(--mono); font-size: 12px; line-height: 1.6; background: #1a1a1a; color: #d4d0c8; padding: 20px; overflow-x: auto; }
+.kw { color: #c792ea; } .str { color: #c3e88d; } .num { color: #f78c6c; } .cm { color: #637777; font-style: italic; } .fn { color: #82aaff; }
+.penalty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.penalty-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.penalty-name { font-family: var(--mono); font-size: 11px; color: var(--ink); width: 210px; flex-shrink: 0; }
+.penalty-note { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 2px; }
+.penalty-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; padding: 2px 6px; border: 1px solid; flex-shrink: 0; width: 76px; text-align: center; }
+.penalty-tag.asym { border-color: var(--accent2); color: var(--accent2); background: #f3f6ff; }
+.penalty-tag.active { border-color: var(--success); color: var(--success); background: #f0faf4; }
+.penalty-tag.no-text { border-color: var(--border); color: var(--muted); font-style: italic; }
+.penalty-bar-wrap { flex: 1; height: 8px; background: var(--border); position: relative; }
+.penalty-bar-zero { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #999; }
+.penalty-bar-fill { position: absolute; top: 0; bottom: 0; background: var(--success); }
+.penalty-bar-fill.neg { background: var(--danger); }
+.penalty-value { font-family: var(--mono); font-size: 11px; font-weight: 500; width: 52px; text-align: right; flex-shrink: 0; }
+.penalty-value.pos { color: var(--success); } .penalty-value.neg { color: var(--danger); } .penalty-value.neu { color: var(--muted); }
+@media (max-width: 600px) {
+  .field-grid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr; }
+  .result-header-top { flex-direction: column; }
+  .prob-display { text-align: left; }
+  .feat-name { width: 130px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<header>
+  <div>
+    <span class="header-tag">Quantitative Regulatory Analysis</span>
+    <span class="header-tag">v5</span>
+  </div>
+  <h1>FDA Approval<br><span>Probability Engine</span></h1>
+  <p class="subtitle">Enter drug details · Copy AI prompt · Paste JSON back · Run the model</p>
+</header>
+
+<!-- ── SCREEN 1: DRUG DETAILS ──────────────────────────────────────────── -->
+<div class="card" id="screen-1">
+  <div class="card-step">Step 1 of 3</div>
+  <div class="card-title">Drug Details</div>
+  <div class="card-desc">Enter the basic trial identifiers. We'll generate a tailored research prompt for you to paste into ChatGPT, Claude, or Perplexity.</div>
+
+  <div class="field-grid">
+    <div class="field">
+      <label>Drug / Compound Name <span class="req">*</span></label>
+      <input type="text" id="drug_name" placeholder="e.g. JOURNAVX (suzetrigine)" />
+    </div>
+    <div class="field">
+      <label>Indication <span class="req">*</span></label>
+      <input type="text" id="indication" placeholder="e.g. Pain associated with DPN" />
+    </div>
+    <div class="field">
+      <label>Trial Phase</label>
+      <select id="trial_phase">
+        <option value="phase2">Phase 2</option>
+        <option value="phase2_3">Phase 2/3</option>
+        <option value="phase3" selected>Phase 3</option>
+        <option value="pivotal">Pivotal / NDA</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Submission Type</label>
+      <select id="submission_type">
+        <option value="NDA">NDA (New Drug Application)</option>
+        <option value="BLA">BLA (Biologics License Application)</option>
+        <option value="sNDA">sNDA (Supplemental NDA)</option>
+      </select>
+    </div>
+    <div class="field full">
+      <label>NCT ID <span style="font-size:9px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400">(optional — greatly improves AI accuracy if provided)</span></label>
+      <input type="text" id="nct_id" placeholder="e.g. NCT05660538" style="max-width:260px" />
+    </div>
+  </div>
+
+  <div class="error-box" id="s1-error">
+    <div class="error-title" id="s1-error-title"></div>
+    <div id="s1-error-body"></div>
+  </div>
+
+  <div class="btn-row" style="justify-content:flex-end">
+    <button class="btn primary" onclick="generatePrompt()">Generate AI Prompt →</button>
+  </div>
+</div>
+
+<!-- ── SCREEN 2: AI PROMPT + JSON UPLOAD ──────────────────────────────── -->
+<div class="card" id="screen-2" style="display:none">
+  <div class="card-step">Step 2 of 3</div>
+  <div class="card-title">Copy this prompt into an AI</div>
+  <div class="card-desc" id="s2-desc">Copy the prompt below, paste it into ChatGPT, Claude, or Perplexity (with web search on), then upload or paste the JSON it returns.</div>
+
+  <div class="prompt-box">
+    <textarea id="generated-prompt" readonly></textarea>
+    <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+  </div>
+
+  <div class="ai-hint">
+    <strong>Recommended (use with web search enabled):</strong><br>
+    · <strong>Perplexity.ai</strong> — best for this; always searches the web<br>
+    · <strong>ChatGPT (GPT-4o)</strong> — enable Search or use Browse mode<br>
+    · <strong>Claude</strong> — paste any NCT / trial abstract alongside the prompt
+  </div>
+
+  <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Once you have the JSON, upload or paste it here:</div>
+
+  <div class="upload-area">
+    <label class="upload-label-btn">
+      📂 Upload JSON File
+      <input type="file" id="json-file" accept=".json,application/json" style="display:none" onchange="handleUpload(event)" />
+    </label>
+    <span class="or-divider">— or —</span>
+    <button class="btn" onclick="togglePaste()">Paste JSON</button>
+  </div>
+
+  <div class="paste-area" id="paste-area">
+    <textarea id="paste-json" placeholder='Paste the JSON from the AI here...'></textarea>
+    <div style="margin-top:8px">
+      <button class="btn run" onclick="submitPaste()">Load JSON →</button>
+    </div>
+  </div>
+
+  <div class="error-box" id="s2-error">
+    <div class="error-title" id="s2-error-title"></div>
+    <div id="s2-error-body"></div>
+  </div>
+
+  <div class="btn-row" style="justify-content:flex-start">
+    <button class="btn" onclick="goTo(1)">← Back</button>
+  </div>
+</div>
+
+<!-- ── SCREEN 3: EDITABLE PREVIEW ─────────────────────────────────────── -->
+<div class="preview-card" id="screen-3">
+  <div class="card">
+    <div class="card-step">Step 3 of 3</div>
+    <div class="card-title">Review & Run</div>
+    <div class="card-desc">Check every field — AI can make mistakes, especially on AdCom votes, p-values, and safety rates. Edit anything before running.</div>
+
+    <div id="adcom-note" class="adcom-note" style="display:none"></div>
+    <div id="data-notes" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:16px"></div>
+
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:4px">▸ Trial Design</div>
+    <div class="field-grid" style="margin-bottom:20px">
+      <div class="field">
+        <label>Therapeutic Area</label>
+        <select id="ov_therapeutic_area">
+          <option value="oncology">Oncology</option><option value="hematology">Hematology</option>
+          <option value="rare_disease">Rare Disease / Orphan</option><option value="neurology">Neurology</option>
+          <option value="psychiatry">Psychiatry</option><option value="cardiovascular">Cardiovascular</option>
+          <option value="infectious_disease">Infectious Disease</option><option value="metabolic">Metabolic / Endocrine</option>
+          <option value="respiratory">Respiratory</option><option value="immunology">Immunology / Autoimmune</option>
+          <option value="dermatology">Dermatology</option><option value="ophthalmology">Ophthalmology</option>
+          <option value="gastroenterology">Gastroenterology</option><option value="musculoskeletal">Musculoskeletal</option>
+          <option value="pain">Pain</option><option value="unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sponsor Name</label>
+        <input type="text" id="ov_sponsor_name" placeholder="e.g. Vertex Pharmaceuticals" />
+      </div>
+      <div class="field">
+        <label>Randomized?</label>
+        <div class="toggle-group">
+          <button class="toggle-btn selected" data-field="ov_is_randomized" data-val="true" onclick="tog(this)">Yes (RCT)</button>
+          <button class="toggle-btn" data-field="ov_is_randomized" data-val="false" onclick="tog(this)">No</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Blinding</label>
+        <select id="ov_blinding_level">
+          <option value="0">Open-label</option><option value="1">Single-blind</option><option value="2" selected>Double-blind</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Placebo-controlled?</label>
+        <div class="toggle-group">
+          <button class="toggle-btn selected" data-field="ov_is_placebo" data-val="true" onclick="tog(this)">Yes</button>
+          <button class="toggle-btn" data-field="ov_is_placebo" data-val="false" onclick="tog(this)">No</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Sample Size</label>
+        <input type="number" id="ov_sample_size" placeholder="e.g. 450" />
+      </div>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">▸ Efficacy</div>
+    <div class="field-grid" style="margin-bottom:20px">
+      <div class="field">
+        <label>Primary Endpoint Type</label>
+        <select id="ov_endpoint_type">
+          <option value="overall_survival">Overall Survival (OS)</option>
+          <option value="progression_free_survival">Progression-Free Survival (PFS)</option>
+          <option value="disease_free_survival">Disease-Free Survival (DFS)</option>
+          <option value="objective_response_rate">Objective Response Rate (ORR)</option>
+          <option value="composite_endpoint">Composite Endpoint</option>
+          <option value="patient_reported_outcome">Patient-Reported Outcome</option>
+          <option value="biomarker_surrogate">Surrogate Biomarker</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Primary Endpoint Met?</label>
+        <select id="ov_ep_met">
+          <option value="yes">Yes</option><option value="no">No</option><option value="unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>P-value</label>
+        <input type="number" id="ov_pvalue" placeholder="e.g. 0.003" step="0.0001" min="0" max="1" />
+      </div>
+      <div class="field">
+        <label>Effect Size (HR / OR / Cohen's d)</label>
+        <input type="number" id="ov_effect_size" placeholder="e.g. 0.72" step="0.01" />
+      </div>
+      <div class="field">
+        <label>95% CI Lower</label>
+        <input type="number" id="ov_ci_lower" placeholder="e.g. 0.58" step="0.01" />
+      </div>
+      <div class="field">
+        <label>95% CI Upper</label>
+        <input type="number" id="ov_ci_upper" placeholder="e.g. 0.89" step="0.01" />
+      </div>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">▸ Safety</div>
+    <div class="field-grid" style="margin-bottom:20px">
+      <div class="field">
+        <label>SAE Rate — Drug (0–1)</label>
+        <input type="number" id="ov_sae_drug" placeholder="e.g. 0.28" step="0.01" min="0" max="1" />
+      </div>
+      <div class="field">
+        <label>SAE Rate — Comparator (0–1)</label>
+        <input type="number" id="ov_sae_comp" placeholder="e.g. 0.22" step="0.01" min="0" max="1" />
+      </div>
+      <div class="field">
+        <label>Discontinuation Rate — Drug</label>
+        <input type="number" id="ov_discont" placeholder="e.g. 0.12" step="0.01" min="0" max="1" />
+      </div>
+      <div class="field">
+        <label>Black Box Warning Signal?</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-field="ov_bb" data-val="true" onclick="tog(this)">Yes 🚨</button>
+          <button class="toggle-btn selected" data-field="ov_bb" data-val="false" onclick="tog(this)">No</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Deaths Drug / N</label>
+        <div style="display:flex;gap:8px">
+          <input type="number" id="ov_deaths_drug" placeholder="Deaths" style="flex:1" />
+          <input type="number" id="ov_n_drug" placeholder="N" style="flex:1" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Deaths Comparator / N</label>
+        <div style="display:flex;gap:8px">
+          <input type="number" id="ov_deaths_comp" placeholder="Deaths" style="flex:1" />
+          <input type="number" id="ov_n_comp" placeholder="N" style="flex:1" />
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">▸ Regulatory</div>
+    <div class="field-grid" style="margin-bottom:20px">
+      <div class="field">
+        <label>AdCom Outcome</label>
+        <select id="ov_adcom">
+          <option value="">No AdCom held</option>
+          <option value="strongly_positive">Strongly positive (&gt;75% yes)</option>
+          <option value="positive">Positive (51–75% yes)</option>
+          <option value="split">Split (40–60%)</option>
+          <option value="negative">Negative (&lt;40% yes)</option>
+          <option value="strongly_negative">Strongly negative (&lt;20% yes)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Prior Approvals / Rejections</label>
+        <div style="display:flex;gap:8px">
+          <input type="number" id="ov_prior_approvals" placeholder="Approvals" style="flex:1" />
+          <input type="number" id="ov_prior_rejections" placeholder="CRLs" style="flex:1" />
+        </div>
+      </div>
+      <div class="field full" style="display:flex;flex-wrap:wrap;gap:16px;margin-top:4px">
+        <label style="flex-direction:row;align-items:center;gap:6px;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--ink)"><input type="checkbox" id="ov_bt"> Breakthrough Therapy</label>
+        <label style="flex-direction:row;align-items:center;gap:6px;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--ink)"><input type="checkbox" id="ov_ft"> Fast Track</label>
+        <label style="flex-direction:row;align-items:center;gap:6px;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--ink)"><input type="checkbox" id="ov_pr"> Priority Review</label>
+        <label style="flex-direction:row;align-items:center;gap:6px;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--ink)"><input type="checkbox" id="ov_od"> Orphan Drug</label>
+        <label style="flex-direction:row;align-items:center;gap:6px;font-size:12px;text-transform:none;letter-spacing:0;cursor:pointer;color:var(--ink)"><input type="checkbox" id="ov_aa"> Accelerated Approval</label>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="goTo(2)">← Back</button>
+      <button class="btn run" onclick="applyAndRun()">Run Probability Model →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SPINNER ─────────────────────────────────────────────────────────── -->
+<div class="spinner-wrap" id="spinner">
+  <div class="spinner"></div>
+  <div class="spinner-label">Computing probability estimate...</div>
+</div>
+
+<!-- ── RESULTS ─────────────────────────────────────────────────────────── -->
+<div id="results-panel">
+  <div class="result-header">
+    <div class="result-header-top">
+      <div>
+        <div class="result-drug" id="r-drug">—</div>
+        <div class="result-indication" id="r-indication">—</div>
+      </div>
+      <div class="prob-display">
+        <div class="prob-number" id="r-prob">—%</div>
+        <div class="prob-label">Approval Probability</div>
+        <div class="result-ci" id="r-ci">—</div>
+        <div class="confidence-badge">
+          <span class="confidence-dot" id="r-conf-dot"></span>
+          <span id="r-conf">—</span> model confidence
+        </div>
+      </div>
+    </div>
+    <div class="conf-bar-wrap">
+      <div class="conf-bar-track">
+        <div class="conf-bar-fill" id="r-bar" style="width:0%"></div>
+        <div class="conf-bar-marker" id="r-marker" style="left:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-grid">
+    <div class="result-cell"><div class="result-cell-title">Key Positive Drivers</div><div id="r-positive"></div></div>
+    <div class="result-cell"><div class="result-cell-title">Key Risk Factors</div><div id="r-negative"></div></div>
+  </div>
+  <div class="result-grid">
+    <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Risk Flags</div><div id="r-flags"></div></div>
+  </div>
+  <div class="result-grid">
+    <div class="result-cell" style="grid-column:1/-1">
+      <div class="result-cell-title">Asymmetric Penalty Breakdown</div>
+      <div id="r-penalties"></div>
+    </div>
+  </div>
+  <div class="result-grid">
+    <div class="result-cell" style="grid-column:1/-1">
+      <div class="result-cell-title">Feature Importances</div>
+      <div id="r-features"></div>
+    </div>
+  </div>
+  <div class="result-grid">
+    <div class="result-cell" style="grid-column:1/-1">
+      <div class="result-cell-title">Investment Committee Memo</div>
+      <div class="memo-box" id="r-memo"></div>
+    </div>
+  </div>
+  <div class="code-section">
+    <div class="code-section-title">Python Code — Run This Analysis</div>
+    <pre id="r-code"></pre>
+  </div>
+  <div style="text-align:center;margin-top:24px">
+    <button class="btn" onclick="resetAll()">← New Analysis</button>
+  </div>
+</div>
+
+</div><!-- /page-wrapper -->
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+let researchedData = null;
+const togState = {
+  ov_is_randomized: true, ov_is_placebo: true,
+  ov_bb: false,
+};
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function goTo(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('screen-' + i);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('screen-' + n).style.display = 'block';
+  if (n === 3) document.getElementById('screen-3').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── STEP 1: GENERATE PROMPT ────────────────────────────────────────────────
+function generatePrompt() {
+  const drug  = document.getElementById('drug_name').value.trim();
+  const ind   = document.getElementById('indication').value.trim();
+  const phase = document.getElementById('trial_phase').value;
+  const sub   = document.getElementById('submission_type').value;
+  const nct   = document.getElementById('nct_id').value.trim().toUpperCase();
+
+  if (!drug) return s1err('Please enter a drug name.');
+  if (!ind)  return s1err('Please enter an indication.');
+  document.getElementById('s1-error').classList.remove('visible');
+
+  const phaseLabel = {phase2:'Phase 2',phase2_3:'Phase 2/3',phase3:'Phase 3',pivotal:'Pivotal / NDA'}[phase];
+  const nctLine = nct ? `\nNCT Trial ID: ${nct} — focus specifically on this trial, not other trials of the same drug.\n` : '';
+
+  const prompt =
+`You are a clinical trial data extraction specialist with access to web search.
+
+Research the following drug trial and return ONLY a valid JSON object — no explanation, no markdown, no code fences.
+${nctLine}
+Drug: ${drug}
+Indication: ${ind}
+Phase: ${phaseLabel}
+Submission type: ${sub}
+
+Search ClinicalTrials.gov, PubMed, FDA.gov, and sponsor press releases.
+For AdCom: find the exact vote count (e.g. "14 to 2 against" = "strongly_negative").
+Do NOT confuse this trial with other trials or indications of the same drug.
+primary_endpoint_met must be the string "yes", "no", or "unknown".
+adcom_outcome must be one of: strongly_positive | positive | split | negative | strongly_negative | null
+All rates (sae_rate_drug etc.) must be decimals 0–1.
+Use null for any value you cannot find with confidence.
+
+Return exactly this JSON structure:
+{
+  "therapeutic_area": "<oncology|hematology|rare_disease|neurology|psychiatry|cardiovascular|infectious_disease|metabolic|respiratory|immunology|dermatology|ophthalmology|gastroenterology|musculoskeletal|pain|unknown>",
+  "sponsor_name": "<string or null>",
+  "is_randomized": <true|false>,
+  "blinding_level": <0=open-label | 1=single-blind | 2=double-blind>,
+  "is_placebo_controlled": <true|false>,
+  "sample_size": <integer or null>,
+  "has_power_calculation": <true|false>,
+  "has_dsmb": <true|false>,
+  "has_pre_specified_analysis": <true|false>,
+  "itt_analysis_used": <true|false>,
+  "primary_endpoint_type": "<overall_survival|progression_free_survival|disease_free_survival|objective_response_rate|composite_endpoint|patient_reported_outcome|biomarker_surrogate|unknown>",
+  "primary_endpoint_met": "<yes|no|unknown>",
+  "primary_pvalue": <float or null>,
+  "primary_effect_size": <float or null>,
+  "primary_ci_lower": <float or null>,
+  "primary_ci_upper": <float or null>,
+  "has_multiplicity_adjustment": <true|false>,
+  "secondary_endpoints_total": <integer or null>,
+  "secondary_endpoints_met": <integer or null>,
+  "sae_rate_drug": <float 0-1 or null>,
+  "sae_rate_comparator": <float 0-1 or null>,
+  "discontinuation_rate_drug": <float 0-1 or null>,
+  "deaths_drug": <integer or null>,
+  "n_drug": <integer or null>,
+  "deaths_comparator": <integer or null>,
+  "n_comparator": <integer or null>,
+  "has_black_box_signal": <true|false>,
+  "has_breakthrough_therapy": <true|false>,
+  "has_fast_track": <true|false>,
+  "has_priority_review": <true|false>,
+  "has_orphan_drug": <true|false>,
+  "has_accelerated_approval": <true|false>,
+  "adcom_outcome": "<strongly_positive|positive|split|negative|strongly_negative|null>",
+  "adcom_vote_detail": "<exact vote string e.g. '14 to 2 against' or null>",
+  "prior_approvals": <integer or null>,
+  "prior_rejections": <integer or null>,
+  "has_prior_fda_sanctions": <true|false>,
+  "report_text": "<2-3 sentence factual summary of trial results>",
+  "data_confidence": "<high|medium|low>",
+  "data_notes": "<one sentence noting any uncertain or estimated fields>"
+}`;
+
+  document.getElementById('generated-prompt').value = prompt;
+  document.getElementById('s2-desc').textContent =
+    `Prompt generated for ${drug} — ${ind} (${phaseLabel}). Copy it into ChatGPT, Claude, or Perplexity, then upload or paste the JSON it returns.`;
+
+  goTo(1); // hide screen 1
+  document.getElementById('screen-1').style.display = 'none';
+  document.getElementById('screen-2').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function s1err(msg) {
+  document.getElementById('s1-error-title').textContent = 'Missing input';
+  document.getElementById('s1-error-body').textContent  = msg;
+  document.getElementById('s1-error').classList.add('visible');
+}
+
+// ── COPY PROMPT ────────────────────────────────────────────────────────────
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('generated-prompt').value).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.style.background = 'var(--success)';
+    btn.style.color = 'white';
+    btn.style.borderColor = 'var(--success)';
+    setTimeout(() => {
+      btn.textContent = 'Copy Prompt';
+      btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = '';
+    }, 2500);
+  });
+}
+
+// ── TOGGLE PASTE BOX ───────────────────────────────────────────────────────
+function togglePaste() {
+  const el = document.getElementById('paste-area');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ── FILE UPLOAD ────────────────────────────────────────────────────────────
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => processJSON(e.target.result);
+  reader.readAsText(file);
+}
+
+function submitPaste() {
+  processJSON(document.getElementById('paste-json').value.trim());
+}
+
+// ── PROCESS JSON ───────────────────────────────────────────────────────────
+function processJSON(raw) {
+  document.getElementById('s2-error').classList.remove('visible');
+  let parsed;
+  try {
+    const clean = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim();
+    parsed = JSON.parse(clean);
+  } catch(e) {
+    s2err('Invalid JSON', 'Could not parse. Check for missing quotes or commas. Error: ' + e.message);
+    return;
+  }
+
+  const drug  = document.getElementById('drug_name').value.trim();
+  const ind   = document.getElementById('indication').value.trim();
+  const phase = document.getElementById('trial_phase').value;
+  const sub   = document.getElementById('submission_type').value;
+
+  researchedData = {
+    drug_name: drug, indication: ind, trial_phase: phase, submission_type: sub,
+    data_confidence: 'medium', data_notes: '',
+    ...parsed,
+    adcom_outcome: (parsed.adcom_outcome === 'null' || parsed.adcom_outcome === '') ? null : (parsed.adcom_outcome || null),
+  };
+
+  normalise(researchedData);
+  populatePreview(researchedData);
+  document.getElementById('screen-2').style.display = 'none';
+  document.getElementById('screen-3').style.display = 'block';
+  document.getElementById('screen-3').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function s2err(title, msg) {
+  document.getElementById('s2-error-title').textContent = title;
+  document.getElementById('s2-error-body').textContent  = msg;
+  document.getElementById('s2-error').classList.add('visible');
+}
+
+// ── NORMALISE ──────────────────────────────────────────────────────────────
+function normalise(r) {
+  if (r.primary_endpoint_met === true  || r.primary_endpoint_met === 1) r.primary_endpoint_met = 'yes';
+  if (r.primary_endpoint_met === false || r.primary_endpoint_met === 0) r.primary_endpoint_met = 'no';
+  if (!['yes','no','unknown'].includes(r.primary_endpoint_met))          r.primary_endpoint_met = 'unknown';
+  const validAdcom = ['strongly_positive','positive','split','negative','strongly_negative'];
+  if (r.adcom_outcome && !validAdcom.includes(r.adcom_outcome)) r.adcom_outcome = null;
+  const validTA = ['oncology','hematology','rare_disease','neurology','psychiatry','cardiovascular',
+    'infectious_disease','metabolic','respiratory','immunology','dermatology','ophthalmology',
+    'gastroenterology','musculoskeletal','pain'];
+  if (!validTA.includes(r.therapeutic_area)) r.therapeutic_area = 'unknown';
+  const nums = ['blinding_level','sample_size','primary_pvalue','primary_effect_size',
+    'primary_ci_lower','primary_ci_upper','secondary_endpoints_total','secondary_endpoints_met',
+    'sae_rate_drug','sae_rate_comparator','discontinuation_rate_drug','dlt_rate',
+    'deaths_drug','n_drug','deaths_comparator','n_comparator','prior_approvals','prior_rejections'];
+  nums.forEach(f => { if (r[f] != null) { const n = Number(r[f]); r[f] = isNaN(n) ? null : n; } });
+  const bools = ['is_randomized','is_placebo_controlled','has_power_calculation','has_dsmb',
+    'has_pre_specified_analysis','itt_analysis_used','has_multiplicity_adjustment',
+    'has_black_box_signal','has_breakthrough_therapy','has_fast_track',
+    'has_priority_review','has_orphan_drug','has_accelerated_approval','has_prior_fda_sanctions'];
+  bools.forEach(f => {
+    if (typeof r[f] === 'string') r[f] = ['true','1','yes'].includes(r[f].toLowerCase());
+    else r[f] = !!r[f];
+  });
+}
+
+// ── POPULATE PREVIEW ───────────────────────────────────────────────────────
+function sv(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.tagName === 'SELECT') {
+    const opt = [...el.options].find(o => o.value === String(val));
+    if (opt) el.value = opt.value;
+  } else if (el.type === 'checkbox') {
+    el.checked = !!val;
+  } else {
+    el.value = (val == null) ? '' : val;
+  }
+}
+
+function setTog(field, val) {
+  togState[field] = val;
+  document.querySelectorAll(`[data-field="${field}"]`).forEach(btn => {
+    const bval = btn.dataset.val === 'true' ? true : btn.dataset.val === 'false' ? false : btn.dataset.val;
+    btn.classList.toggle('selected', bval === val);
+  });
+}
+
+function populatePreview(d) {
+  sv('ov_therapeutic_area', d.therapeutic_area || 'unknown');
+  sv('ov_sponsor_name',     d.sponsor_name || '');
+  sv('ov_sample_size',      d.sample_size || '');
+  sv('ov_blinding_level',   d.blinding_level ?? 2);
+  sv('ov_endpoint_type',    d.primary_endpoint_type || 'unknown');
+  sv('ov_ep_met',           d.primary_endpoint_met || 'unknown');
+  sv('ov_pvalue',           d.primary_pvalue ?? '');
+  sv('ov_effect_size',      d.primary_effect_size ?? '');
+  sv('ov_ci_lower',         d.primary_ci_lower ?? '');
+  sv('ov_ci_upper',         d.primary_ci_upper ?? '');
+  sv('ov_sae_drug',         d.sae_rate_drug ?? '');
+  sv('ov_sae_comp',         d.sae_rate_comparator ?? '');
+  sv('ov_discont',          d.discontinuation_rate_drug ?? '');
+  sv('ov_deaths_drug',      d.deaths_drug ?? '');
+  sv('ov_n_drug',           d.n_drug ?? '');
+  sv('ov_deaths_comp',      d.deaths_comparator ?? '');
+  sv('ov_n_comp',           d.n_comparator ?? '');
+  sv('ov_adcom',            d.adcom_outcome || '');
+  sv('ov_prior_approvals',  d.prior_approvals ?? '');
+  sv('ov_prior_rejections', d.prior_rejections ?? '');
+  sv('ov_bt', d.has_breakthrough_therapy);
+  sv('ov_ft', d.has_fast_track);
+  sv('ov_pr', d.has_priority_review);
+  sv('ov_od', d.has_orphan_drug);
+  sv('ov_aa', d.has_accelerated_approval);
+  setTog('ov_is_randomized', d.is_randomized !== false);
+  setTog('ov_is_placebo',    d.is_placebo_controlled !== false);
+  setTog('ov_bb',            !!d.has_black_box_signal);
+
+  // Show AdCom note if vote detail provided
+  const adcomNote = document.getElementById('adcom-note');
+  if (d.adcom_vote_detail) {
+    adcomNote.style.display = 'block';
+    adcomNote.textContent = '⚠ AdCom vote detail: "' + d.adcom_vote_detail + '" — verify the dropdown above matches this.';
+  } else {
+    adcomNote.style.display = 'none';
+  }
+
+  const notesEl = document.getElementById('data-notes');
+  notesEl.textContent = d.data_notes ? '📋 AI notes: ' + d.data_notes : '';
+}
+
+// ── TOGGLE BUTTONS ─────────────────────────────────────────────────────────
+function tog(btn) {
+  const field = btn.dataset.field;
+  const val = btn.dataset.val === 'true' ? true : btn.dataset.val === 'false' ? false : btn.dataset.val;
+  togState[field] = val;
+  btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => {
+    const bval = b.dataset.val === 'true' ? true : b.dataset.val === 'false' ? false : b.dataset.val;
+    b.classList.toggle('selected', bval === val);
+  });
+}
+
+// ── APPLY OVERRIDES + RUN ──────────────────────────────────────────────────
+function applyAndRun() {
+  const d = researchedData || {};
+  d.therapeutic_area          = document.getElementById('ov_therapeutic_area').value;
+  d.sponsor_name              = document.getElementById('ov_sponsor_name').value;
+  d.is_randomized             = togState.ov_is_randomized;
+  d.blinding_level            = parseInt(document.getElementById('ov_blinding_level').value);
+  d.is_placebo_controlled     = togState.ov_is_placebo;
+  d.sample_size               = parseInt(document.getElementById('ov_sample_size').value) || 300;
+  d.primary_endpoint_type     = document.getElementById('ov_endpoint_type').value;
+  d.primary_endpoint_met      = document.getElementById('ov_ep_met').value;
+  d.primary_pvalue            = parseFloat(document.getElementById('ov_pvalue').value) || null;
+  d.primary_effect_size       = parseFloat(document.getElementById('ov_effect_size').value) || null;
+  d.primary_ci_lower          = parseFloat(document.getElementById('ov_ci_lower').value) || null;
+  d.primary_ci_upper          = parseFloat(document.getElementById('ov_ci_upper').value) || null;
+  d.sae_rate_drug             = parseFloat(document.getElementById('ov_sae_drug').value) || null;
+  d.sae_rate_comparator       = parseFloat(document.getElementById('ov_sae_comp').value) || null;
+  d.discontinuation_rate_drug = parseFloat(document.getElementById('ov_discont').value) || null;
+  d.has_black_box_signal      = togState.ov_bb;
+  d.deaths_drug               = parseInt(document.getElementById('ov_deaths_drug').value) || 0;
+  d.n_drug                    = parseInt(document.getElementById('ov_n_drug').value) || 0;
+  d.deaths_comparator         = parseInt(document.getElementById('ov_deaths_comp').value) || 0;
+  d.n_comparator              = parseInt(document.getElementById('ov_n_comp').value) || 0;
+  d.adcom_outcome             = document.getElementById('ov_adcom').value || null;
+  d.prior_approvals           = parseInt(document.getElementById('ov_prior_approvals').value) || 0;
+  d.prior_rejections          = parseInt(document.getElementById('ov_prior_rejections').value) || 0;
+  d.has_breakthrough_therapy  = document.getElementById('ov_bt').checked;
+  d.has_fast_track            = document.getElementById('ov_ft').checked;
+  d.has_priority_review       = document.getElementById('ov_pr').checked;
+  d.has_orphan_drug           = document.getElementById('ov_od').checked;
+  d.has_accelerated_approval  = document.getElementById('ov_aa').checked;
+  // defaults for fields not in preview
+  d.has_power_calculation     = d.has_power_calculation !== false;
+  d.has_dsmb                  = d.has_dsmb !== false;
+  d.has_pre_specified_analysis= d.has_pre_specified_analysis !== false;
+  d.itt_analysis_used         = d.itt_analysis_used !== false;
+  d.has_multiplicity_adjustment = d.has_multiplicity_adjustment !== false;
+  d.secondary_endpoints_total = d.secondary_endpoints_total || 0;
+  d.secondary_endpoints_met   = d.secondary_endpoints_met || 0;
+  d.has_prior_fda_sanctions   = d.has_prior_fda_sanctions || false;
+  d.report_text               = d.report_text || '';
+  researchedData = d;
+  runAnalysis();
+}
+
+function showSpinner() { document.getElementById('spinner').classList.add('visible'); }
+function hideSpinner() { document.getElementById('spinner').classList.remove('visible'); }
+
+function showError(title, body) {
+  // No error-box in results panel, just console
+  console.error(title, body);
+}
+function hideError() {}
+
+function resetAll() {
+  researchedData = null;
+  document.getElementById('results-panel').classList.remove('visible');
+  document.getElementById('results-panel').style.display = 'none';
+  document.getElementById('spinner').classList.remove('visible');
+  document.getElementById('screen-3').classList.remove('visible');
+  document.getElementById('screen-3').style.display = 'none';
+  document.getElementById('screen-2').style.display = 'none';
+  document.getElementById('screen-1').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const TA_BASE_RATES = {
+  oncology: 0.35, hematology: 0.42, rare_disease: 0.55, neurology: 0.22,
+  psychiatry: 0.20, cardiovascular: 0.30, infectious_disease: 0.52,
+  metabolic: 0.38, respiratory: 0.44, immunology: 0.45, dermatology: 0.48,
+  ophthalmology: 0.51, gastroenterology: 0.40, musculoskeletal: 0.35,
+  pain: 0.25, unknown: 0.35
+};
+
+const EP_WEIGHTS = {
+  overall_survival: 1.0, progression_free_survival: 0.75, disease_free_survival: 0.72,
+  objective_response_rate: 0.60, composite_endpoint: 0.68,
+  patient_reported_outcome: 0.55, biomarker_surrogate: 0.45, unknown: 0.50
+};
+
+const ADCOM_RAW = {
+  strongly_positive: 0.92, positive: 0.78, split: 0.52,
+  negative: 0.22, strongly_negative: 0.08, '': null, null: null
+};
+
+const PHASE_RATES = { phase2: 0.28, phase2_3: 0.45, phase3: 0.57, pivotal: 0.85 };
+
+const SAMPLE_NORMS = {
+  phase2: {mean:120, std:80}, phase2_3:{mean:280, std:150},
+  phase3:{mean:450, std:250}, pivotal:{mean:600, std:300}
+};
+
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+
+function adcomLogitContribution(adcom_outcome) {
+  if (!adcom_outcome || adcom_outcome === '') return 0.0;
+  const score = ADCOM_RAW[adcom_outcome] ?? null;
+  if (score === null) return 0.0;
+  if (score > 0.55) return clamp((score - 0.55) * 2.1, 0, 1.0);
+  else if (score >= 0.45) return -0.4;
+  else { const deficit = 0.55 - score; return -(deficit * deficit * 18); }
+}
+
+function deathImbalanceLogitPenalty(death_imbalance) {
+  if (death_imbalance <= 0) return 0.0;
+  if (death_imbalance <= 0.01) return -(death_imbalance * 15);
+  else if (death_imbalance <= 0.03) { const excess = death_imbalance - 0.01; return -(0.15 + excess * excess * 400); }
+  else return -clamp(0.15 + 0.16 + (death_imbalance - 0.03) * 50, 0, 4.5);
+}
+
+function saeImbalanceLogitPenalty(sae_ratio, sae_drug) {
+  if (sae_ratio <= 1.0) return Math.min((1.0 - sae_ratio) * 0.5, 0.4);
+  else if (sae_ratio <= 1.3) return 0.0;
+  else if (sae_ratio <= 2.0) { const excess = sae_ratio - 1.3; return -(excess * excess * 6.0 * (0.5 + sae_drug)); }
+  else { const base = -(0.7 * 0.7 * 6.0 * (0.5 + sae_drug)); const extra = -(sae_ratio - 2.0) * 1.5; return clamp(base + extra, -3.5, 0); }
+}
+
+function discontinuationLogitPenalty(rate) {
+  if (!rate || rate <= 0.15) return 0.0;
+  if (rate <= 0.25) return -((rate - 0.15) * 8.0);
+  else { const excess = rate - 0.25; return -(0.80 + excess * excess * 30); }
+}
+
+function pvalueLogitContribution(pval, ep_met) {
+  let p;
+  if (pval) p = Math.max(pval, 1e-10);
+  else { if (ep_met === "yes") p = 0.03; else if (ep_met === "no") p = 0.35; else p = 0.10; }
+  const plog = -Math.log10(p);
+  const base = plog * 0.15;
+  const cliff = p > 0.10 ? -1.0 : p > 0.05 ? -0.4 : 0.0;
+  return base + cliff;
+}
+
+function heuristicNLP(text) {
+  if (!text) return { design: 0.5, ep_robust: 0.5, safety: 0.0, reg_risk: 0.0, confidence: 0.5, ae_sev: 0.0 };
+  const t = text.toLowerCase();
+  const safety_pats = [/black.{0,5}box/,/boxed warning/,/rems\b/,/fatal/,/serious adverse/,/hepatotoxic/,/cardiotoxic/,/qt.{0,10}prolong/,/discontinu.{0,20}safety/,/death.{0,5}related/];
+  const pos_pats = [/breakthrough therapy/,/fast.track/,/unmet.{0,5}need/,/clinically meaningful/,/durable response/,/well.tolerated/,/statistically significant.*primary/,/overall survival.*benefit/];
+  const design_pats = [/randomized.*controlled/,/double.blind/,/placebo.controlled/,/intention.to.treat/,/pre.specified/,/multiplicity.*adjust/];
+  const weak_pats = [/single.arm/,/open.label.*uncontrolled/,/post.hoc/,/failed to.*meet/,/did not.*meet.*primary/,/nominal.*significant/,/marginal.*statistic/];
+  const safety_score = Math.min(safety_pats.filter(p=>p.test(t)).length / safety_pats.length * 2.5, 1);
+  const pos_score = Math.min(pos_pats.filter(p=>p.test(t)).length / pos_pats.length * 2.0, 1);
+  const design_score = Math.min(design_pats.filter(p=>p.test(t)).length / design_pats.length * 2.0, 1);
+  const weak_score = Math.min(weak_pats.filter(p=>p.test(t)).length / weak_pats.length * 2.5, 1);
+  let ep_robust = 0.4;
+  if (/overall survival/.test(t)) ep_robust = 0.85;
+  else if (/progression.free|disease.free/.test(t)) ep_robust = 0.65;
+  const ae_pats = [/grade [345]/,/serious.{0,10}adverse/,/life.threatening/,/fatal/];
+  const ae_sev = Math.min(ae_pats.filter(p=>p.test(t)).length / 4, 1);
+  return { design: design_score, ep_robust, safety: safety_score, reg_risk: Math.min(0.5 * safety_score + 0.5 * weak_score, 1), confidence: Math.max(0, Math.min(0.5 + 0.3 * pos_score - 0.3 * weak_score, 1)), ae_sev };
+}
+
+function computeProbability(d, nlp) {
+  const has_text      = !!(nlp && d.report_text && d.report_text.length > 80);
+  const nlp_design    = has_text ? nlp.design    : 0.5;
+  const nlp_ep_robust = has_text ? nlp.ep_robust : 0.5;
+  const nlp_safety    = has_text ? nlp.safety    : 0.0;
+  const nlp_reg_risk  = has_text ? nlp.reg_risk  : 0.0;
+  const nlp_conf      = has_text ? nlp.confidence: 0.5;
+  const nlp_ae_sev    = has_text ? nlp.ae_sev    : 0.0;
+
+  const base_rate = TA_BASE_RATES[d.therapeutic_area] || 0.35;
+  const ep_weight = EP_WEIGHTS[d.primary_endpoint_type] || 0.5;
+  const phase_rate = PHASE_RATES[d.trial_phase] || 0.57;
+
+  const sae_drug = d.sae_rate_drug ?? 0.10;
+  const sae_comp = d.sae_rate_comparator ?? 0.08;
+  const sae_ratio = sae_comp > 0 ? sae_drug / sae_comp : 1.0;
+
+  let death_imbalance = 0;
+  if (d.n_drug > 0 && d.n_comparator > 0) {
+    death_imbalance = (d.deaths_drug / d.n_drug) - (d.deaths_comparator / d.n_comparator);
+  }
+
+  const pval = d.primary_pvalue || null;
+  const es = d.primary_effect_size ??
+    (d.primary_endpoint_met === "yes" ? 0.5 : d.primary_endpoint_met === "no" ? 0.0 : 0.25);
+
+  let ci_width_norm = 0.4;
+  if (d.primary_ci_lower !== null && d.primary_ci_upper !== null) {
+    ci_width_norm = Math.exp(-Math.abs(d.primary_ci_upper - d.primary_ci_lower) * 0.8);
+  }
+
+  const norm = SAMPLE_NORMS[d.trial_phase] || SAMPLE_NORMS.phase3;
+  const size_z = (d.sample_size - norm.mean) / norm.std;
+
+  const design_quality = (
+    0.20 * (d.is_randomized ? 1 : 0) +
+    0.15 * (d.blinding_level / 2) +
+    0.10 * (d.is_placebo_controlled ? 1 : 0) +
+    0.15 * (d.has_power_calculation ? 1 : 0) +
+    0.10 * (d.has_dsmb ? 1 : 0) +
+    0.15 * (d.has_pre_specified_analysis ? 1 : 0) +
+    0.15 * (d.itt_analysis_used ? 1 : 0)
+  );
+
+  const total_sub = d.prior_approvals + d.prior_rejections;
+  const sponsor_score = total_sub === 0 ? 0.5
+    : Math.max(0, d.prior_approvals / total_sub - d.prior_rejections * 0.03 - (d.has_prior_fda_sanctions ? 0.15 : 0));
+
+  const desig_uplift = (
+    0.15 * (d.has_breakthrough_therapy ? 1 : 0) +
+    0.08 * (d.has_fast_track ? 1 : 0) +
+    0.10 * (d.has_priority_review ? 1 : 0) +
+    0.12 * (d.has_orphan_drug ? 1 : 0) +
+    0.09 * (d.has_accelerated_approval ? 1 : 0)
+  );
+
+  const sec_ratio = d.secondary_endpoints_total > 0
+    ? d.secondary_endpoints_met / d.secondary_endpoints_total : 0.5;
+
+  const adcom_contribution   = adcomLogitContribution(d.adcom_outcome);
+  const death_penalty        = deathImbalanceLogitPenalty(death_imbalance);
+  const sae_penalty          = saeImbalanceLogitPenalty(sae_ratio, sae_drug);
+  const discont_penalty      = discontinuationLogitPenalty(d.discontinuation_rate_drug);
+  const pval_contribution    = pvalueLogitContribution(pval, d.primary_endpoint_met);
+
+  const logit = (
+    Math.log(base_rate / (1 - base_rate))
+    + 2.5 * (d.primary_endpoint_met === "yes" ? 1 : 0)
+    + pval_contribution
+    + 0.8  * clamp(es, -2, 2) * ep_weight
+    + 0.3  * (ep_weight - 0.5)
+    - 1.5  * (d.has_black_box_signal ? 1 : 0)
+    + sae_penalty
+    + death_penalty
+    + discont_penalty
+    + 1.2  * (design_quality - 0.5)
+    + desig_uplift * 3.0
+    + adcom_contribution
+    + 0.6  * (sponsor_score - 0.5)
+    + 0.4  * (sec_ratio - 0.5)
+    + Math.log(phase_rate / 0.57)
+    + sigmoid(size_z * 0.5) * 0.5 - 0.25
+  );
+
+  const nlp_raw = has_text ? (
+      0.40 * (nlp_design    - 0.5)
+    + 0.35 * (nlp_ep_robust - 0.5)
+    - 0.55 *  nlp_safety
+    - 0.50 *  nlp_reg_risk
+    + 0.30 * (nlp_conf      - 0.5)
+    - 0.35 *  nlp_ae_sev
+  ) : 0.0;
+  const nlp_contribution = clamp(nlp_raw, -0.6, 0.6);
+  const logit_final = logit + nlp_contribution;
+
+  let prob = clamp(sigmoid(logit_final), 0.02, 0.98);
+
+  if (d.has_prior_fda_sanctions) {
+    const compounding_risk = d.primary_endpoint_met === "no" || sae_ratio > 1.8;
+    prob = compounding_risk ? prob * 0.72 : prob;
+    prob = clamp(prob, 0.02, 0.98);
+  }
+
+  const adcom_unc = !d.adcom_outcome ? 0.03 : (ADCOM_RAW[d.adcom_outcome] < 0.45 ? 0.04 : 0.0);
+  const ci_half = 0.09 + 0.08 * (1 - 2 * Math.abs(prob - 0.5)) + adcom_unc;
+  const lower = clamp(prob - ci_half, 0.01, 0.97);
+  const upper = clamp(prob + ci_half, 0.03, 0.99);
+  const conf = (upper - lower) < 0.14 ? 'High' : (upper - lower) < 0.22 ? 'Medium' : 'Low';
+
+  const importances = {
+    'primary_endpoint_met':           0.217,
+    'pvalue_log_transformed':         0.198,
+    'adcom_score [ASYMMETRIC]':       0.068,
+    'sae_imbalance [ASYMMETRIC]':     0.058,
+    'effect_size_normalized':         0.054,
+    'therapeutic_area_base_rate':     0.054,
+    'death_imbalance [ASYMMETRIC]':   0.051,
+    'has_black_box_warning':          0.049,
+    'sample_size_adequacy_z':         0.045,
+    'discontinuation [ASYMMETRIC]':   0.038,
+    'nlp_safety_concern':             has_text ? +(0.022*(1+nlp_safety)).toFixed(4)   : 0,
+    'nlp_regulatory_risk':            has_text ? +(0.020*(1+nlp_reg_risk)).toFixed(4) : 0,
+    'nlp_design_quality':             has_text ? +(0.016*(1+Math.abs(nlp_design-0.5)*2)).toFixed(4)    : 0,
+    'nlp_endpoint_robustness':        has_text ? +(0.014*(1+Math.abs(nlp_ep_robust-0.5)*2)).toFixed(4) : 0,
+    'nlp_ae_severity':                has_text ? +(0.013*(1+nlp_ae_sev)).toFixed(4)   : 0,
+    'nlp_narrative_confidence':       has_text ? +(0.010*(1+Math.abs(nlp_conf-0.5)*2)).toFixed(4)      : 0,
+    'breakthrough_therapy':           0.028,
+  };
+
+  const penalties = { adcom_contribution, death_penalty, sae_penalty, discont_penalty, pval_contribution, nlp_contribution, nlp_raw, has_text, nlp_safety, nlp_reg_risk, nlp_design, nlp_ep_robust, nlp_ae_sev, nlp_conf };
+
+  return { prob, lower, upper, conf, importances, design_quality, sae_ratio, death_imbalance, ep_weight, adcom_contribution, sponsor_score, penalties };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RISK FLAGS
+// ─────────────────────────────────────────────────────────────────────────────
+function generateFlags(d, model) {
+  const flags = [];
+  const pval = d.primary_pvalue || null;
+
+  if (d.primary_endpoint_met === "no")
+    flags.push({ type:'crit', text:'PRIMARY ENDPOINT NOT MET — highest risk factor for rejection' });
+
+  if (pval !== null) {
+    if (d.primary_endpoint_met === "yes" && pval > 0.10)
+      flags.push({ type:'crit', text:`p = ${pval.toFixed(3)} > 0.10 — qualitative evidence failure; additional −1.0 logit cliff penalty applied` });
+    else if (d.primary_endpoint_met === "yes" && pval > 0.05)
+      flags.push({ type:'crit', text:`p = ${pval.toFixed(3)} > 0.05 — statistical significance not demonstrated; −0.4 logit cliff penalty applied` });
+    else if (d.primary_endpoint_met === "yes" && pval >= 0.01)
+      flags.push({ type:'warn', text:`p = ${pval.toFixed(3)} — borderline significance; FDA may require confirmatory evidence` });
+  }
+
+  if (d.has_black_box_signal)
+    flags.push({ type:'crit', text:'BLACK BOX WARNING SIGNAL — mandatory labeling; potential REMS requirement (−1.5 logit)' });
+
+  const sr = model.sae_ratio;
+  if (sr > 2.5) flags.push({ type:'crit', text:`SAE ratio ${sr.toFixed(2)}x — severe imbalance; quadratic penalty: ${model.penalties.sae_penalty.toFixed(2)} logit; near-disqualifying` });
+  else if (sr > 2.0) flags.push({ type:'crit', text:`SAE ratio ${sr.toFixed(2)}x — high imbalance; quadratic penalty: ${model.penalties.sae_penalty.toFixed(2)} logit` });
+  else if (sr > 1.5) flags.push({ type:'warn', text:`SAE ratio ${sr.toFixed(2)}x — elevated; penalty: ${model.penalties.sae_penalty.toFixed(2)} logit; labeling restrictions likely` });
+  else if (sr > 1.3) flags.push({ type:'info', text:`SAE ratio ${sr.toFixed(2)}x — mild imbalance; noted in labeling` });
+  else if (sr < 0.8) flags.push({ type:'info', text:`SAE ratio ${sr.toFixed(2)}x — drug arm notably safer than comparator; positive safety signal` });
+
+  const di = model.death_imbalance;
+  if (di > 0.03) flags.push({ type:'crit', text:`Death rate excess: ${(di*100).toFixed(1)}pp — severe; exponential penalty: ${model.penalties.death_penalty.toFixed(2)} logit; near-disqualifying` });
+  else if (di > 0.02) flags.push({ type:'crit', text:`Death rate excess: ${(di*100).toFixed(1)}pp — significant; penalty: ${model.penalties.death_penalty.toFixed(2)} logit` });
+  else if (di > 0.01) flags.push({ type:'warn', text:`Death rate excess: ${(di*100).toFixed(1)}pp — growing concern; penalty: ${model.penalties.death_penalty.toFixed(2)} logit` });
+  else if (di > 0.005) flags.push({ type:'warn', text:`Minor death rate imbalance (${(di*100).toFixed(1)}pp) — monitoring required` });
+
+  const dr = d.discontinuation_rate_drug || 0;
+  if (dr > 0.30) flags.push({ type:'crit', text:`Discontinuation rate ${(dr*100).toFixed(0)}% — severe; convex penalty: ${model.penalties.discont_penalty.toFixed(2)} logit` });
+  else if (dr > 0.25) flags.push({ type:'warn', text:`High discontinuation rate ${(dr*100).toFixed(0)}% — convex penalty: ${model.penalties.discont_penalty.toFixed(2)} logit` });
+  else if (dr > 0.20) flags.push({ type:'warn', text:`Elevated discontinuation rate ${(dr*100).toFixed(0)}% — penalty begins above 20%` });
+
+  const adcomC = model.penalties.adcom_contribution;
+  if (d.adcom_outcome === 'strongly_negative') flags.push({ type:'crit', text:`STRONGLY NEGATIVE AdCom — asymmetric penalty: ${adcomC.toFixed(2)} logit; FDA override rate <5%` });
+  else if (d.adcom_outcome === 'negative') flags.push({ type:'crit', text:`Negative AdCom — asymmetric penalty: ${adcomC.toFixed(2)} logit` });
+  else if (d.adcom_outcome === 'split') flags.push({ type:'warn', text:`Split AdCom — penalty: ${adcomC.toFixed(2)} logit` });
+
+  if (d.has_prior_fda_sanctions) {
+    const compounding = d.primary_endpoint_met === "no" || model.sae_ratio > 1.8;
+    if (compounding) flags.push({ type:'crit', text:'Prior FDA sanctions + safety/efficacy failure — multiplicative interaction: ×0.72 applied' });
+    else flags.push({ type:'warn', text:'Prior FDA sanctions on record — FDA scrutiny heightened' });
+  }
+
+  if (!d.is_randomized) flags.push({ type:'warn', text:'Non-randomized design — FDA requires substantially stronger efficacy evidence' });
+  if (d.blinding_level < 1) flags.push({ type:'info', text:'Open-label design — potential ascertainment bias on subjective endpoints' });
+  if (d.sample_size < 150 && d.trial_phase === 'phase3') flags.push({ type:'warn', text:'Small sample size for Phase 3 — trial may be underpowered' });
+  if (!d.has_pre_specified_analysis) flags.push({ type:'warn', text:'No pre-specified SAP — post-hoc analyses receive reduced regulatory weight' });
+  if (!d.has_multiplicity_adjustment && d.secondary_endpoints_total > 3) flags.push({ type:'info', text:'No multiplicity adjustment with multiple secondary endpoints — Type I error inflation' });
+  const ep_weight = EP_WEIGHTS[d.primary_endpoint_type] || 0.5;
+  if (ep_weight < 0.55) flags.push({ type:'info', text:'Surrogate/low-hierarchy endpoint — may require post-marketing confirmatory trial' });
+
+  return flags;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DRIVERS
+// ─────────────────────────────────────────────────────────────────────────────
+function generateDrivers(d, model) {
+  const pos = [], neg = [];
+
+  if (d.primary_endpoint_met === "yes") pos.push({ icon:'✓', label:'Primary endpoint achieved', expl:'Strong efficacy signal — necessary for approval' });
+  if (d.has_breakthrough_therapy) pos.push({ icon:'✓', label:'Breakthrough Therapy Designation', expl:'FDA endorses unmet need and promising early data' });
+  if (d.primary_pvalue && d.primary_pvalue < 0.001) pos.push({ icon:'✓', label:'Highly significant p-value', expl:`p = ${d.primary_pvalue} — well below 0.05 threshold` });
+  else if (d.primary_pvalue && d.primary_pvalue < 0.05) pos.push({ icon:'✓', label:'Statistically significant result', expl:`p = ${d.primary_pvalue}` });
+  if (model.adcom_contribution > 0.25) pos.push({ icon:'✓', label:'Positive Advisory Committee', expl:'AdCom votes in favor — asymmetric uplift applied' });
+  if (d.has_orphan_drug) pos.push({ icon:'✓', label:'Orphan Drug Designation', expl:'Regulatory advantage for rare disease indication' });
+  if (d.is_randomized && d.blinding_level === 2) pos.push({ icon:'✓', label:'Double-blind RCT design', expl:'Gold-standard methodology' });
+  if (d.is_placebo_controlled) pos.push({ icon:'✓', label:'Placebo-controlled', expl:'Clear comparator for attributing treatment effect' });
+  if (model.ep_weight >= 0.75) pos.push({ icon:'✓', label:'High-quality primary endpoint', expl:'OS or PFS: strong FDA regulatory acceptance' });
+  if (d.secondary_endpoints_total > 0 && d.secondary_endpoints_met / d.secondary_endpoints_total >= 0.7)
+    pos.push({ icon:'✓', label:'Strong secondary endpoint performance', expl:'Supports robustness of primary finding' });
+
+  if (d.primary_endpoint_met === "no") neg.push({ icon:'✗', label:'Primary endpoint not met', expl:'Fatal flaw: FDA approval without primary endpoint is extremely rare' });
+  if (d.has_black_box_signal) neg.push({ icon:'✗', label:'Black box warning signal', expl:'Highest safety regulatory scrutiny level' });
+  if (model.sae_ratio > 1.5) neg.push({ icon:'✗', label:'SAE imbalance', expl:`Drug SAE rate ${model.sae_ratio.toFixed(1)}x comparator` });
+  if (model.death_imbalance > 0.01) neg.push({ icon:'✗', label:'Death rate imbalance', expl:'Mortality signal triggers full safety investigation' });
+  if (model.adcom_contribution < -0.8 && d.adcom_outcome) neg.push({ icon:'✗', label:'Negative/split AdCom vote', expl:`Asymmetric penalty: ${model.adcom_contribution.toFixed(2)} logit` });
+  if (d.primary_pvalue && d.primary_pvalue > 0.05 && d.primary_endpoint_met === "yes") neg.push({ icon:'✗', label:'Marginal p-value', expl:`p = ${d.primary_pvalue} exceeds 0.05 threshold` });
+  if (!d.is_randomized) neg.push({ icon:'✗', label:'Non-randomized design', expl:'FDA requires substantially stronger evidence' });
+  if (model.ep_weight < 0.50) neg.push({ icon:'✗', label:'Surrogate endpoint', expl:'Requires post-marketing verification' });
+  if (d.blinding_level === 0) neg.push({ icon:'✗', label:'Open-label design', expl:'Bias risk in subjective endpoint assessment' });
+
+  return { pos: pos.slice(0,5), neg: neg.slice(0,5) };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MEMO
+// ─────────────────────────────────────────────────────────────────────────────
+function generateMemo(d, model, flags, drivers) {
+  const prob_pct = (model.prob * 100).toFixed(1);
+  const ci_lo = (model.lower * 100).toFixed(1);
+  const ci_hi = (model.upper * 100).toFixed(1);
+
+  const overall = model.prob >= 0.70 ? 'favorable' : model.prob >= 0.50 ? 'mixed' : model.prob >= 0.30 ? 'unfavorable' : 'high-risk';
+  const verdict = model.prob >= 0.70 ? 'We view this as a relatively high-probability approval candidate'
+    : model.prob >= 0.50 ? 'The evidence package presents a mixed regulatory picture'
+    : model.prob >= 0.30 ? 'Significant regulatory risks weigh against approval'
+    : 'The data package presents major regulatory deficiencies';
+
+  const ep_text = d.primary_endpoint_met === "yes"
+    ? (d.primary_pvalue && d.primary_pvalue < 0.01 ? "Primary endpoint met (highly significant)" : "Primary endpoint met")
+    : d.primary_endpoint_met === "no" ? "Primary endpoint not met" : "Primary endpoint status unknown";
+
+  const safety_text = model.sae_ratio < 1.2
+    ? `The safety profile appears balanced (SAE ratio: ${model.sae_ratio.toFixed(2)}).`
+    : model.sae_ratio < 1.5
+    ? `The safety profile shows a modest SAE imbalance (${model.sae_ratio.toFixed(1)}x), likely manageable with labeling.`
+    : `The safety profile is a significant concern (${model.sae_ratio.toFixed(1)}x SAE imbalance)${d.has_black_box_signal ? '; black box warning probable' : ''}.`;
+
+  const desig_parts = [];
+  if (d.has_breakthrough_therapy) desig_parts.push('Breakthrough Therapy');
+  if (d.has_fast_track) desig_parts.push('Fast Track');
+  if (d.has_orphan_drug) desig_parts.push('Orphan Drug');
+  const reg_text = desig_parts.length
+    ? `The drug carries ${desig_parts.join(', ')} designation(s).`
+    : 'The drug does not carry special regulatory designations.';
+
+  const adcom_contribution = model.adcom_contribution;
+  const adcom_text = !d.adcom_outcome ? 'No Advisory Committee meeting was held.'
+    : adcom_contribution > 0.25 ? 'The Advisory Committee vote was positive.'
+    : adcom_contribution < -1.5 ? `The Advisory Committee vote was strongly negative (penalty: ${adcom_contribution.toFixed(2)} logit).`
+    : adcom_contribution < -0.3 ? `The Advisory Committee vote was negative or split (penalty: ${adcom_contribution.toFixed(2)} logit).`
+    : 'The Advisory Committee vote was split.';
+
+  const risk_text = flags.length === 0 ? 'No major risk flags identified.'
+    : flags.length <= 2 ? `Minor risk profile (${flags.length} flags).`
+    : flags.length <= 4 ? `Moderate risk profile (${flags.length} flags).`
+    : `Elevated risk profile (${flags.length} flags identified).`;
+
+  const pos_text = drivers.pos.slice(0,3).map(d => `  + ${d.label}: ${d.expl}`).join('\n');
+  const neg_text = drivers.neg.slice(0,3).map(d => `  - ${d.label}: ${d.expl}`).join('\n');
+
+  return `FDA APPROVAL PROBABILITY ASSESSMENT
+Drug: ${d.drug_name} | Indication: ${d.indication} | Phase: ${d.trial_phase.toUpperCase()}
+Data Source: Groq / Llama 3 Research (Confidence: ${(d.data_confidence || 'unknown').toUpperCase()})
+──────────────────────────────────────────────────────────────────
+PROBABILITY ESTIMATE: ${prob_pct}% (95% CI: ${ci_lo}%–${ci_hi}%)
+Model Confidence: ${model.conf}
+
+EXECUTIVE SUMMARY:
+${verdict}. The model assigns a ${Math.round(model.prob*100)}% probability of FDA approval
+with a 95% CI of ${ci_lo}%–${ci_hi}%. The overall data package is ${overall}.
+
+EFFICACY ASSESSMENT:
+${ep_text}
+
+SAFETY ASSESSMENT:
+${safety_text}
+
+REGULATORY CONTEXT:
+${reg_text} ${adcom_text}
+
+RISK PROFILE:
+${risk_text}
+
+TOP POSITIVE DRIVERS:
+${pos_text || '  (none identified)'}
+
+TOP RISK FACTORS:
+${neg_text || '  (none identified)'}
+
+DATA NOTES:
+${d.data_notes || 'No additional notes from Groq / Llama 3 research.'}
+
+DISCLAIMER:
+This analysis was generated from Groq / Llama 3 research and quantitative scoring.
+Clinical trial data may be incomplete, estimated, or from different trial phases.
+Expert regulatory affairs review is required before any investment decision.
+──────────────────────────────────────────────────────────────────`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PYTHON CODE GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
+function generateCode(d) {
+  const bool = v => v ? 'True' : 'False';
+  const num  = v => (v !== null && v !== undefined && !isNaN(v)) ? v : 'None';
+  const str  = v => v ? `"${v}"` : 'None';
+
+  return `<span class="cm"># Run this in Python after installing the FDA Approval Engine</span>
+<span class="kw">from</span> <span class="var">fda_approval_engine.engine</span> <span class="kw">import</span> <span class="var">FDAApprovalEngine</span>
+<span class="kw">from</span> <span class="var">fda_approval_engine.data.schemas</span> <span class="kw">import</span> <span class="var">ClinicalTrialRawData</span>, <span class="var">SponsorProfile</span>
+
+<span class="cm"># Data auto-researched by Groq / Llama 3 (confidence: ${d.data_confidence || 'unknown'})</span>
+engine = <span class="fn">FDAApprovalEngine</span>()
+engine.<span class="fn">train</span>()
+
+trial = <span class="fn">ClinicalTrialRawData</span>(
+    drug_name=<span class="str">${str(d.drug_name)}</span>,
+    indication=<span class="str">${str(d.indication)}</span>,
+    therapeutic_area=<span class="str">${str(d.therapeutic_area)}</span>,
+    trial_phase=<span class="str">${str(d.trial_phase)}</span>,
+    sponsor=<span class="fn">SponsorProfile</span>(
+        name=<span class="str">${str(d.sponsor_name)}</span>,
+        prior_approvals=<span class="num">${num(d.prior_approvals)}</span>,
+        prior_rejections=<span class="num">${num(d.prior_rejections)}</span>,
+    ),
+    is_randomized=<span class="kw">${bool(d.is_randomized)}</span>,
+    blinding_level=<span class="num">${num(d.blinding_level)}</span>,
+    is_placebo_controlled=<span class="kw">${bool(d.is_placebo_controlled)}</span>,
+    sample_size=<span class="num">${num(d.sample_size)}</span>,
+    has_power_calculation=<span class="kw">${bool(d.has_power_calculation)}</span>,
+    has_dsmb=<span class="kw">${bool(d.has_dsmb)}</span>,
+    has_pre_specified_analysis=<span class="kw">${bool(d.has_pre_specified_analysis)}</span>,
+    itt_analysis_used=<span class="kw">${bool(d.itt_analysis_used)}</span>,
+    primary_endpoint_type=<span class="str">${str(d.primary_endpoint_type)}</span>,
+    primary_endpoint_met=<span class="str">${d.primary_endpoint_met}</span>,
+    primary_pvalue=<span class="num">${num(d.primary_pvalue)}</span>,
+    primary_effect_size=<span class="num">${num(d.primary_effect_size)}</span>,
+    primary_ci_lower=<span class="num">${num(d.primary_ci_lower)}</span>,
+    primary_ci_upper=<span class="num">${num(d.primary_ci_upper)}</span>,
+    has_multiplicity_adjustment=<span class="kw">${bool(d.has_multiplicity_adjustment)}</span>,
+    secondary_endpoints_total=<span class="num">${num(d.secondary_endpoints_total)}</span>,
+    secondary_endpoints_met=<span class="num">${num(d.secondary_endpoints_met)}</span>,
+    sae_rate_drug=<span class="num">${num(d.sae_rate_drug)}</span>,
+    sae_rate_comparator=<span class="num">${num(d.sae_rate_comparator)}</span>,
+    deaths_drug=<span class="num">${num(d.deaths_drug)}</span>, n_drug=<span class="num">${num(d.n_drug)}</span>,
+    deaths_comparator=<span class="num">${num(d.deaths_comparator)}</span>, n_comparator=<span class="num">${num(d.n_comparator)}</span>,
+    has_black_box_signal=<span class="kw">${bool(d.has_black_box_signal)}</span>,
+    has_breakthrough_therapy=<span class="kw">${bool(d.has_breakthrough_therapy)}</span>,
+    has_fast_track=<span class="kw">${bool(d.has_fast_track)}</span>,
+    has_priority_review=<span class="kw">${bool(d.has_priority_review)}</span>,
+    has_orphan_drug=<span class="kw">${bool(d.has_orphan_drug)}</span>,
+    adcom_outcome=<span class="str">${d.adcom_outcome ? str(d.adcom_outcome) : 'None'}</span>,
+    full_report_text=<span class="str">"${(d.report_text || '').substring(0,80).replace(/\n/g,' ')}..."</span>,
+)
+
+result = engine.<span class="fn">predict</span>(trial)
+<span class="fn">print</span>(result.<span class="fn">to_dict</span>())
+<span class="fn">print</span>(result.investment_memo)`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RUN ANALYSIS (called after user reviews preview)
+// ─────────────────────────────────────────────────────────────────────────────
+async function runAnalysis() {
+  const d = researchedData;
+  if (!d) return;
+
+  document.getElementById('screen-3').style.display = 'none';
+  document.getElementById('screen-3').classList.remove('visible');
+  document.getElementById('results-panel').style.display = 'none';
+  document.getElementById('results-panel').classList.remove('visible');
+  showSpinner();
+
+  await new Promise(r => setTimeout(r, 1200));
+
+  const nlp    = heuristicNLP(d.report_text);
+  const model  = computeProbability(d, nlp);
+  const flags  = generateFlags(d, model);
+  const drivers = generateDrivers(d, model);
+  const memo   = generateMemo(d, model, flags, drivers);
+  const code   = generateCode(d);
+
+  // Populate results
+  document.getElementById('r-drug').textContent = d.drug_name;
+  document.getElementById('r-indication').textContent = `${d.indication} · ${d.trial_phase.toUpperCase()} · ${(d.therapeutic_area || 'unknown').replace(/_/g,' ')}`;
+
+  const probPct = Math.round(model.prob * 100);
+  const probEl = document.getElementById('r-prob');
+  probEl.textContent = `${probPct}%`;
+  probEl.className = 'prob-number ' + (probPct >= 60 ? 'high' : probPct >= 40 ? 'medium' : 'low');
+
+  document.getElementById('r-ci').textContent = `95% CI: ${(model.lower*100).toFixed(1)}% – ${(model.upper*100).toFixed(1)}%`;
+  document.getElementById('r-conf').textContent = model.conf;
+  document.getElementById('r-conf-dot').style.background = model.conf === 'High' ? '#6ee89a' : model.conf === 'Medium' ? '#f5c842' : '#ff6b4a';
+  document.getElementById('r-bar').style.width = `${probPct}%`;
+  document.getElementById('r-marker').style.left = `${probPct}%`;
+
+  document.getElementById('r-positive').innerHTML = drivers.pos.length
+    ? drivers.pos.map(dr => `<div class="driver-item"><div class="driver-icon" style="color:#1a6e3a">✓</div><div class="driver-text"><div class="driver-label">${dr.label}</div><div class="driver-expl">${dr.expl}</div></div></div>`).join('')
+    : '<div style="font-family:var(--mono);font-size:11px;color:var(--muted)">No strong positive drivers identified</div>';
+
+  document.getElementById('r-negative').innerHTML = drivers.neg.length
+    ? drivers.neg.map(dr => `<div class="driver-item"><div class="driver-icon" style="color:#c8401a">✗</div><div class="driver-text"><div class="driver-label">${dr.label}</div><div class="driver-expl">${dr.expl}</div></div></div>`).join('')
+    : '<div style="font-family:var(--mono);font-size:11px;color:var(--muted)">No major risk factors identified</div>';
+
+  document.getElementById('r-flags').innerHTML = flags.length
+    ? flags.map(f => `<div class="flag-item ${f.type}">${f.text}</div>`).join('')
+    : '<div class="flag-item">No risk flags triggered — data package appears clean</div>';
+
+  // Penalty breakdown
+  const penEl = document.getElementById('r-penalties');
+  const p = model.penalties;
+  const MAX_LOGIT = 4.5;
+
+  function penRow(name, value, type, note) {
+    const isPos = value > 0.005, isNeg = value < -0.005;
+    const valClass = isPos ? 'pos' : isNeg ? 'neg' : 'neu';
+    const sign = isPos ? '+' : '';
+    const tagClass = type === 'ASYMMETRIC' ? 'asym' : type === 'ACTIVE' ? 'active' : type === 'NO TEXT' ? 'no-text' : 'linear';
+    const pct = Math.min(Math.abs(value) / MAX_LOGIT * 50, 50);
+    const barFill = isNeg ? `style="right:${50-pct}%;left:auto;width:${pct}%"` : `style="left:50%;width:${pct}%"`;
+    return `<div class="penalty-row">
+      <div><div class="penalty-name">${name}</div><div class="penalty-note">${note}</div></div>
+      <span class="penalty-tag ${tagClass}">${type}</span>
+      <div class="penalty-bar-wrap">
+        <div class="penalty-bar-zero"></div>
+        <div class="penalty-bar-fill ${isNeg ? 'neg' : ''}" ${barFill}></div>
+      </div>
+      <div class="penalty-value ${valClass}">${sign}${value.toFixed(3)}</div>
+    </div>`;
+  }
+
+  const adcomOutcome = d.adcom_outcome || 'none';
+  const adcomNote = adcomOutcome === 'none' ? 'No AdCom held — neutral'
+    : adcomOutcome === 'strongly_positive' ? 'Piecewise: gentle uplift zone'
+    : adcomOutcome === 'positive' ? 'Piecewise: positive linear zone'
+    : adcomOutcome === 'split' ? 'Piecewise: split → slight penalty'
+    : adcomOutcome === 'negative' ? 'Piecewise: quadratic penalty zone'
+    : 'Piecewise: near-veto zone (×18 quadratic)';
+
+  const saeNote = model.sae_ratio <= 1.3 ? `SAE ratio ${model.sae_ratio.toFixed(2)}x — within tolerance`
+    : model.sae_ratio <= 2.0 ? `SAE ratio ${model.sae_ratio.toFixed(2)}x — quadratic zone`
+    : `SAE ratio ${model.sae_ratio.toFixed(2)}x — accelerating zone above 2.0x`;
+
+  const deathNote = model.death_imbalance <= 0 ? 'No excess mortality in drug arm'
+    : model.death_imbalance <= 0.01 ? `${(model.death_imbalance*100).toFixed(1)}pp excess — linear zone`
+    : model.death_imbalance <= 0.03 ? `${(model.death_imbalance*100).toFixed(1)}pp excess — quadratic escalation`
+    : `${(model.death_imbalance*100).toFixed(1)}pp excess — near-veto zone`;
+
+  const dr2 = d.discontinuation_rate_drug || 0;
+  const discontNote = dr2 <= 0.15 ? 'Below 15% threshold — no penalty'
+    : dr2 <= 0.25 ? `${(dr2*100).toFixed(0)}% — linear ramp (15–25%)`
+    : `${(dr2*100).toFixed(0)}% — quadratic zone above 25%`;
+
+  const pvalRaw = d.primary_pvalue;
+  const pvalNote = !pvalRaw ? 'P-value imputed from endpoint result'
+    : pvalRaw > 0.10 ? `p=${pvalRaw} — cliff: −1.0 applied (>0.10 qualitative failure)`
+    : pvalRaw > 0.05 ? `p=${pvalRaw} — cliff: −0.4 applied`
+    : `p=${pvalRaw} — no cliff; standard −log₁₀ contribution`;
+
+  penEl.innerHTML = [
+    penRow('NLP Adjustment', p.nlp_contribution, p.has_text ? 'ACTIVE' : 'NO TEXT',
+      p.has_text
+        ? `Safety:${(p.nlp_safety*100).toFixed(0)}% RegRisk:${(p.nlp_reg_risk*100).toFixed(0)}% Design:${(p.nlp_design*100).toFixed(0)}% — capped ±0.6 logit`
+        : 'GPT summary text used — NLP module active'),
+    penRow('AdCom Score', p.adcom_contribution, 'ASYMMETRIC', adcomNote),
+    penRow('Death Imbalance', p.death_penalty, 'ASYMMETRIC', deathNote),
+    penRow('SAE Imbalance', p.sae_penalty, 'ASYMMETRIC', saeNote),
+    penRow('Discontinuation Rate', p.discont_penalty, 'ASYMMETRIC', discontNote),
+    penRow('P-value + Cliff', p.pval_contribution, 'ASYMMETRIC', pvalNote),
+  ].join('');
+
+  // Feature importances
+  const featEntries = Object.entries(model.importances).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const maxImp = featEntries[0][1];
+  document.getElementById('r-features').innerHTML = featEntries.map(([name, imp]) =>
+    `<div class="feat-row">
+      <div class="feat-name">${name.replace(/_/g,' ')}</div>
+      <div class="feat-bar-bg"><div class="feat-bar-fill" style="width:${(imp/maxImp*100).toFixed(1)}%"></div></div>
+      <div class="feat-val">${(imp*100).toFixed(1)}%</div>
+    </div>`).join('');
+
+  document.getElementById('r-memo').textContent = memo;
+  document.getElementById('r-code').innerHTML = code;
+
+  hideSpinner();
+  document.getElementById('results-panel').style.display = 'block';
+  document.getElementById('results-panel').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── stale helpers removed — showSpinner/hideSpinner defined in new front-end JS above
+</script>
+</body>
+</html>
