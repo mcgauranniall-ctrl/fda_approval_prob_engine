@@ -66,3 +66,9 @@ def test_shared_event_goes_to_the_best_matching_indication():
     assert len(tlb.best_indication(ev, {"MIG": ["asthma"], "CLUSTER": ["gout"]}, {"NDA_ACCEPTED"})) == 2
     # other event types are untouched
     assert len(tlb.best_indication(ev, kw, {"PDUFA_DATE"})) == 2
+
+
+def test_drugsfda_abbreviated_holder_names_match_sponsors():
+    from fdaengine.dataset import timelines as tlb
+    assert tlb.same_company("TEVA BRANDED PHARM", "Teva Branded Pharmaceutical Products R&D, Inc.")
+    assert not tlb.same_company("TEVA BRANDED PHARM", "Sandoz")

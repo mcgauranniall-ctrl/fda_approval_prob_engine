@@ -5,7 +5,8 @@ effects shrunk towards shared ones, a therapeutic-area random effect, and the tr
 measurement of the truth (sensitivity/specificity priors from `data/processed/label_error.json`, script 08).
 
 Validation, all on the training population (novel drugs, final outcomes; script 08):
-  * 5-fold cross-validation grouped by drug (a drug's programmes never straddle train and test);
+  * 5-fold cross-validation grouped by drug (a drug's programmes never straddle train and test), folds hashed from
+    the drug id and repeated with 3 seeds (scores averaged), so scores are comparable across data rebuilds;
   * a temporal holdout: fitted on rows with cut-offs before the 80th percentile date, scored on the later ones;
   * per level: Brier score (and skill vs the level base rate), log loss, AUROC, calibration intercept and slope,
     reliability by decile. Scores compare the model's probability of the *observed* label (true probability passed
@@ -15,7 +16,7 @@ Validation, all on the training population (novel drugs, final outcomes; script 
     challenger (§7.6).
 P5 is met at a level when the calibration slope is 0.8–1.2 and the model's Brier score beats every benchmark.
 
-  uv run python scripts/09_production_model.py [--folds 5] [--draws 1000]
+  uv run python scripts/09_production_model.py [--folds 5] [--repeats 3] [--draws 1000]
 Outputs: models/landmark-v1/ (posterior.npz, model.json), data/processed/oof_predictions.parquet,
          data/processed/validation.json, reports/validation.html
 """
@@ -23,6 +24,7 @@ Outputs: models/landmark-v1/ (posterior.npz, model.json), data/processed/oof_pre
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import sys
@@ -159,10 +161,9 @@ def reliability(df: pd.DataFrame, col: str) -> pd.DataFrame:
 
 # ------------------------------------------------------------------------------------------------ main
 def main(argv: list[str] | None = None) -> None:
-    from sklearn.model_selection import GroupKFold
-
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--folds", type=int, default=5)
+    ap.add_argument("--repeats", type=int, default=3, help="cross-validation repeats with different fold seeds")
     ap.add_argument("--draws", type=int, default=1000)
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding="utf-8")
@@ -175,20 +176,29 @@ def main(argv: list[str] | None = None) -> None:
     print(f"[09] {len(pop):,} rows: {pop['level'].value_counts().sort_index().to_dict()}")
     print(f"[09] label priors: {json.dumps(priors)}")
 
-    # Cross-validation, grouped by drug.
-    oof = pop[["programme_id", "drug_id", "level", "cutoff", "y"]].copy()
-    diag = []
-    for k, (tr, te) in enumerate(GroupKFold(n_splits=args.folds).split(pop, groups=pop["drug_id"])):
-        q, p, _post, _scale, d = bayes(tr, te, pop, raw, priors, max(500, args.draws // 2), seed=100 + k)
-        oof.loc[te, "bayes (observed label)"] = q
-        oof.loc[te, "bayes (true outcome)"] = p
-        for name, v in benchmarks(tr, te, pop, raw).items():
-            oof.loc[te, name] = v
-        diag.append({"fold": k, **d})
-        print(f"[09] fold {k + 1}/{args.folds} done ({time.time() - t0:.0f}s) {d}")
+    # Cross-validation grouped by drug. Folds are hashed from the drug id (so they stay the same when the data are
+    # rebuilt; re-dealt folds moved a level's Brier score by up to 0.017 between builds) and repeated with
+    # `--repeats` seeds; scores are the mean over repeats, out-of-fold predictions come from the first.
     model_cols = ["bayes (observed label)", "level base rate", "literature rate", "TA prior rate", "endpoint met alone",
                   "provisional (app today)", "logistic, same features", "LightGBM challenger"]
-    cv = score_table(oof, model_cols, "cv")
+    diag, cv_runs = [], []
+    for rep in range(args.repeats):
+        fold = pop["drug_id"].map(lambda d: int(hashlib.md5(f"{d}-{rep}".encode()).hexdigest(), 16) % args.folds)
+        run = pop[["programme_id", "drug_id", "level", "cutoff", "y"]].copy()
+        for k in range(args.folds):
+            tr, te = np.flatnonzero(fold != k), np.flatnonzero(fold == k)
+            q, p, _post, _scale, d = bayes(tr, te, pop, raw, priors, max(500, args.draws // 2), seed=100 * rep + k)
+            run.loc[te, "bayes (observed label)"] = q
+            run.loc[te, "bayes (true outcome)"] = p
+            for name, v in benchmarks(tr, te, pop, raw).items():
+                run.loc[te, name] = v
+            diag.append({"fold": f"{rep}.{k}", **d})
+            print(f"[09] repeat {rep + 1}/{args.repeats} fold {k + 1}/{args.folds} done ({time.time() - t0:.0f}s) {d}")
+        if rep == 0:
+            oof = run
+        cv_runs.append(score_table(run, model_cols, "cv"))
+    cv = pd.concat(cv_runs).groupby(["split", "level", "model"], sort=False).mean(numeric_only=True).reset_index()
+    cv["n"] = cv["n"].astype(int)
 
     # Temporal holdout.
     t_split = sorted(pop["cutoff"])[int(0.8 * len(pop))]                  # ISO date strings

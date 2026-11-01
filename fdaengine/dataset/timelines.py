@@ -29,7 +29,8 @@ REPEAT_FILINGS = 3
 WINDOW_BEFORE_YEARS, WINDOW_AFTER_YEARS = 3, 12       # documents considered around a programme's anchor
 MAX_NGRAM = 4
 _CORP = re.compile(r"\b(inc|incorporated|corp|corporation|co|company|ltd|limited|llc|plc|ag|sa|se|nv|bv|gmbh|kk|"
-                   r"holdings?|group|pharmaceuticals?|pharma|therapeutics|biosciences?|biotherapeutics|"
+                   r"holdings?|group|pharmaceuticals?|pharma|pharms?|products?|prods?|therapeutics|biosciences?|"
+                   r"biotherapeutics|"   # Drugs@FDA abbreviates: 'TEVA BRANDED PHARM' = Teva Branded Pharmaceutical Products
                    r"biopharma(ceuticals)?|biotech(nology)?|laboratories|labs?|research|development|r&d|"
                    r"the|of|and|us|usa|international|global)\b|/[a-z]{2}/|[^a-z0-9 ]", re.IGNORECASE)
 

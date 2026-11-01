@@ -60,8 +60,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGf2d15104c1: INSULIN GLARGINE / Diabetes Mellitus, Type 2
 
 - Sponsor Sanofi; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2014-06-01; moiety first approved 2000-04-20; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2015-07-17 (appl 021081), source edgar+drugsfda / high, failure basis nan, CRLs -
-- **Approved product** LANTUS (appl 021081); label indications: "1 INDICATIONS AND USAGE LANTUS is indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. LANTUS is a long-acting human insulin analog indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. ( 1 ) Limitations of Use Not recommended for the treatment of diabetic ketoacidosis. ( 1 ) Limitations of Use LANTUS is not recommend"
+- **Label:** event 1.0, y_prog 1.0, approval 2015-02-25 (appl 206538), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** TOUJEO SOLOSTAR (appl 206538); label indications: "1 INDICATIONS AND USAGE TOUJEO is indicated to improve glycemic control in adults and pediatric patients 6 years of age and older with diabetes mellitus. TOUJEO is a long-acting human insulin analog indicated to improve glycemic control in adults and pediatric patients 6 years and older with diabetes mellitus. ( 1 ) Limitations of Use : Not recommended for the treatment of diabetic ketoacidosis. ("
 - **Phase 3 trials:**
   - NCT02227862 [COMPLETED] 2014-06-01 -> 2016-07-31: Non-inferiority Study to Compare the Efficacy and Safety of Mylan's Insulin Glargine With Lantus® in Type 1 Diabetes Mellitus Pati
   - NCT02227212 [COMPLETED] 2014-08-01 -> 2014-11-30: Ease of Use and Safety of the New U300 Pen Injector in Insulin-Naïve Patients With T2DM
@@ -109,8 +109,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG6003dd48a4: PREGABALIN / Fibromyalgia
 
 - Sponsor Pfizer's Upjohn has merged with Mylan to form Viatris Inc.; TA neurology; cohort lifecycle_holder; first P3 2011-10-01; moiety first approved 2004-12-30; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2017-10-11 (appl 209501), source edgar+drugsfda / high, failure basis nan, CRLs -
-- **Approved product** LYRICA CR (appl 209501); label indications: "1 INDICATIONS AND USAGE LYRICA CR is indicated for the management of: • Neuropathic pain associated with diabetic peripheral neuropathy • Postherpetic neuralgia Efficacy of LYRICA CR has not been established for the management of fibromyalgia or as adjunctive therapy for adult patients with partial onset seizures. LYRICA CR is indicated for the management of: • Neuropathic pain associated with dia"
+- **Label:** event 1.0, y_prog 1.0, approval 2016-12-22 (appl 021446), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** LYRICA (appl 021446); label indications: "1 INDICATIONS AND USAGE LYRICA is indicated for: • Management of neuropathic pain associated with diabetic peripheral neuropathy • Management of postherpetic neuralgia • Adjunctive therapy for the treatment of partial‑onset seizures in patients 1 month of age and older • Management of fibromyalgia • Management of neuropathic pain associated with spinal cord injury LYRICA is indicated for: • Neurop"
 - **Phase 3 trials:**
   - NCT01432236 [COMPLETED] 2011-10-01 -> 2013-07-31: A Phase 3b Multicenter Study of Pregabalin in Fibromyalgia Subjects Who Have Comorbid Depression
   - NCT01387607 [COMPLETED] 2012-02-06 -> 2016-10-31: A Study For Pregabalin In Patients With Fibromyalgia
@@ -135,7 +135,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG7f21924bf9: ABATACEPT / Arthritis, Juvenile
 
 - Sponsor Bristol-Myers Squibb; TA immunology; cohort lifecycle_holder; first P3 2013-08-09; moiety first approved 2005-12-23; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2016-06-07 (appl 125118), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2017-03-30 (appl 125118), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** ORENCIA (appl 125118); label indications: "1 INDICATIONS AND USAGE ORENCIA is a selective T cell costimulation modulator indicated for: • the treatment of adult patients with moderately to severely active rheumatoid arthritis (RA). (1.1) • the treatment of patients 2 years of age and older with moderately to severely active polyarticular juvenile idiopathic arthritis (pJIA). (1.2) • the treatment of patients 2 years of age and older with a"
 - **Phase 3 trials:**
   - NCT01835470 [COMPLETED] 2013-08-09 -> 2015-11-24: Efficacy, Safety, Pharmacokinetics and Immunogenicity Study of Abatacept Administered Intravenously to Treat Active Polyarticular-
@@ -146,7 +146,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG3a32d35c10: tenofovir / HBV
 
 - Sponsor Gilead Sciences; TA gastroenterology; cohort lifecycle_holder; first P3 2015-06-19; moiety first approved 2001-10-26; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2018-07-03 (appl 208464), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2016-11-10 (appl 208464), source drugsfda_neworig+label / high, failure basis nan, CRLs -
 - **Approved product** VEMLIDY (appl 208464); label indications: "1 INDICATIONS AND USAGE VEMLIDY is indicated for the treatment of chronic hepatitis B virus (HBV) infection in adults and pediatric patients 6 years of age and older and weighing at least 25 kg with compensated liver disease [see Clinical Studies (14) ] . VEMLIDY is a hepatitis B virus (HBV) nucleoside analog reverse transcriptase inhibitor and is indicated for the treatment of chronic hepatitis B"
 - **Phase 3 trials:**
   - NCT02836236 [COMPLETED] 2015-06-19 -> 2017-04-05: Tenofovir Alafenamide Versus Tenofovir Disoproxil Fumarate for Treatment of Hepatitis B e Antigen-Negative Hepatitis B (China)
@@ -158,7 +158,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG055df5ddee: BLINATUMOMAB / Precursor Cell Lymphoblastic Leukemia-Lymphoma
 
 - Sponsor Amgen; TA oncology; cohort lifecycle_holder; first P3 2015-11-10; moiety first approved 2014-12-03; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2021-03-11 (appl 125557), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2017-07-11 (appl 125557), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** BLINCYTO (appl 125557); label indications: "1 INDICATIONS AND USAGE BLINCYTO is a bispecific CD19-directed CD3 T-cell engager indicated for the treatment of adult and pediatric patients one month and older with: CD19-positive B-cell precursor acute lymphoblastic leukemia (ALL) in first or second complete remission with minimal residual disease (MRD) greater than or equal to 0.1%. ( 1.1 ) Relapsed or refractory CD19-positive B-cell precursor"
 - **Phase 3 trials:**
   - NCT02393859 [COMPLETED] 2015-11-10 -> 2019-07-17: Phase 3 Trial of Blinatumomab vs Standard Chemotherapy in Pediatric Subjects With HIgh-Risk (HR) First Relapse B-precursor Acute L
@@ -186,8 +186,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG1aa5d19654: RAMUCIRUMAB / Metastatic Gastric Adenocarcinoma
 
 - Sponsor Eli Lilly and Company; TA oncology; cohort lifecycle_holder; first P3 2015-01-20; moiety first approved 2014-04-21; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2019-05-10 (appl 125477), source drugsfda_suppl+label / low, failure basis nan, CRLs -
-- **Approved product** CYRAMZA (appl 125477); label indications: "1 INDICATIONS AND USAGE CYRAMZA ® is a human vascular endothelial growth factor receptor 2 (VEGFR2) antagonist indicated: as a single agent or in combination with paclitaxel, for treatment of adults with advanced or metastatic gastric or gastro-esophageal junction adenocarcinoma with disease progression on or after prior fluoropyrimidine- or platinum-containing chemotherapy. ( 1.1 ) in combination"
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
 - **Phase 3 trials:**
   - NCT02314117 [COMPLETED] 2015-01-20 -> 2017-01-17: A Study of Ramucirumab (LY3009806) in Combination With Capecitabine and Cisplatin in Participants With Stomach Cancer
   - NCT04675983 [TERMINATED] 2021-03-10 -> 2023-02-12: A Study of Sintilimab Plus Ramucirumab as First-line Treatment for G/EGJ Adenocarcinoma (ORIENT-106)
@@ -214,7 +213,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG9d492e193b: LACOSAMIDE / Epilepsy With Partial-onset Seizures
 
 - Sponsor UCB BIOSCIENCES, Inc.; TA neurology; cohort lifecycle_holder; first P3 2015-06-05; moiety first approved 2008-10-28; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2020-11-16 (appl 022253), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2020-11-16 (appl 022253), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** VIMPAT (appl 022253); label indications: "1 INDICATIONS AND USAGE VIMPAT is indicated for: Treatment of partial-onset seizures in patients 1 month of age and older ( 1.1 ) Adjunctive therapy in the treatment of primary generalized tonic-clonic seizures in patients 4 years of age and older ( 1.2 ) 1.1 Partial-Onset Seizures VIMPAT is indicated for the treatment of partial-onset seizures in patients 1 month of age and older. 1.2 Primary Gen"
 - **Phase 3 trials:**
   - NCT02477839 [COMPLETED] 2015-06-05 -> 2020-05-28: Efficacy and Safety of Lacosamide as Adjunctive Therapy in Subjects ≥1 Month to <4 Years With Partial-onset Seizures
@@ -224,7 +223,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGc0a859a3be: ECULIZUMAB / Myasthenia Gravis
 
 - Sponsor Alexion Pharmaceuticals, Inc.; TA oncology; cohort lifecycle_holder; first P3 2013-12-01; moiety first approved 2007-03-16; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2017-10-23 (appl 125166), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2017-10-23 (appl 125166), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** SOLIRIS (appl 125166); label indications: "1 INDICATIONS AND USAGE SOLIRIS is a complement inhibitor indicated for: the treatment of patients with paroxysmal nocturnal hemoglobinuria (PNH) to reduce hemolysis. ( 1.1 ) the treatment of patients with atypical hemolytic uremic syndrome (aHUS) to inhibit complement-mediated thrombotic microangiopathy. ( 1.2 ) Limitation of Use SOLIRIS is not indicated for the treatment of patients with Shiga t"
 - **Phase 3 trials:**
   - NCT01997229 [COMPLETED] 2013-12-01 -> 2016-02-29: Safety and Efficacy of Eculizumab in Refractory Generalized Myasthenia Gravis (REGAIN Study)
@@ -237,7 +236,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGe82d5815e5: FEBUXOSTAT / Gout
 
 - Sponsor Astellas Pharma Taiwan, Inc.; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2011-03-01; moiety first approved 2009-02-13; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2017-08-15 (appl 021856), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 2.0, y_prog 0.0, approval 2019-02-21 (appl 021856), source drugsfda_suppl+letter / high, failure basis approved_after_window, CRLs -
 - **Approved product** ULORIC (appl 021856); label indications: "1 INDICATIONS AND USAGE ULORIC is a xanthine oxidase (XO) inhibitor indicated for the chronic management of hyperuricemia in adult patients with gout who have an inadequate response to a maximally titrated dose of allopurinol, who are intolerant to allopurinol, or for whom treatment with allopurinol is not advisable. ULORIC is a xanthine oxidase (XO) inhibitor indicated for the chronic management "
 - **Phase 3 trials:**
   - NCT01736514 [COMPLETED] 2011-03-01 -> 2012-02-29: A Study to Evaluate Safety and Efficacy of Oral Febuxostat in Patients With Gout
@@ -251,7 +250,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG05668c8333: ECULIZUMAB / Neuromyelitis Optica
 
 - Sponsor Alexion Pharmaceuticals, Inc.; TA neurology; cohort lifecycle_holder; first P3 2014-04-11; moiety first approved 2007-03-16; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2019-06-27 (appl 125166), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2019-06-27 (appl 125166), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** SOLIRIS (appl 125166); label indications: "1 INDICATIONS AND USAGE SOLIRIS is a complement inhibitor indicated for: the treatment of patients with paroxysmal nocturnal hemoglobinuria (PNH) to reduce hemolysis. ( 1.1 ) the treatment of patients with atypical hemolytic uremic syndrome (aHUS) to inhibit complement-mediated thrombotic microangiopathy. ( 1.2 ) Limitation of Use SOLIRIS is not indicated for the treatment of patients with Shiga t"
 - **Phase 3 trials:**
   - NCT01892345 [TERMINATED] 2014-04-11 -> 2018-07-17: A Randomized Controlled Trial of Eculizumab in AQP4 Antibody-positive Participants With NMO (PREVENT Study)
@@ -316,8 +315,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG151ec7f426: INSULIN LISPRO / Diabetes Mellitus, Type 1
 
 - Sponsor Eli Lilly and Company; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2010-04-01; moiety first approved 1996-06-14; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2011-05-18 (appl 020563), source drugsfda_suppl+label / low, failure basis nan, CRLs 2020-04-23
-- **Approved product** HUMALOG (appl 020563); label indications: "1 INDICATIONS AND USAGE HUMALOG is indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. HUMALOG is a rapid acting human insulin analog indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. ( 1 ) 1 INDICATIONS AND USAGE Insulin Lispro is indicated to improve glycemic control in adult and pediatric patients with diabete"
+- **Label:** event 1.0, y_prog 1.0, approval 2015-05-26 (appl 205747), source drugsfda_neworig+label / high, failure basis nan, CRLs 2020-04-23
+- **Approved product** HUMALOG KWIKPEN (appl 205747); label indications: "1 INDICATIONS AND USAGE HUMALOG is indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. HUMALOG is a rapid acting human insulin analog indicated to improve glycemic control in adult and pediatric patients with diabetes mellitus. ( 1 )"
 - **Phase 3 trials:**
   - NCT01109316 [COMPLETED] 2010-04-01 -> 2011-08-31: Insulin Lispro 6 Days Versus Insulin Aspart 6 Days in Pump Use
   - NCT01134107 [COMPLETED] 2010-11-01 -> 2011-12-31: Insulin Lispro 6 Days Versus Insulin Aspart 6 Days in Pump Use
@@ -439,7 +438,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG9772aed5f1: NIVOLUMAB / Head and Neck Cancer
 
 - Sponsor Bristol-Myers Squibb; TA oncology; cohort lifecycle_holder; first P3 2016-10-05; moiety first approved 2014-12-22; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2018-07-10 (appl 125554), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2016-11-10 (appl 125554), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** OPDIVO (appl 125554); label indications: "1 INDICATIONS AND USAGE OPDIVO is a programmed death receptor-1 (PD-1)-blocking antibody indicated for the treatment of: Melanoma • adult and pediatric (12 years and older) patients with unresectable or metastatic melanoma, as a single agent or in combination with ipilimumab. (1.1) • for the adjuvant treatment of adult and pediatric patients 12 years and older with completely resected Stage IIB, S"
 - **Phase 3 trials:**
   - NCT02741570 [COMPLETED] 2016-10-05 -> 2021-05-10: Study of Nivolumab in Combination With Ipilimumab Compared to the Standard of Care (Extreme Regimen) as First Line Treatment in Pa
@@ -467,7 +466,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG00c883a25a: Bimatoprost / Glaucoma
 
 - Sponsor Laboratoires Thea; TA ophthalmology; cohort lifecycle_holder; first P3 2022-06-22; moiety first approved 2001-03-16; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2025-09-09 (appl 217307), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2025-09-09 (appl 217307), source drugsfda_neworig+label / high, failure basis nan, CRLs -
 - **Approved product** ZOLYMBUS (appl 217307); label indications: "1 INDICATIONS AND USAGE ZOLYMBUS™ is indicated for the reduction of elevated intraocular pressure (IOP) in patients with open-angle glaucoma or ocular hypertension. ZOLYMBUS™ is a prostaglandin analog indicated for the reduction of elevated intraocular pressure in patients with open-angle glaucoma or ocular hypertension."
 - **Phase 3 trials:**
   - NCT05397600 [COMPLETED] 2022-06-22 -> 2024-03-07: Efficacy and Safety Assessment of T4032 (Unpreserved Bimatoprost 0.01%) Versus Lumigan® 0.01% in Ocular Hypertensive or Glaucomato
@@ -498,7 +497,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGeb3d5f7cce: NIVOLUMAB / Hodgkin Disease
 
 - Sponsor Bristol-Myers Squibb; TA oncology; cohort lifecycle_holder; first P3 2017-06-26; moiety first approved 2014-12-22; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2021-04-16 (appl 125554), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 2.0, y_prog 0.0, approval 2026-03-20 (appl 125554), source drugsfda_suppl+letter / high, failure basis approved_after_window, CRLs -
 - **Approved product** OPDIVO (appl 125554); label indications: "1 INDICATIONS AND USAGE OPDIVO is a programmed death receptor-1 (PD-1)-blocking antibody indicated for the treatment of: Melanoma • adult and pediatric (12 years and older) patients with unresectable or metastatic melanoma, as a single agent or in combination with ipilimumab. (1.1) • for the adjuvant treatment of adult and pediatric patients 12 years and older with completely resected Stage IIB, S"
 - **Phase 3 trials:**
   - NCT03138499 [TERMINATED] 2017-06-26 -> 2021-02-22: A Study of Nivolumab Plus Brentuximab Vedotin Versus Brentuximab Vedotin Alone in Patients With Advanced Stage Classical Hodgkin L
@@ -509,8 +508,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG0ba08a698c: PATISIRAN / Amyloidosis, Hereditary, Transthyretin-Related
 
 - Sponsor Alnylam Pharmaceuticals; TA cardiovascular; cohort lifecycle_holder; first P3 2019-09-04; moiety first approved 2018-08-10; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2023-01-13 (appl 210922), source drugsfda_suppl+label / low, failure basis nan, CRLs 2023-10-10
-- **Approved product** ONPATTRO (appl 210922); label indications: "1 INDICATIONS AND USAGE ONPATTRO is indicated for the treatment of the polyneuropathy of hereditary transthyretin-mediated amyloidosis in adults. ONPATTRO contains a transthyretin-directed small interfering RNA and is indicated for the treatment of the polyneuropathy of hereditary transthyretin-mediated amyloidosis in adults."
+- **Label:** event nan, y_prog nan, approval nan (appl nan), source edgar_only_unverified / none, failure basis nan, CRLs 2023-10-10
 - **Phase 3 trials:**
   - NCT03997383 [COMPLETED] 2019-09-04 -> 2022-06-20: APOLLO-B: A Study to Evaluate Patisiran in Participants With Transthyretin Amyloidosis With Cardiomyopathy (ATTR Amyloidosis With 
 - **Levels:**
@@ -519,8 +517,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG54570cd648: DELAFLOXACIN / Community Acquired Bacterial Pneumonia
 
 - Sponsor Melinta Therapeutics, Inc.; TA infectious_disease; cohort novel; first P3 2016-12-14; moiety first approved 2017-06-19; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2019-10-24 (appl 208610), source drugsfda_suppl+label / low, failure basis nan, CRLs -
-- **Approved product** BAXDELA (appl 208610); label indications: "1 INDICATIONS AND USAGE BAXDELA is a fluoroquinolone antibacterial indicated for the treatment of adults with the following infections caused by designated susceptible bacteria: Acute Bacterial Skin and Skin Structure Infections (ABSSSI) ( 1.1 ) Community-Acquired Bacterial Pneumonia (CABP) ( 1.2 ) To reduce the development of drug-resistant bacteria and maintain the effectiveness of BAXDELA and o"
+- **Label:** event 1.0, y_prog 1.0, approval 2019-10-24 (appl 208611), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Approved product** BAXDELA (appl 208611); label indications: "1 INDICATIONS AND USAGE BAXDELA is a fluoroquinolone antibacterial indicated for the treatment of adults with the following infections caused by designated susceptible bacteria: Acute Bacterial Skin and Skin Structure Infections (ABSSSI) ( 1.1 ) Community-Acquired Bacterial Pneumonia (CABP) ( 1.2 ) To reduce the development of drug-resistant bacteria and maintain the effectiveness of BAXDELA and o"
 - **Phase 3 trials:**
   - NCT02679573 [COMPLETED] 2016-12-14 -> 2018-07-31: Study to Compare Delafloxacin to Moxifloxacin for the Treatment of Adults With Community-acquired Bacterial Pneumonia
 - **Levels:**
@@ -535,7 +533,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG8a979f033d: TAZAROTENE / Acne Vulgaris
 
 - Sponsor Bausch Health Americas, Inc.; TA dermatology; cohort lifecycle_holder; first P3 2017-06-29; moiety first approved 1997-06-13; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2019-12-18 (appl 211882), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2019-12-18 (appl 211882), source drugsfda_neworig+label / high, failure basis nan, CRLs -
 - **Approved product** ARAZLO (appl 211882); label indications: "1 INDICATIONS AND USAGE ARAZLO ® (tazarotene) lotion, 0.045% is indicated for the topical treatment of acne vulgaris in patients 9 years of age and older. ARAZLO is a retinoid indicated for the topical treatment of acne vulgaris in patients 9 years of age and older. ( 1 )"
 - **Phase 3 trials:**
   - NCT03168321 [COMPLETED] 2017-06-29 -> 2018-06-07: A Phase 3, Vehicle-controlled Efficacy and Safety Study of IDP-123 Lotion in the Treatment of Acne Vulgaris (301)
@@ -548,8 +546,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG8882c49e59: ECULIZUMAB / Hemoglobinuria, Paroxysmal
 
 - Sponsor AO GENERIUM; TA hematology; cohort lifecycle_holder; first P3 2017-11-29; moiety first approved 2007-03-16; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2019-06-27 (appl 125166), source drugsfda_suppl+label / low, failure basis nan, CRLs -
-- **Approved product** SOLIRIS (appl 125166); label indications: "1 INDICATIONS AND USAGE SOLIRIS is a complement inhibitor indicated for: the treatment of patients with paroxysmal nocturnal hemoglobinuria (PNH) to reduce hemolysis. ( 1.1 ) the treatment of patients with atypical hemolytic uremic syndrome (aHUS) to inhibit complement-mediated thrombotic microangiopathy. ( 1.2 ) Limitation of Use SOLIRIS is not indicated for the treatment of patients with Shiga t"
+- **Label:** event 1.0, y_prog 1.0, approval 2024-05-28 (appl 761333), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** BKEMV (appl 761333); label indications: "1 INDICATIONS AND USAGE BKEMV is a complement inhibitor indicated for: The treatment of patients with paroxysmal nocturnal hemoglobinuria (PNH) to reduce hemolysis. ( 1.1 ) The treatment of patients with atypical hemolytic uremic syndrome (aHUS) to inhibit complement-mediated thrombotic microangiopathy. ( 1.2 ) Limitation of Use BKEMV is not indicated for the treatment of patients with Shiga toxin"
 - **Phase 3 trials:**
   - NCT04463056 [COMPLETED] 2017-11-29 -> 2018-10-16: Efficacy and Safety of Elizaria® vs. Soliris® in Patients With PNH
   - NCT04679103 [COMPLETED] 2018-05-03 -> 2020-04-20: A Safety and Immunogenicity Study in Long-term Treatment of Eculizumab (JSC "GENERIUM", Russian Federation)
@@ -596,7 +594,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG610f792e8b: IPILIMUMAB / Carcinoma, Renal Cell
 
 - Sponsor Bristol-Myers Squibb; TA oncology; cohort lifecycle_holder; first P3 2017-07-07; moiety first approved 2011-03-25; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2020-03-10 (appl 125377), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2018-04-16 (appl 125377), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** YERVOY (appl 125377); label indications: "1 INDICATIONS AND USAGE YERVOY is a human cytotoxic T-lymphocyte antigen 4 (CTLA-4)-blocking antibody indicated for: Melanoma • Treatment of unresectable or metastatic melanoma in adults and pediatric patients 12 years and older as a single agent or in combination with nivolumab. (1.1) • Adjuvant treatment of adult patients with cutaneous melanoma with pathologic involvement of regional lymph node"
 - **Phase 3 trials:**
   - NCT03138512 [COMPLETED] 2017-07-07 -> 2023-09-28: A Study Comparing Nivolumab, Nivolumab in Combination With Ipilimumab and Placebo in Participants With Localized Kidney Cancer Who
@@ -732,7 +730,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG11a49bb73e: azithromycin / Conjunctivitis, Bacterial
 
 - Sponsor Merck Sharp & Dohme LLC; TA infectious_disease; cohort lifecycle_holder; first P3 2004-05-01; moiety first approved 1991-11-01; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2007-04-27 (appl 050810), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2007-04-27 (appl 050810), source drugsfda_neworig+label / high, failure basis nan, CRLs -
 - **Approved product** AZASITE (appl 050810); label indications: "1 INDICATIONS AND USAGE AzaSite ® is indicated for the treatment of bacterial conjunctivitis caused by susceptible isolates of the following microorganisms: CDC coryneform group G Efficacy for this organism was studied in fewer than 10 infections. Haemophilus influenzae Staphylococcus aureus Streptococcus mitis group Streptococcus pneumoniae AzaSite is a macrolide antimicrobial indicated for the t"
 - **Phase 3 trials:**
   - NCT00357773 [COMPLETED] 2004-05-01 -> nan: Efficacy and Safety of T1225 1.5% Versus Tobramycin 0.3 % in the Treatment of Purulent Bacterial Conjunctivitis
@@ -872,7 +870,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG69748897ca: METHYLPHENIDATE / Attention Deficit Disorder with Hyperactivity
 
 - Sponsor Alza Corporation, DE, USA; TA psychiatry; cohort lifecycle_holder; first P3 1998-03-01; moiety first approved 1955-12-05; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2000-08-01 (appl 021121), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2000-08-01 (appl 021121), source drugsfda_neworig+label / high, failure basis nan, CRLs -
 - **Approved product** CONCERTA (appl 021121); label indications: "1 INDICATIONS AND USAGE CONCERTA is indicated for the treatment of attention deficit hyperactivity disorder (ADHD) in patients aged 6 to 65 years old. Limitations of Use The use of CONCERTA is not recommended in pediatric patients younger than 6 years of age because they had higher plasma exposure and a higher incidence of adverse reactions (e.g., weight loss) than patients 6 years and older at th"
 - **Phase 3 trials:**
   - NCT00269789 [COMPLETED] 1998-03-01 -> nan: A Comparative Effectiveness Study Evaluating OROS Methylphenidate HCl, Ritalin (Methylphenidate HCl), and Placebo for the Treatmen
@@ -913,7 +911,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGfce9ce6413: LUBIPROSTONE / Opioid-Induced Constipation
 
 - Sponsor Sucampo Pharma Americas, LLC; TA psychiatry; cohort lifecycle_holder; first P3 2007-08-01; moiety first approved 2006-01-31; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2013-04-19 (appl 021908), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2013-04-19 (appl 021908), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
 - **Approved product** AMITIZA (appl 021908); label indications: "1 INDICATIONS AND USAGE Lubiprostone is a chloride channel activator indicated for the treatment of: chronic idiopathic constipation (CIC) in adults. ( 1.1 ) opioid-induced constipation (OIC) in adult patients with chronic, non-cancer pain, including patients with chronic pain related to prior cancer or its treatment who do not require frequent (e.g., weekly) opioid dosage escalation. ( 1.2 ) Limi"
 - **Phase 3 trials:**
   - NCT00595946 [COMPLETED] 2007-08-01 -> 2009-03-31: Opioid-induced Bowel Dysfunction: Pivotal Assessment of Lubiprostone
@@ -1041,8 +1039,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGb0394d4ac2: GLUTAMINE / Anemia, Sickle Cell
 
 - Sponsor Emmaus Medical, Inc.; TA hematology; cohort lifecycle_holder; first P3 2010-05-01; moiety first approved 2004-06-10; sample: stratified sample
-- **Label:** event 2.0, y_prog 0.0, approval 2017-07-07 (appl 208587), source drugsfda_suppl+label / high, failure basis approved_after_window, CRLs -
-- **Approved product** ENDARI (appl 208587); label indications: "1 INDICATIONS AND USAGE Endari is indicated to reduce the acute complications of sickle cell disease in adult and pediatric patients 5 years of age and older. ENDARI is an amino acid indicated to reduce the acute complications of sickle cell disease in adult and pediatric patients 5 years of age and older. ( 1 )"
+- **Label:** event nan, y_prog nan, approval nan (appl nan), source edgar_only_unverified / none, failure basis nan, CRLs -
 - **Phase 3 trials:**
   - NCT01179217 [COMPLETED] 2010-05-01 -> 2014-03-31: A Phase III Safety and Efficacy Study of L-Glutamine to Treat Sickle Cell Disease or Sickle βo-thalassemia
 - **Levels:**
@@ -1151,7 +1148,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG0c3542eb95: RUCAPARIB / Carcinoma, Ovarian Epithelial
 
 - Sponsor pharmaand GmbH; TA oncology; cohort lifecycle_holder; first P3 2018-05-14; moiety first approved 2016-12-19; sample: stratified sample
-- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2022-12-21 (appl 209115), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** RUBRACA (appl 209115); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT03522246 [ACTIVE_NOT_RECRUITING] 2018-05-14 -> 2024-05-20: A Study in Ovarian Cancer Patients Evaluating Rucaparib and Nivolumab as Maintenance Treatment Following Response to Front-Line Pl
   - NCT04227522 [COMPLETED] 2020-06-08 -> 2023-12-01: Rucaparib MAintenance After Bevacizumab Maintenance Following Carboplatin Based First Line Chemotherapy in Ovarian Cancer Patients
@@ -1452,7 +1450,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG6697866043: MELOXICAM / Arthritis, Rheumatoid
 
 - Sponsor Boehringer Ingelheim; TA immunology; cohort lifecycle_holder; first P3 2002-06-01; moiety first approved 2000-04-13; sample: stratified sample
-- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2004-07-16 (appl 020938), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** MOBIC (appl 020938); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT00042068 [COMPLETED] 2002-06-01 -> nan: A Multi-Center Trial to Compare Three Doses of Meloxicam and Placebo in Patients With Rheumatoid Arthritis
   - NCT00239382 [COMPLETED] 2004-07-01 -> 2004-12-01: A Study to Compare Meloxicam IM Once Daily Versus Meloxicam Orally Once Daily in Patients With Rheumatoid Arthritis
@@ -1518,7 +1517,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGae1d17b88b: trazodone / Depressive Disorder, Major
 
 - Sponsor Labopharm Inc.; TA psychiatry; cohort lifecycle_holder; first P3 2007-06-01; moiety first approved 1981-12-24; sample: stratified sample
-- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2010-02-02 (appl 022411), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** OLEPTRO (appl 022411); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT00775203 [COMPLETED] 2007-06-01 -> 2007-11-30: A Randomized, Double-blind, Two-arm Study Comparing the Efficacy and Safety of Trazodone Contramid® OAD and Placebo in the Treatme
   - NCT02086929 [COMPLETED] 2012-12-01 -> 2014-04-30: Trazodone Once a Day in Major Depression Disorder
@@ -1553,7 +1553,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGed8239fb11: ROPINIROLE / Parkinson Disease
 
 - Sponsor GlaxoSmithKline; TA neurology; cohort lifecycle_holder; first P3 2003-06-01; moiety first approved 1997-09-19; sample: stratified sample
-- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2008-06-13 (appl 022008), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** REQUIP XL (appl 022008); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT00381472 [COMPLETED] 2003-06-01 -> nan: Investigational Parkinson's Disease In Patients Not Well Controlled On L-dopa
   - NCT00363727 [COMPLETED] 2003-12-01 -> 2006-01-31: Onset Motor Complications Using REQUIP CR (Ropinirole Controlled-release) As Add-on Therapy To L-dopa In Parkinson's
@@ -1665,7 +1666,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGe1f12a2a7e: OCRELIZUMAB / Multiple Sclerosis
 
 - Sponsor Hoffmann-La Roche; TA neurology; cohort lifecycle_holder; first P3 2018-05-28; moiety first approved 2017-03-28; sample: stratified sample
-- **Label:** event 1.0, y_prog 1.0, approval 2020-12-14 (appl 761053), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 2.0, y_prog 0.0, approval 2026-05-08 (appl 761053), source drugsfda_suppl+letter / high, failure basis approved_after_window, CRLs -
 - **Approved product** OCREVUS (appl 761053); label indications: "1 INDICATIONS AND USAGE OCREVUS is indicated for the treatment of: Relapsing forms of multiple sclerosis (MS), to include clinically isolated syndrome, relapsing-remitting disease, and active secondary progressive disease, in adults Primary progressive MS, in adults Relapsing-remitting MS, in pediatric patients 10 years of age and older who weigh 25 kg or more. OCREVUS is a CD20-directed cytolytic"
 - **Phase 3 trials:**
   - NCT03523858 [ACTIVE_NOT_RECRUITING] 2018-05-28 -> 2026-10-22: A Study to Evaluate Ocrelizumab Treatment in Participants With Progressive Multiple Sclerosis
@@ -1690,7 +1691,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 - **Phase 3 trials:**
   - NCT06568627 [RECRUITING] 2025-06-01 -> 2026-12-31: A Double Blind Study Performed to Evaluate the Efficacy and the Safety of EscharEx in Debridement of VLU (VALUE)
 - **Levels:**
-  - L1 2026-10-30 (Phase 2 complete; no Phase 3 results yet)
+  - L1 2026-11-01 (Phase 2 complete; no Phase 3 results yet)
 
 ## PG1de48f557a: icotrokinra / Arthritis, Psoriatic
 
@@ -1721,7 +1722,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
   - NCT07144345 [RECRUITING] 2025-11-19 -> 2027-01-31: Study of Reformulated Levulan Kerastick Plus PDT for Actinic Keratosis on Face and Scalp
   - NCT07144852 [RECRUITING] 2025-11-29 -> 2027-01-31: Study of Reformulated Levulan Kerastick Plus PDT for Actinic Keratosis on Upper Extremities
 - **Levels:**
-  - L1 2026-10-30 (Phase 2 complete; no Phase 3 results yet)
+  - L1 2026-11-01 (Phase 2 complete; no Phase 3 results yet)
 
 ## PG82e4f57274: TRASTUZUMAB / Colorectal Neoplasms
 
@@ -1772,7 +1773,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 - **Phase 3 trials:**
   - NCT06644781 [RECRUITING] 2025-03-27 -> 2028-06-01: A Study of Ifinatamab Deruxtecan in Subjects With Pretreated Advanced or Metastatic Esophageal Squamous Cell Carcinoma (ESCC) (IDe
 - **Levels:**
-  - L1 2026-10-30 (Phase 2 complete; no Phase 3 results yet)
+  - L1 2026-11-01 (Phase 2 complete; no Phase 3 results yet)
 
 ## PGf7bad06a84: BEBTELOVIMAB / COVID-19
 
@@ -1910,11 +1911,12 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG81a6ee76e7: DOSTARLIMAB / Rectal Neoplasms
 
 - Sponsor GlaxoSmithKline; TA oncology; cohort lifecycle_holder; first P3 2026-09-17; moiety first approved 2021-04-22; sample: stratified sample
-- **Label:** event 0.0, y_prog nan, approval nan (appl nan), source no_approval_found / none, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2026-10-19 (appl 761174), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** JEMPERLI (appl 761174); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT07740720 [NOT_YET_RECRUITING] 2026-09-17 -> 2029-12-12: A Study of the Duration of Dostarlimab in Untreated Mismatch Repair Deficient (dMMR)/ Microsatellite Instability-high (MSI-H) Loca
 - **Levels:**
-  - L1 2026-10-30 (Phase 2 complete; no Phase 3 results yet)
+  - L1 2026-11-01 (Phase 2 complete; no Phase 3 results yet)
 
 ## PGfaaf65b76e: PITOLISANT / Prader-Willi Syndrome
 
@@ -1952,7 +1954,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGb93c7ee85d: IPILIMUMAB / Carcinoma, Hepatocellular
 
 - Sponsor Bristol-Myers Squibb; TA oncology; cohort lifecycle_holder; first P3 2019-09-30; moiety first approved 2011-03-25; sample: stratified sample
-- **Label:** event nan, y_prog nan, approval nan (appl nan), source edgar_only_unverified / none, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2020-03-10 (appl 125377), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** YERVOY (appl 125377); label indications: "1 INDICATIONS AND USAGE YERVOY is a human cytotoxic T-lymphocyte antigen 4 (CTLA-4)-blocking antibody indicated for: Melanoma • Treatment of unresectable or metastatic melanoma in adults and pediatric patients 12 years and older as a single agent or in combination with nivolumab. (1.1) • Adjuvant treatment of adult patients with cutaneous melanoma with pathologic involvement of regional lymph node"
 - **Phase 3 trials:**
   - NCT04039607 [COMPLETED] 2019-09-30 -> 2026-07-09: A Study of Nivolumab in Combination With Ipilimumab in Participants With Advanced Hepatocellular Carcinoma
 - **Levels:**
@@ -1978,7 +1981,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGe77aed7c97: tamoxifen / Breast Cancer
 
 - Sponsor AstraZeneca; TA oncology; cohort lifecycle_holder; first P3 1996-01-01; moiety first approved 1977-12-30; sample: stratified sample
-- **Label:** event nan, y_prog nan, approval nan (appl nan), source edgar_only_unverified / none, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 1998-10-29 (appl 017970), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** NOLVADEX (appl 017970); label indications: "(no label on file)"
 - **Phase 3 trials:**
   - NCT00291759 [COMPLETED] 1996-01-01 -> 2009-06-30: ABCSG 8 - Adjuvant Treatment in Patients With Hormone Receptor-positive Breast Cancer With Good to Moderate Differentiation.
   - NCT00232661 [COMPLETED] 2000-08-01 -> 2003-01-31: PROACT - Pre-Operative Arimidex Compared To Tamoxifen
@@ -2139,7 +2143,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG66d0846c20: DURVALUMAB / Urothelial Cancer
 
 - Sponsor AstraZeneca; TA oncology; cohort novel; first P3 2015-11-02; moiety first approved 2017-05-01; sample: late-level supplement: L3, pipeline Y_LEVEL 0
-- **Label:** event 1.0, y_prog 1.0, approval 2020-03-27 (appl 761069), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2020-11-18 (appl 761069), source drugsfda_suppl+label / low, failure basis nan, CRLs -
 - **Approved product** IMFINZI (appl 761069); label indications: "1 INDICATIONS AND USAGE IMFINZI is a programmed death-ligand 1 (PD-L1) blocking antibody indicated: • in combination with platinum-containing chemotherapy as neoadjuvant treatment, followed by IMFINZI continued as a single agent as adjuvant treatment after surgery, for the treatment of adult patients with resectable (tumors ≥ 4 cm and/or node positive) non-small cell lung cancer (NSCLC) and no kno"
 - **Phase 3 trials:**
   - NCT02516241 [ACTIVE_NOT_RECRUITING] 2015-11-02 -> 2020-01-27: Study of MEDI4736 (Durvalumab) With or Without Tremelimumab Versus Standard of Care Chemotherapy in Urothelial Cancer
@@ -2235,7 +2239,9 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 - **Phase 3 trials:**
   - NCT05378763 [SUSPENDED] 2022-05-12 -> 2027-12-25: A Study of Poziotinib in Previously Treated Participants With Locally Advanced or Metastatic NSCLC Harboring HER2 Exon 20 Mutation
 - **Levels:**
-  - L1 2026-10-30 (Phase 2 complete; no Phase 3 results yet)
+  - L1 2026-11-01 (Phase 2 complete; no Phase 3 results yet)
+  - L4 2022-09-24 (day after AdCom vote)
+    - ADCOM_VOTE 2022-09-23 [filing_date] 0001193125-22-250274_d382544dex992.htm: "The committee voted 9-4 that the current benefits of poziotinib did not outweigh its risks. We are disappointed by the outcome of the ODAC meeting, as patients with NSCLC HER2 exon 20 insertion mutations are in need of additional effective and safe therapies, stated Tom Riga, President and Chief E"
 
 ## PGc8e94e6842: TENAPANOR / Hyperphosphatemia
 
@@ -2383,6 +2389,8 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
     - PHASE3_POSITIVE 2015-01-05 [filing_date] 0001193125-15-000981_d845382dex991.htm: "EST CHAPEL HILL, N.C.  January 4, 2015  Cempra, Inc. (Nasdaq: CEMP), a clinical-stage pharmaceutical company focused on developing antibiotics in the face of rising antibiotic resistant bacterial infections, today announced positive topline results from a global, pivotal Phase 3 clinical trial of "
   - L3 2016-07-07 (day after filing acceptance announced)
     - NDA_ACCEPTED 2016-07-06 [filing_date] 0001193125-16-642483_d210846dex991.htm: "Solithera (solithromycin, CEM-101) has successfully completed two Phase 3 clinical trials for community-acquired bacterial pneumonia (CABP) and new drug applications for both intravenous and oral capsule formulations have been accepted for review by the FDA."
+  - L4 2016-11-08 (day after AdCom vote)
+    - ADCOM_VOTE 2016-11-07 [filing_date] 0001193125-16-760570_d282535dex991.htm: "Food and Drug Administration (FDA) Antimicrobial Drugs Advisory Committee (AMDAC) voted (7-6) that efficacy results of Cempras solithromycin outweigh the risks for the treatment of community-acquired bacterial pneumonia (CABP)."
 
 ## PGe4c4650418: ARBACLOFEN / Multiple Sclerosis
 
@@ -2482,8 +2490,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG711d75d9ad: PERTUZUMAB / Breast Neoplasms
 
 - Sponsor Hoffmann-La Roche; TA oncology; cohort novel; first P3 2012-06-01; moiety first approved 2012-06-08; sample: late-level supplement: L3, pipeline Y_LEVEL 0
-- **Label:** event 2.0, y_prog 0.0, approval 2020-01-16 (appl 125409), source drugsfda_suppl+label / high, failure basis approved_after_window, CRLs -
-- **Approved product** PERJETA (appl 125409); label indications: "1 INDICATIONS AND USAGE PERJETA is a HER2/neu receptor antagonist indicated for: Use in combination with trastuzumab and docetaxel for treatment of adults with HER2-positive metastatic breast cancer (MBC) who have not received prior anti-HER2 therapy or chemotherapy for metastatic disease. ( 1.1 ) Use in combination with trastuzumab and chemotherapy as neoadjuvant treatment of adults with HER2-pos"
+- **Label:** event nan, y_prog nan, approval nan (appl nan), source ambiguous_unlabelled_approval / none, failure basis nan, CRLs -
 - **Phase 3 trials:**
   - NCT01572038 [COMPLETED] 2012-06-01 -> 2019-09-20: A Study of Pertuzumab in Combination With Trastuzumab (Herceptin) and a Taxane in First-Line Treatment in Participants With Human 
 - **Levels:**
@@ -2747,8 +2754,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PG052e714edf: mitapivat / Anemia, Sickle Cell
 
 - Sponsor Agios Pharmaceuticals, Inc.; TA hematology; cohort novel; first P3 2022-02-11; moiety first approved 2022-02-17; sample: late-level supplement: L3, pipeline Y_LEVEL 1
-- **Label:** event 1.0, y_prog 1.0, approval 2025-12-23 (appl 216196), source drugsfda_suppl+label / low, failure basis nan, CRLs -
-- **Approved product** PYRUKYND (appl 216196); label indications: "1 INDICATIONS AND USAGE PYRUKYND is indicated for the treatment of hemolytic anemia in adults with pyruvate kinase (PK) deficiency. PYRUKYND is a pyruvate kinase activator indicated for the treatment of hemolytic anemia in adults with pyruvate kinase (PK) deficiency. ( 1 ) 1 INDICATIONS AND USAGE AQVESME is indicated for the treatment of anemia in adults with alpha- or beta-thalassemia. AQVESME is"
+- **Label:** event 0.0, y_prog nan, approval nan (appl nan), source no_approval_found / none, failure basis nan, CRLs -
 - **Phase 3 trials:**
   - NCT05031780 [ACTIVE_NOT_RECRUITING] 2022-02-11 -> 2025-10-30: A Study Evaluating the Efficacy and Safety of Mitapivat (AG-348) in Participants With Sickle Cell Disease (RISE UP)
   - NCT07656415 [RECRUITING] 2026-07-21 -> 2029-08-31: A Study to Investigate the Effect of Mitapivat on Transfusion Burden in Subjects With Sickle Cell Disease (SCD)
@@ -2763,8 +2769,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGd35b630d2e: Tapinarof / Dermatitis, Atopic
 
 - Sponsor Organon and Co; TA immunology; cohort novel; first P3 2021-09-01; moiety first approved 2022-05-23; sample: late-level supplement: L3, pipeline Y_LEVEL 1
-- **Label:** event 1.0, y_prog 1.0, approval 2024-12-12 (appl 215272), source drugsfda_suppl+label / low, failure basis nan, CRLs -
-- **Approved product** VTAMA (appl 215272); label indications: "1 INDICATIONS AND USAGE VTAMA cream, 1% is an aryl hydrocarbon receptor agonist indicated for: the topical treatment of plaque psoriasis in adults. ( 1.1 ) the topical treatment of atopic dermatitis in adults and pediatric patients 2 years of age and older. ( 1.2 ) 1.1 Plaque Psoriasis VTAMA ® cream is indicated for the topical treatment of plaque psoriasis in adults. 1.2 Atopic Dermatitis VTAMA c"
+- **Label:** event 0.0, y_prog nan, approval nan (appl nan), source no_approval_found / none, failure basis nan, CRLs -
 - **Phase 3 trials:**
   - NCT05014568 [COMPLETED] 2021-09-01 -> 2023-03-30: Tapinarof for the Treatment of Atopic Dermatitis in Children and Adults
   - NCT05032859 [COMPLETED] 2021-09-23 -> 2023-02-03: Tapinarof for the Treatment of Atopic Dermatitis in Children and Adults (DMVT-505-3102)
@@ -2936,7 +2941,7 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 ## PGc241bd01d1: FREMANEZUMAB / Migraine Disorders
 
 - Sponsor Teva Branded Pharmaceutical Products R&D, Inc.; TA pain; cohort novel; first P3 2016-02-26; moiety first approved 2018-09-14; sample: late-level supplement: L3, pipeline Y_LEVEL 1
-- **Label:** event 1.0, y_prog 1.0, approval 2018-09-14 (appl 761089), source drugsfda_orig+label / medium, failure basis nan, CRLs -
+- **Label:** event 1.0, y_prog 1.0, approval 2018-09-14 (appl 761089), source drugsfda_orig+label / high, failure basis nan, CRLs -
 - **Approved product** AJOVY (appl 761089); label indications: "1 INDICATIONS AND USAGE AJOVY is indicated for: the preventive treatment of migraine in adults, and the preventive treatment of episodic migraine in pediatric patients who are 6 to 17 years of age and who weigh 45 kg or more. AJOVY is a calcitonin gene-related peptide antagonist indicated for: the preventive treatment of migraine in adults, and the preventive treatment of episodic migraine in pedi"
 - **Phase 3 trials:**
   - NCT02638103 [COMPLETED] 2016-02-26 -> 2018-06-06: Efficacy and Safety of Subcutaneous Administration of Fremanezumab (TEV-48125) for the Preventive Treatment of Migraine
@@ -3028,3 +3033,549 @@ Evidence behind each pipeline value. Verdicts go in `gold_set.csv` (`truth_*` co
 - **Phase 3 trials:**
   - NCT06264180 [RECRUITING] 2024-07-11 -> 2030-09-30: VO and Nivolumab vs Physician's Choice in Advanced Melanoma That Progressed on Anti-PD-1 & Anti-CTLA-4 Drugs [IGNYTE-3]
 - **Levels:**
+
+## PG303c1d4236: DURVALUMAB / Locally Advanced Cervical Cancer
+
+- Sponsor AstraZeneca; TA oncology; cohort lifecycle_holder; first P3 2019-02-15; moiety first approved 2017-05-01; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03830866 [COMPLETED] 2019-02-15 -> 2022-01-20: Study of Durvalumab With Chemoradiotherapy for Women With Locally Advanced Cervical Cancer (CALLA)
+- **Levels:**
+  - L1 2022-01-19 (day before first Phase 3 primary completion / topline)
+  - L2 2022-10-25 (day after Phase 3 topline (press_release))
+    - PHASE3_POSITIVE 2022-10-24 [filing_date] 0001654954-22-014037_a8410d.htm: "The approval by the US Food and Drug Administration (FDA) was based on positive results from the HIMALAYA Phase III trial."
+
+## PGee5ea407db: LENVATINIB / Esophageal Squamous Cell Carcinoma
+
+- Sponsor Merck Sharp & Dohme LLC; TA oncology; cohort lifecycle_holder; first P3 2021-07-28; moiety first approved 2015-02-13; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / high, failure basis all_p3_terminated, CRLs -
+- **Phase 3 trials:**
+  - NCT04949256 [TERMINATED] 2021-07-28 -> 2025-05-08: Efficacy and Safety of Pembrolizumab (MK-3475) Plus Lenvatinib (E7080/MK-7902) Plus Chemotherapy in Participants With Metastatic E
+- **Levels:**
+  - L1 2025-05-07 (day before first Phase 3 primary completion / topline)
+  - L2 2025-08-06 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG0b3cd8f19c: PERFLUTREN / Cardiac Disease
+
+- Sponsor Lantheus Medical Imaging; TA cardiovascular; cohort lifecycle_holder; first P3 2018-10-24; moiety first approved 2001-07-31; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03571672 [COMPLETED] 2018-10-24 -> 2019-08-30: DEF-314 Better Accuracy in Ejection Fraction (EF) Assessment With DEFINITY
+  - NCT03719612 [COMPLETED] 2018-12-28 -> 2020-01-09: DEF-315 Better Accuracy in Ejection Fraction (EF) Assessment With DEFINITY
+- **Levels:**
+  - L2 2020-04-08 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG22bdbac480: DICLOFENAC / Toothache
+
+- Sponsor IBSA Institut Biochimique SA; TA pain; cohort lifecycle_holder; first P3 2009-09-01; moiety first approved 1988-07-28; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00942448 [COMPLETED] 2009-09-01 -> 2010-01-31: Evaluation of the Efficacy and Safety of Diclofenac HPBCD 25, 50 mg/ml in the Treatment of Post-surgical Pain Following Dental Sur
+  - NCT00943098 [COMPLETED] 2009-09-01 -> 2010-03-31: Evaluation of the Efficacy and Safety of Diclofenac HPBCD 75mg/ml in Treatment of Pain Following Dental Surgery
+  - NCT02476422 [COMPLETED] 2015-04-01 -> 2015-08-31: A Study to Assess the Efficacy and Tolerability of Diclofenac Potassium Soft Gelatin Capsules Compared With Ibuprofen Tablets in P
+- **Levels:**
+  - L1 2010-01-30 (day before first Phase 3 primary completion / topline)
+  - L2 2015-11-29 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG12ab9fc116: brimonidine / Ocular Hypertension
+
+- Sponsor Allergan; TA ophthalmology; cohort lifecycle_holder; first P3 1999-12-01; moiety first approved 1996-09-06; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00332436 [COMPLETED] 1999-12-01 -> 2001-11-30: Safety and Efficacy Study of Brimonidine/Timolol Fixed Combination in Patients With Glaucoma or Ocular Hypertension
+  - NCT00332384 [COMPLETED] 2000-01-01 -> 2001-11-30: Safety and Efficacy Study of Brimonidine/Timolol Fixed Combination in Patients With Glaucoma or Ocular Hypertension
+- **Levels:**
+  - L1 2001-11-29 (day before first Phase 3 primary completion / topline)
+  - L2 2002-02-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGb53002147d: brimonidine / Erythema
+
+- Sponsor Galderma R&D; TA dermatology; cohort lifecycle_holder; first P3 2012-09-01; moiety first approved 1996-09-06; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 1.0, y_prog 1.0, approval 2013-08-23 (appl 204708), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** MIRVASO (appl 204708); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT01659853 [COMPLETED] 2012-09-01 -> 2012-12-31: Efficacy and Safety Study Comparing CD07805/47 Gel 0.5% to Azelaic Acid Gel 15% in Subjects With Erythema of Rosacea
+  - NCT01882712 [WITHDRAWN] nan -> 2015-09-30: Phase 3 Efficacy and Safety Study of CD07805/47 Topical Gel in Subjects With Persistent Facial Erythema
+- **Levels:**
+  - L1 2012-12-30 (day before first Phase 3 primary completion / topline)
+  - L2 2013-03-31 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG1dc0bb0593: TENECTEPLASE / THROMBOLYSIS
+
+- Sponsor Genentech, Inc.; TA cardiovascular; cohort lifecycle_holder; first P3 2019-03-02; moiety first approved 2000-06-02; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03785678 [COMPLETED] 2019-03-02 -> 2023-02-28: Tenecteplase in Stroke Patients Between 4.5 and 24 Hours
+- **Levels:**
+  - L2 2023-05-29 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG6f0fa1a22c: beclometasone / Rhinitis, Allergic, Perennial
+
+- Sponsor Teva Branded Pharmaceutical Products R&D, Inc.; TA respiratory; cohort lifecycle_holder; first P3 2006-05-01; moiety first approved 1976-05-12; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 1.0, y_prog 1.0, approval 2012-03-23 (appl 202813), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** QNASL (appl 202813); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT00346775 [COMPLETED] 2006-05-01 -> 2006-06-29: Validation Of Preference Module Of Experience With Allergic Rhinitis Nasal Sprays Questionnaire (EARNS-Q)
+  - NCT00988247 [COMPLETED] 2009-10-31 -> 2011-02-28: Long Term Safety and Efficacy Trial of Beclomethasone Dipropionate - Hydrofluoroalkane (BDP-HFA) 320 mcg in Allergic Rhinitis
+  - NCT01024608 [COMPLETED] 2009-12-31 -> 2010-02-28: Study in Adult and Adolescent Subjects With Seasonal Allergic Rhinitis (SAR)
+  - NCT01134705 [COMPLETED] 2010-05-01 -> 2010-10-31: Study in Adult and Adolescent Subjects With PAR (Perennial Allergic Rhinitis)
+  - NCT01133626 [COMPLETED] 2010-06-01 -> 2010-09-30: Hypothalamic-Pituitary-Adrenal (HPA) Axis Study in Adult and Adolescent Subjects With Perennial Allergic Rhinitis (PAR)
+  - NCT01307319 [COMPLETED] 2011-03-01 -> 2011-07-31: Study of an Investigational Nasal Aerosol or Placebo Nasal Aerosol in Children (Ages 6-11) With Seasonal Allergies
+  - NCT01783548 [COMPLETED] 2013-01-01 -> 2013-10-31: Study of an Investigational Nasal Aerosol or Placebo in Children (Ages 4 to 11) With Perennial Allergic Rhinitis (PAR)
+- **Levels:**
+  - L1 2006-06-28 (day before first Phase 3 primary completion / topline)
+  - L2 2014-01-29 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+  - L3 2011-08-09 (day after filing acceptance announced)
+    - NDA_ACCEPTED 2011-08-08 [filing_date] 0000818686-11-000086_bdp20082011.htm: "Food and Drug Administration (FDA) has accepted for filing Teva`s New Drug Application (NDA) for beclomethasone dipropionate hydrofluoroalkane (BDP Nasal HFA), a nasal aerosol corticosteroid in development for the treatment of seasonal allergic rhinitis (SAR) and perennial allergic rhinitis (PAR)."
+
+## PG58737f0c3a: duloxetine / Osteoarthritis, Knee
+
+- Sponsor Eli Lilly and Company; TA immunology; cohort lifecycle_holder; first P3 2006-11-01; moiety first approved 2004-08-03; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00408421 [COMPLETED] 2006-11-01 -> 2007-10-31: Duloxetine Versus Placebo for Osteoarthritis Knee Pain
+  - NCT00433290 [COMPLETED] 2007-02-01 -> 2008-05-31: Duloxetine vs. Placebo in the Treatment of Osteoarthritis Knee Pain
+  - NCT00945945 [COMPLETED] 2009-07-01 -> 2010-05-31: A Study of Duloxetine in Patients With Osteoarthritis Knee Pain
+  - NCT01018680 [COMPLETED] 2009-11-01 -> 2011-04-30: A Study Comparing Duloxetine Versus Placebo in Patients Taking a Nonsteroidal Anti-inflammatory Drug (NSAID) for Knee Pain Due to 
+- **Levels:**
+  - L2 2011-07-29 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG84841ba24a: LENVATINIB / Carcinoma, Non-Small-Cell Lung
+
+- Sponsor Merck Sharp & Dohme LLC; TA oncology; cohort lifecycle_holder; first P3 2019-03-13; moiety first approved 2015-02-13; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03829332 [COMPLETED] 2019-03-13 -> 2021-05-19: Efficacy and Safety Study of Pembrolizumab (MK-3475) With or Without Lenvatinib (MK-7902/E7080) in Adults With Programmed Cell Dea
+  - NCT03829319 [COMPLETED] 2019-03-25 -> 2023-08-11: Safety and Efficacy Study of Pemetrexed + Platinum Chemotherapy + Pembrolizumab (MK-3475) With or Without Lenvatinib (MK-7902/E708
+  - NCT03976375 [COMPLETED] 2019-06-26 -> 2023-08-11: Efficacy and Safety of Pembrolizumab (MK-3475) With Lenvatinib (E7080/MK-7902) vs. Docetaxel in Participants With Metastatic Non-S
+  - NCT04676412 [COMPLETED] 2019-10-23 -> 2021-05-19: Efficacy and Safety Study of Pembrolizumab (MK-3475) With or Without Lenvatinib (MK-7902/E7080) in Adults With Programmed Cell Dea
+  - NCT04716933 [COMPLETED] 2019-11-05 -> 2023-08-11: Safety and Efficacy Study of Pemetrexed + Platinum Chemotherapy + Pembrolizumab (MK-3475) With or Without Lenvatinib (MK-7902/E708
+  - NCT04662710 [COMPLETED] 2020-12-30 -> 2024-10-29: Efficacy and Safety of Lenvatinib (E7080/MK-7902) Plus Pembrolizumab (MK-3475) Plus Chemotherapy in Participants With Advanced/Met
+  - NCT04776148 [COMPLETED] 2021-03-29 -> 2024-09-27: Study of Lenvatinib (MK-7902/E7080) in Combination With Pembrolizumab (MK-3475) Versus Standard of Care in Participants With Metas
+  - NCT05487391 [RECRUITING] 2022-12-08 -> 2027-08-31: A Study of QL1706 Combined With Platinum-containing Chemotherapy in Adjuvant Treatment of Stage II-IIIB Non-small Cell Lung Cancer
+  - NCT05690945 [ACTIVE_NOT_RECRUITING] 2023-02-15 -> 2029-06-30: A Study of QL1706 in Combination With Chemotherapy in PD-L1-Negative Non-small Cell Lung Cancer
+  - NCT05001724 [TERMINATED] 2021-10-28 -> 2023-02-13: KN046 Plus Lenvatinib in Subject With Advanced Non-Small Cell Lung Cancer in the Failure of Anti-PD-(L)1 Agent
+- **Levels:**
+  - L1 2021-05-18 (day before first Phase 3 primary completion / topline)
+
+## PGbef9205ad7: Ezetimibe / Hypercholesterolemia
+
+- Sponsor Organon and Co; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2014-10-13; moiety first approved 2002-10-25; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03288038 [COMPLETED] 2014-10-13 -> 2015-11-19: The Efficacy and Safety of Combination Therapy of Rosuvastatin and Ezetimibe and Rosuvastatin Monotherapy in Patients With Primary
+  - NCT02550288 [COMPLETED] 2015-09-29 -> 2016-05-30: A Clinical Trial to Assess the Efficacy and Safety of MK-0653C in Japanese Participants With Hypercholesterolemia (MK-0653C-383)
+  - NCT02749994 [COMPLETED] 2016-04-01 -> 2017-02-28: A Clinical Trial to Compare the Efficacy and Safety of a Combination Therapy of Ezetimibe and Rosuvastatin Versus Monotherapy of R
+  - NCT02748057 [COMPLETED] 2016-05-18 -> 2017-12-11: A Clinical Trial to Assess the Long Term Safety and Tolerability of MK-0653H in Japanese Participants With Hypercholesterolemia (M
+  - NCT02741245 [COMPLETED] 2016-06-09 -> 2017-01-18: A Study of the Efficacy and Safety of MK-0653H in Japanese Participants With Hypercholesterolemia (MK-0653H-832)
+  - NCT03510884 [COMPLETED] 2018-05-31 -> 2021-01-14: An Efficacy and Safety Study of Alirocumab in Children and Adolescents With Heterozygous Familial Hypercholesterolemia
+  - NCT03510715 [COMPLETED] 2018-08-31 -> 2020-02-17: An Efficacy and Safety Study of Alirocumab in Children and Adolescents With Homozygous Familial Hypercholesterolemia
+  - NCT00965055 [TERMINATED] 2009-09-01 -> 2011-09-30: Ezetimibe in Patients Hypo-responsive to Statins
+  - NCT00328523 [COMPLETED] 2004-06-01 -> 2006-01-31: TWICE (Ezetimibe Together With Any Statin Cholesterol Enhancement)(0653-060)
+  - NCT00664469 [TERMINATED] 2007-08-01 -> 2010-03-31: INdians Followed for INtensive Lipid Lowering Treatment and Its safetY
+  - NCT02476006 [COMPLETED] 2015-06-23 -> 2019-04-12: Safety, Tolerability, and Effect of Alirocumab in High Cardiovascular Risk Patients With Severe Hypercholesterolemia Not Adequatel
+- **Levels:**
+  - L1 2006-01-30 (day before first Phase 3 primary completion / topline)
+  - L2 2021-04-14 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG60399c2b8b: INGENOL MEBUTATE / Keratosis, Actinic
+
+- Sponsor LEO Pharma; TA oncology; cohort lifecycle_holder; first P3 2015-11-01; moiety first approved 2012-01-23; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT02547363 [COMPLETED] 2015-11-01 -> 2016-08-17: Efficacy and Safety of LEO 43204 in Field Treatment of Actinic Keratosis on Balding Scalp Including 12-month Follow-up
+  - NCT02549352 [COMPLETED] 2015-11-01 -> 2016-09-22: Efficacy and Safety of LEO 43204 in Field Treatment of Actinic Keratosis on Balding Scalp Including 12-month Follow-up
+  - NCT03200912 [COMPLETED] 2016-08-19 -> 2017-03-07: An Equivalence Study of Generic Ingenol Mebutate Gel 0.015% and Picato Gel 0.015% in Subjects With Actinic Keratosis
+  - NCT03115476 [TERMINATED] 2017-06-16 -> 2018-03-12: A Trial to Compare the Incidence of Squamous Cell Carcinoma (SCC) and Other Skin Neoplasia on Skin Areas Treated With Ingenol Diso
+- **Levels:**
+  - L1 2016-08-16 (day before first Phase 3 primary completion / topline)
+  - L2 2018-06-10 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG593a3aae13: MONOMETHYL FUMARATE / Multiple Sclerosis
+
+- Sponsor Biogen; TA neurology; cohort lifecycle_holder; first P3 2015-04-01; moiety first approved 2013-03-27; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 1.0, y_prog 1.0, approval 2019-10-29 (appl 211855), source edgar+drugsfda / high, failure basis nan, CRLs -
+- **Approved product** VUMERITY (appl 211855); label indications: "1 INDICATIONS AND USAGE VUMERITY is indicated for the treatment of relapsing forms of multiple sclerosis (MS), to include clinically isolated syndrome, relapsing-remitting disease, and active secondary progressive disease, in adults. VUMERITY is indicated for the treatment of relapsing forms of multiple sclerosis (MS), to include clinically isolated syndrome, relapsing-remitting disease, and activ"
+- **Phase 3 trials:**
+  - NCT02428231 [TERMINATED] 2015-04-01 -> 2015-12-31: Tecfidera Slow-Titration Study
+  - NCT02634307 [COMPLETED] 2015-12-10 -> 2021-06-01: A Study of ALKS 8700 in Adults With Relapsing Remitting Multiple Sclerosis (MS) EVOLVE-MS-1
+  - NCT05083923 [COMPLETED] 2021-11-18 -> 2024-09-11: A Study of Diroximel Fumarate (DRF) in Adult Participants From the Asia-Pacific Region With Relapsing Forms of Multiple Sclerosis 
+- **Levels:**
+  - L1 2015-12-30 (day before first Phase 3 primary completion / topline)
+  - L2 2019-07-31 (day after Phase 3 topline (press_release))
+    - PHASE3_POSITIVE 2019-07-30 [filing_date] 0001564590-19-026738_alks-ex991_7.htm: "DUBLIN, Ireland and CAMBRIDGE, Mass., July 30, 2019 -- Alkermes plc (Nasdaq: ALKS) and Biogen Inc. (Nasdaq: BIIB) today announced positive topline results from EVOLVE-MS-2, a large, randomized, double-blind, five-week, Phase 3 study of diroximel fumarate, an investigational, novel oral fumarate with"
+
+## PGebc31cf8d7: ALTEPLASE / Stroke
+
+- Sponsor Genentech, Inc.; TA neurology; cohort lifecycle_holder; first P3 2014-05-31; moiety first approved 1987-11-13; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT02072226 [TERMINATED] 2014-05-31 -> 2017-03-22: A Study of the Efficacy and Safety of Alteplase in Participants With Mild Stroke
+  - NCT02930837 [COMPLETED] 2016-11-15 -> 2017-12-11: Safety and Efficacy of Alteplase When Administered in Chinese Patients With Acute Ischemic Hemispheric Stroke Where Thrombolysis i
+- **Levels:**
+  - L1 2017-03-21 (day before first Phase 3 primary completion / topline)
+  - L2 2018-03-11 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGa886e5d266: ibandronic acid / Bone Neoplasms
+
+- Sponsor Hoffmann-La Roche; TA oncology; cohort lifecycle_holder; first P3 2005-07-01; moiety first approved 2003-05-16; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 1.0, y_prog 1.0, approval 2006-01-06 (appl 021858), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** BONIVA (appl 021858); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT00099203 [TERMINATED] 2005-07-01 -> 2007-12-31: A Study to Assess the Efficacy of Intravenous Bondronat (Ibandronate) in Patients With Malignant and Painful Bone Disease
+  - NCT00099177 [TERMINATED] 2005-08-01 -> 2007-12-31: A Study to Assess the Efficacy of Intravenous/Oral Bondronat (Ibandronate) in Patients With Metastatic Bone Disease Experiencing M
+  - NCT02716792 [COMPLETED] 2006-01-01 -> 2008-06-30: A Study to Evaluate Renal Safety of Intravenous Ibandronate (Bondronat) in Participants With Metastatic Bone Disease Due to Breast
+  - NCT02561039 [COMPLETED] 2006-12-01 -> 2008-03-31: A Study of Ibandronate (Bondronat) in Participants With Malignant Bone Disease
+- **Levels:**
+  - L1 2007-12-30 (day before first Phase 3 primary completion / topline)
+  - L2 2008-09-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGceeb0a965e: MYCOPHENOLIC ACID / Kidney Transplantation
+
+- Sponsor Astellas Pharma Inc; TA immunology; cohort lifecycle_holder; first P3 2009-08-17; moiety first approved 1995-05-03; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00933231 [COMPLETED] 2009-08-17 -> 2015-05-11: Comparison of Standard Versus Low Dose Advagraf® With or Without Angiotensin-converting Enzyme Inhibitor (ACEi)/Angiotensin Recept
+  - NCT01410448 [COMPLETED] 2011-11-01 -> 2015-12-31: Everolimus in de Novo Kidney Transplant Recipients
+  - NCT00048152 [COMPLETED] 2000-12-01 -> 2006-03-31: A Study to Assess Use of Zenapax (Daclizumab) and CellCept (Mycophenolate Mofetil) to Improve Kidney Function in Kidney Transplant
+  - NCT00693381 [COMPLETED] 2003-02-01 -> 2004-08-31: Mycophenolate Mofetil (MMF) Discontinuation From a Tacrolimus/MMF/Steroid Triple Regimen After Kidney Transplantation
+  - NCT01213394 [TERMINATED] 2010-10-01 -> 2011-10-31: Mycophenolate Mofetil for Reducing Cardiovascular Risk in Renal Transplant Recipients
+- **Levels:**
+  - L1 2004-08-30 (day before first Phase 3 primary completion / topline)
+  - L2 2016-03-30 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG80f92ef1e0: imatinib / Pulmonary Arterial Hypertension
+
+- Sponsor Novartis Pharmaceuticals; TA respiratory; cohort lifecycle_holder; first P3 2006-04-01; moiety first approved 2001-05-10; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00477269 [COMPLETED] 2006-04-01 -> 2014-01-31: Safety and Efficacy of Imatinib Mesylate in Patients With Pulmonary Arterial Hypertension
+  - NCT00902174 [COMPLETED] 2009-09-01 -> 2011-05-31: Imatinib (QTI571) in Pulmonary Arterial Hypertension
+  - NCT01117987 [TERMINATED] 2010-04-01 -> 2014-04-30: Extension to QTI571A2301 to Evaluate the Long-term Safety, Tolerability and Efficacy of Imatinib in Severe Pulmonary Arterial Hype
+  - NCT01392469 [COMPLETED] 2011-04-20 -> 2012-10-25: Pharmacokinetic Effects of QTI571 on Sildenafil and Bosentan in Pulmonary Arterial Hypertension Participants
+  - NCT01392495 [TERMINATED] 2011-06-01 -> 2014-03-31: Extension to CQTI571A2102 to Evaluate Long-term Safety, Tolerability and Efficacy of Imatinib in Severe Pulmonary Arterial Hyperte
+- **Levels:**
+  - L2 2010-10-22 (day after Phase 3 topline (press_release))
+    - PHASE3_NEGATIVE 2010-10-21 [filing_date] 0001104659-10-053014_a10-19748_16k.htm: "Delay due to device switch to Concept 1 QTI571 ( Imatinib ) Pulmonary arterial hypertension 2011 III QVA149 Chronic obstructive pulmonary disease 2012 III RLX030 Acute heart failure 2013 III SMC021 Osteoarthritis 2011 III - Top line Phase III results (Study 2301) from SMC021 in osteoarthritis did no"
+
+## PG7dbe0a6154: ETANERCEPT / Arthritis, Rheumatoid
+
+- Sponsor Wyeth is now a wholly owned subsidiary of Pfizer; TA immunology; cohort lifecycle_holder; first P3 2006-06-01; moiety first approved 1998-11-02; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT00443950 [COMPLETED] 2006-06-01 -> nan: Study Evaluating the Efficacy and Safety of Etanercept in Chinese Subjects With Rheumatoid Arthritis
+  - NCT00445770 [COMPLETED] 2006-07-01 -> 2010-07-31: Study Evaluating the Efficacy and Safety of Etanercept and Methotrexate in Japanese Subjects With Rheumatoid Arthritis
+  - NCT00413452 [COMPLETED] 2006-12-01 -> 2007-08-31: Etanercept SFP in RA Patients
+  - NCT00418717 [COMPLETED] 2007-02-01 -> 2007-12-31: Open Label, Dose-Regimen Study Evaluating Etanercept 50 mg Once-Weekly In Japanese Subjects With RA
+  - NCT00484237 [COMPLETED] 2007-04-01 -> nan: A Study Evaluating 10 mg and 25 mg Doses of Etanercept in Patients With Rheumatoid Arthritis
+  - NCT01270997 [COMPLETED] 2010-12-01 -> 2012-05-31: Randomized Double-blind Parallel Trial to Evaluate Equivalence in Efficacy and Safety of HD203 and Enbrel in RA Patients
+  - NCT01421069 [COMPLETED] 2011-10-10 -> 2021-02-04: Extension Study Evaluating Etanercept in 3 Subtypes of Childhood Arthritis
+  - NCT01690299 [COMPLETED] 2012-10-01 -> 2014-07-03: Phase 3b Safety and Efficacy Study of Apremilast to Treat Moderate to Severe Plaque-plaque Psoriasis
+  - NCT00249041 [COMPLETED] 2005-10-01 -> 2006-12-31: Enbrel Liquid Immunogenicity Protocol
+- **Levels:**
+  - L1 2006-12-30 (day before first Phase 3 primary completion / topline)
+  - L2 2021-05-05 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGd02af7481a: DENILEUKIN DIFTITOX / Lymphoma, T-Cell, Cutaneous
+
+- Sponsor Eisai Inc.; TA oncology; cohort lifecycle_holder; first P3 2013-05-30; moiety first approved 1999-02-05; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval 2024-08-07 (appl 761312), source drugsfda_neworig+label / high, failure basis approved_after_window, CRLs 2023-07-28|2024-03-18
+- **Approved product** LYMPHIR (appl 761312); label indications: "1 INDICATIONS AND USAGE LYMPHIR is indicated for the treatment of adult patients with relapsed or refractory Stage I-III cutaneous T-cell lymphoma (CTCL) after at least one prior systemic therapy. LYMPHIR is an IL2-receptor-directed cytotoxin indicated for the treatment of adult patients with relapsed or refractory Stage I-III cutaneous T-cell lymphoma (CTCL) after at least one prior systemic ther"
+- **Phase 3 trials:**
+  - NCT01871727 [COMPLETED] 2013-05-30 -> 2021-12-06: A Trial of E7777 in Persistent and Recurrent Cutaneous T-Cell Lymphoma
+- **Levels:**
+  - L1 2021-12-05 (day before first Phase 3 primary completion / topline)
+  - L2 2022-03-06 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+  - L3 2022-12-02 (day after filing acceptance announced)
+    - NDA_ACCEPTED 2022-12-01 [filing_date] 0001213900-22-076878_ea169519-8k_citiuspharma.htm: "On December 1, 2022, Citius Pharmaceuticals, Inc. issued a press release to announce that the Food and Drug Administration has accepted the Company’s Biologics License Application for Denileukin Diftitox for the treatment of patients with persistent or recurrent cutaneous T-cell lymphoma."
+
+## PG2bc5fb59a3: METRONIDAZOLE / Complicated Intra-abdominal Infections
+
+- Sponsor Merck Sharp & Dohme LLC; TA infectious_disease; cohort lifecycle_holder; first P3 2019-03-20; moiety first approved 1963-07-18; sample: lifecycle supplement: pipeline Y_PROG 0
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03830333 [COMPLETED] 2019-03-20 -> 2020-10-14: Ceftolozane/Tazobactam (MK-7625A) Plus Metronidazole Versus Meropenem for Participants With Complicated Intra-abdominal Infection 
+  - NCT01499290 [COMPLETED] 2012-03-01 -> 2014-04-30: Compare Ceftazidime-Avibactam + Metronidazole Versus Meropenem for Hospitalized Adults With Complicated Intra-Abdominal Infections
+  - NCT04927312 [COMPLETED] 2021-10-01 -> 2022-09-15: Study to Assess Efficacy and Safety of PF-06947386 in Japanese Adult Patients With Complicated Intra-abdominal Infection
+- **Levels:**
+  - L1 2014-04-29 (day before first Phase 3 primary completion / topline)
+  - L2 2022-12-14 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGdba2938328: PEMBROLIZUMAB / Prostatic Neoplasms
+
+- Sponsor Merck Sharp & Dohme LLC; TA oncology; cohort lifecycle_holder; first P3 2019-05-02; moiety first approved 2014-09-04; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2019-07-30 (appl 125514), source drugsfda_suppl+label / low, failure basis nan, CRLs -
+- **Approved product** KEYTRUDA (appl 125514); label indications: "1 INDICATIONS AND USAGE KEYTRUDA is a programmed death receptor-1 (PD-1)-blocking antibody indicated: Melanoma for the treatment of patients with unresectable or metastatic melanoma. ( 1.1 ) for the adjuvant treatment of adult and pediatric (12 years and older) patients with Stage IIB, IIC, or III melanoma following complete resection. ( 1.1 ) Non-Small Cell Lung Cancer (NSCLC) in combination with"
+- **Phase 3 trials:**
+  - NCT03834506 [COMPLETED] 2019-05-02 -> 2022-06-20: Study of Pembrolizumab (MK-3475) Plus Docetaxel Versus Placebo Plus Docetaxel in Chemotherapy-naïve Metastatic Castration-resistan
+  - NCT03834519 [COMPLETED] 2019-05-02 -> 2022-03-14: Study of Pembrolizumab (MK-3475) Plus Olaparib Versus Abiraterone Acetate or Enzalutamide in Metastatic Castration-resistant Prost
+  - NCT03834493 [TERMINATED] 2019-07-28 -> 2022-12-12: Study of Pembrolizumab (MK-3475) Plus Enzalutamide Versus Placebo Plus Enzalutamide in Participants With Metastatic Castration-res
+  - NCT04907227 [TERMINATED] 2020-09-23 -> 2022-08-03: Study of Pembrolizumab (MK-3475) Plus Docetaxel Versus Placebo Plus Docetaxel in Chemotherapy-naïve Metastatic Castration-resistan
+  - NCT03711032 [ACTIVE_NOT_RECRUITING] 2018-12-24 -> 2028-07-31: Efficacy and Safety of Pembrolizumab (MK-3475) in Combination With Bacillus Calmette-Guerin (BCG) in High-Risk Non-Muscle Invasive
+  - NCT03260894 [COMPLETED] 2017-12-07 -> 2018-08-22: Pembrolizumab (MK-3475) Plus Epacadostat vs Standard of Care in mRCC (KEYNOTE-679/ECHO-302)
+  - NCT06841354 [RECRUITING] 2025-03-16 -> 2030-05-18: A Study of Sacituzumab Tirumotecan (Sac-TMT, MK-2870) as Monotherapy and in Combination With Pembrolizumab (MK-3475) in Participan
+  - NCT03358472 [COMPLETED] 2017-12-01 -> 2018-07-19: Pembrolizumab Plus Epacadostat, Pembrolizumab Monotherapy, and the EXTREME Regimen in Recurrent or Metastatic Head and Neck Squamo
+  - NCT06312176 [RECRUITING] 2024-04-14 -> 2027-07-11: A Study of Sacituzumab Tirumotecan (MK-2870) as a Single Agent and in Combination With Pembrolizumab (MK-3475) Versus Treatment of
+- **Levels:**
+  - L1 2018-07-18 (day before first Phase 3 primary completion / topline)
+
+## PG2bcea9b50d: CINACALCET / Hyperparathyroidism, Secondary
+
+- Sponsor Amgen; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2015-06-10; moiety first approved 2004-03-08; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT02341417 [COMPLETED] 2015-06-10 -> 2017-03-15: Extension Study of Cinacalcet for Treatment of Secondary Hyperparathyroidism (SHPT) in Pediatric Patients With Chronic Kidney Dise
+- **Levels:**
+  - L1 2017-03-14 (day before first Phase 3 primary completion / topline)
+  - L2 2017-06-13 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGc1c9eb91c0: atorvastatin / Hypercholesterolemia
+
+- Sponsor Sanofi; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2013-10-01; moiety first approved 1996-12-17; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2017-06-23 (appl 020702), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** LIPITOR (appl 020702); label indications: "1 INDICATIONS AND USAGE LIPITOR is indicated: • To reduce the risk of: o Myocardial infarction (MI), stroke, revascularization procedures, and angina in adults with multiple risk factors for coronary heart disease (CHD) but without clinically evident CHD o MI and stroke in adults with type 2 diabetes mellitus with multiple risk factors for CHD but without clinically evident CHD o Non-fatal MI, fat"
+- **Phase 3 trials:**
+  - NCT01964326 [COMPLETED] 2013-10-01 -> 2014-12-31: Actual Use Trial of Atorvastatin Calcium 10 mg
+  - NCT02550288 [COMPLETED] 2015-09-29 -> 2016-05-30: A Clinical Trial to Assess the Efficacy and Safety of MK-0653C in Japanese Participants With Hypercholesterolemia (MK-0653C-383)
+  - NCT03415178 [COMPLETED] 2018-03-29 -> 2018-08-09: Usability Study of the Commercial Auto-injector Device and the New Auto-injector Device (SYDNEY) in Patients With High or Very Hig
+  - NCT03510884 [COMPLETED] 2018-05-31 -> 2021-01-14: An Efficacy and Safety Study of Alirocumab in Children and Adolescents With Heterozygous Familial Hypercholesterolemia
+  - NCT03510715 [COMPLETED] 2018-08-31 -> 2020-02-17: An Efficacy and Safety Study of Alirocumab in Children and Adolescents With Homozygous Familial Hypercholesterolemia
+  - NCT01984424 [COMPLETED] 2013-12-10 -> 2015-11-10: Goal Achievement After Utilizing an Anti-PCSK9 Antibody in Statin Intolerant Subjects-3
+  - NCT02476006 [COMPLETED] 2015-06-23 -> 2019-04-12: Safety, Tolerability, and Effect of Alirocumab in High Cardiovascular Risk Patients With Severe Hypercholesterolemia Not Adequatel
+  - NCT00249249 [COMPLETED] 2005-10-01 -> nan: Study to Compare the Efficacy of Pitavastatin With That of Atorvastatin in Lowering Cholesterol Levels
+  - NCT01236365 [COMPLETED] 2010-10-01 -> 2013-10-31: Statins in Children With Type 1 Diabetes and Hypercholesterolemia
+  - NCT01709513 [COMPLETED] 2012-09-30 -> 2014-05-31: Study of Alirocumab (REGN727/SAR236553) in Patients With Primary Hypercholesterolemia and Moderate, High, or Very High Cardiovascu
+  - NCT03867318 [COMPLETED] 2000-04-24 -> 2001-11-16: Efficacy and Safety Study of Ezetimibe (SCH 58235, MK-0653) in Addition to Atorvastatin in Participants With Coronary Heart Diseas
+  - NCT03882996 [COMPLETED] 2000-10-06 -> 2003-02-04: A Long-term Safety and Tolerability Study of Ezetimibe Plus Atorvastatin in Participants With Coronary Heart Disease, Multiple Ris
+  - NCT03885921 [COMPLETED] 2000-10-25 -> 2003-07-08: Safety and Tolerability Study of Ezetimibe (SCH 058235/MK-0653) Plus Atorvastatin or Simvastatin in Homozygous Familial Hyperchole
+  - NCT00239330 [COMPLETED] 2003-06-01 -> 2005-02-28: Direct Statin Comparison of LDL-C Values: an Evaluation of Rosuvastatin Therapy
+- **Levels:**
+  - L1 2001-11-15 (day before first Phase 3 primary completion / topline)
+  - L2 2021-04-14 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG83608dfffe: APREMILAST / Psoriasis
+
+- Sponsor Amgen; TA dermatology; cohort lifecycle_holder; first P3 2019-12-20; moiety first approved 2014-03-21; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2020-04-10 (appl 205437), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** OTEZLA (appl 205437); label indications: "1 INDICATIONS AND USAGE OTEZLA/OTEZLA XR, an inhibitor of phosphodiesterase 4 (PDE4), is indicated for the treatment of: Adult patients with: Active psoriatic arthritis ( 1.1 ) Plaque psoriasis who are candidates for phototherapy or systemic therapy ( 1.2 ) Oral ulcers associated with Behçet's Disease ( 1.3 ) Pediatric patients 6 years of age and older with: Active psoriatic arthritis ( 1.1 ) Mode"
+- **Phase 3 trials:**
+  - NCT04175613 [COMPLETED] 2019-12-20 -> 2025-10-30: A Long-term Extension Study of Apremilast (CC-10004) in Pediatric Subjects From 6 Through 17 Years of Age With Moderate to Severe 
+  - NCT05174065 [COMPLETED] 2022-03-08 -> 2023-08-19: Phase 3, Randomized Study of Apremilast in Japanese Participants With Palmoplantar Pustulosis (PPP)
+  - NCT06863493 [NOT_YET_RECRUITING] 2025-06-01 -> 2026-06-01: Comparison of Otezla to SFA-002 to Placebo in Plaque Psoriasis Patients
+  - NCT03191539 [UNKNOWN] 2017-11-02 -> 2019-06-14: Assessment of the Clinical and Ultrasound Response to Apremilast by Clinical Evaluation and by a Joint-periarticular-nail Ultrasou
+- **Levels:**
+  - L1 2023-08-18 (day before first Phase 3 primary completion / topline)
+  - L2 2026-01-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG30343d4c16: canagliflozin / Heart Failure
+
+- Sponsor Janssen Research & Development, LLC; TA cardiovascular; cohort lifecycle_holder; first P3 2020-03-10; moiety first approved 2013-03-29; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 0.0, y_prog nan, approval nan (appl nan), source no_approval_found / none, failure basis nan, CRLs -
+- **Phase 3 trials:**
+  - NCT04252287 [COMPLETED] 2020-03-10 -> 2021-11-09: A Study on Impact of Canagliflozin on Health Status, Quality of Life, and Functional Status in Heart Failure
+- **Levels:**
+  - L2 2022-02-07 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGb3da792477: RAVULIZUMAB / Glomerulonephritis, IGA
+
+- Sponsor Alexion Pharmaceuticals, Inc.; TA immunology; cohort lifecycle_holder; first P3 2024-03-29; moiety first approved 2018-12-21; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2026-10-21 (appl 761108), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** ULTOMIRIS (appl 761108); label indications: "1 INDICATIONS AND USAGE ULTOMIRIS is a complement inhibitor indicated for: the treatment of adult and pediatric patients one month of age and older with paroxysmal nocturnal hemoglobinuria (PNH). ( 1.1 ) the treatment of adult and pediatric patients one month of age and older with atypical hemolytic uremic syndrome (aHUS) to inhibit complement-mediated thrombotic microangiopathy (TMA). ( 1.2 ) Lim"
+- **Phase 3 trials:**
+  - NCT06291376 [ACTIVE_NOT_RECRUITING] 2024-03-29 -> 2026-01-05: Study of Ravulizumab in Immunoglobulin A Nephropathy (IgAN)
+  - NCT07024563 [RECRUITING] 2025-06-14 -> 2028-11-29: Study of Ravulizumab in Pediatric Participants With Primary IgAN
+- **Levels:**
+  - L2 2026-04-05 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGc99cae5002: ROMIPLOSTIM / Purpura, Thrombocytopenic, Idiopathic
+
+- Sponsor Amgen; TA hematology; cohort lifecycle_holder; first P3 2012-01-01; moiety first approved 2008-08-22; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2018-12-14 (appl 125268), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** NPLATE (appl 125268); label indications: "1 INDICATIONS AND USAGE Nplate is a thrombopoietin receptor agonist indicated for the treatment of thrombocytopenia in: Adult patients with immune thrombocytopenia (ITP) who have had an insufficient response to corticosteroids, immunoglobulins, or splenectomy. ( 1.1 ) Pediatric patients 1 year of age and older with ITP for at least 6 months who have had an insufficient response to corticosteroids,"
+- **Phase 3 trials:**
+  - NCT01444417 [COMPLETED] 2012-01-01 -> 2015-02-28: Safety and Efficacy Study of Romiplostim to Treat Immune Thrombocytopenia (ITP) in Pediatric Patients
+  - NCT02279173 [COMPLETED] 2014-12-10 -> 2018-08-30: Long-term Study of Romiplostim in Thrombocytopenic Pediatric Patients With Immune Thrombocytopenia (ITP)
+  - NCT02868099 [COMPLETED] 2015-09-01 -> 2017-02-28: Efficacy and Safety of Romiplostim in Adult Subjects With Persistent or Chronic Immune Thrombocytopenia (ITP)
+- **Levels:**
+  - L1 2015-02-27 (day before first Phase 3 primary completion / topline)
+  - L2 2018-11-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGabbf7356d7: Naltrexone / Alcoholism
+
+- Sponsor Alkermes, Inc.; TA psychiatry; cohort lifecycle_holder; first P3 2002-02-01; moiety first approved 1984-11-20; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2006-04-13 (appl 021897), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** VIVITROL (appl 021897); label indications: "1 INDICATIONS AND USAGE Treatment with naltrexone for extended-release injectable suspension should be part of a comprehensive management program that includes psychosocial support. Naltrexone for extended-release injectable suspension contains naltrexone, an opioid antagonist, and is indicated for the treatment of alcohol dependence in patients who are able to abstain from alcohol in an outpatien"
+- **Phase 3 trials:**
+  - NCT01218958 [COMPLETED] 2002-02-01 -> 2003-09-30: ALK21-003: Study of Medisorb® Naltrexone (VIVITROL®) in Alcohol-Dependent Adults
+  - NCT01218971 [COMPLETED] 2002-08-01 -> 2004-09-30: ALK21-003EXT: An Extension of Study ALK21-003 (NCT01218958) to Test the Long-term Safety of Medisorb® Naltrexone (VIVITROL®)
+  - NCT01218997 [COMPLETED] 2003-08-01 -> 2005-03-31: ALK21-006: Long-Term Study of Medisorb® Naltrexone (VIVITROL®)
+  - NCT00156923 [COMPLETED] 2003-10-01 -> 2007-01-31: ALK21-010: Long-term Safety of Medisorb® Naltrexone (VIVITROL®) in Alcohol-dependent Adults
+  - NCT00156936 [TERMINATED] 2004-08-01 -> 2007-01-31: ALK21-006EXT: Long-term Safety of Medisorb® Naltrexone (VIVITROL®) in Alcohol- or Opioid-dependent Adults (Extension of Study ALK2
+  - NCT00006206 [COMPLETED] 1997-08-01 -> nan: COMBINE (Acamprosate/Naltrexone)
+- **Levels:**
+  - L1 2003-09-29 (day before first Phase 3 primary completion / topline)
+  - L2 2007-05-01 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG927f947582: OMALIZUMAB / Asthma
+
+- Sponsor Shanghai Biomabs Pharmaceutical Co., Ltd.; TA respiratory; cohort lifecycle_holder; first P3 2018-05-09; moiety first approved 2003-06-20; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03468790 [COMPLETED] 2018-05-09 -> 2021-01-12: Anti-IgE Monoclonal Antibody Treatment in Patients With Allergic Asthma.
+  - NCT04607629 [COMPLETED] 2018-06-20 -> 2019-04-29: An Efficacy and Safety Study of Genolar® and Xolar® in the Persistent Atopic Bronchial Asthma
+  - NCT05813470 [COMPLETED] 2021-01-18 -> 2023-01-15: Efficacy and Safety of Zerafil® (Omalizumab) in Participants With Uncontrolled Moderate to Severe Allergic Asthma
+  - NCT00396409 [COMPLETED] 2006-02-01 -> 2008-08-31: Efficacy/ Safety of Omalizumab in Patients With Seasonal Allergic Asthma and Seasonal Allergic Rhinoconjunctivitis
+  - NCT00829179 [COMPLETED] 2002-10-01 -> 2004-07-31: Role of RhuMab-E25 in Reducing Exhaled Nitric Oxide (NO) in Allergic Asthma
+  - NCT01007149 [COMPLETED] 2009-09-01 -> 2011-02-28: Effect of Omalizumab in Patients With Severe Persistent Non-atopic Uncontrolled Asthma
+  - NCT00180011 [COMPLETED] 2005-09-01 -> 2012-02-29: Efficacy of Omalizumab as Add on Therapy for Minority Patients With Moderate to Severe Asthma
+- **Levels:**
+  - L1 2004-07-30 (day before first Phase 3 primary completion / topline)
+  - L2 2023-04-15 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGce4d1e2f1f: IPILIMUMAB / Metastatic Colorectal Cancer
+
+- Sponsor Bristol-Myers Squibb; TA oncology; cohort lifecycle_holder; first P3 2019-08-05; moiety first approved 2011-03-25; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2025-04-08 (appl 125377), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** YERVOY (appl 125377); label indications: "1 INDICATIONS AND USAGE YERVOY is a human cytotoxic T-lymphocyte antigen 4 (CTLA-4)-blocking antibody indicated for: Melanoma • Treatment of unresectable or metastatic melanoma in adults and pediatric patients 12 years and older as a single agent or in combination with nivolumab. (1.1) • Adjuvant treatment of adult patients with cutaneous melanoma with pathologic involvement of regional lymph node"
+- **Phase 3 trials:**
+  - NCT04008030 [ACTIVE_NOT_RECRUITING] 2019-08-05 -> 2024-08-28: A Study of Nivolumab, Nivolumab Plus Ipilimumab, or Investigator's Choice Chemotherapy for the Treatment of Participants With Defi
+- **Levels:**
+  - L1 2024-08-27 (day before first Phase 3 primary completion / topline)
+  - L2 2024-11-26 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG74bea7b161: calcipotriol + BETAMETHASONE / Psoriasis Vulgaris
+
+- Sponsor MC2 Therapeutics; TA immunology; cohort lifecycle_holder; first P3 2017-10-03; moiety first approved 2006-01-09; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 2.0, y_prog 0.0, approval nan (appl nan), source no_approval_found / medium, failure basis window_closed, CRLs -
+- **Phase 3 trials:**
+  - NCT03308799 [COMPLETED] 2017-10-03 -> 2018-06-08: A Clinical Trial Evaluating Efficacy and Safety of MC2-01 Cream
+  - NCT03802344 [COMPLETED] 2018-12-12 -> 2019-10-02: This Trial is a Randomised, Multicentre, Investigator-blind, Vehicle and Comparator-controlled, Parallel-group Trial With the Purp
+- **Levels:**
+  - L1 2018-06-07 (day before first Phase 3 primary completion / topline)
+  - L2 2019-12-31 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG29e56f717a: BETAMETHASONE / Plaque Psoriasis
+
+- Sponsor Primus Pharmaceuticals; TA immunology; cohort lifecycle_holder; first P3 2015-08-19; moiety first approved 1961-04-17; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2016-02-05 (appl 208079), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** SERNIVO (appl 208079); label indications: "1 INDICATIONS AND USAGE SERNIVO Spray is indicated for the treatment of mild to moderate plaque psoriasis in patients 18 years of age or older. SERNIVO Spray is a corticosteroid indicated for the treatment of mild to moderate plaque psoriasis in patients 18 years of age or older. ( 1 )"
+- **Phase 3 trials:**
+  - NCT02527421 [TERMINATED] 2015-08-19 -> 2019-03-30: DFD01 Spray HPA Axis Suppression Study in Adolescent Patients With Moderate to Severe Plaque Psoriasis
+- **Levels:**
+  - L1 2019-03-29 (day before first Phase 3 primary completion / topline)
+  - L2 2019-06-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGac9f45925b: APREPITANT / Vomiting
+
+- Sponsor Merck Sharp & Dohme LLC; TA gastroenterology; cohort lifecycle_holder; first P3 2011-09-13; moiety first approved 2003-03-26; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2016-02-01 (appl 022023), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** EMEND (appl 022023); label indications: "1 INDICATIONS AND USAGE EMEND ® for injection, in combination with other antiemetic agents, is indicated in adults and pediatric patients 6 months of age and older for the prevention of: acute and delayed nausea and vomiting associated with initial and repeat courses of highly emetogenic cancer chemotherapy (HEC) including high-dose cisplatin. delayed nausea and vomiting associated with initial an"
+- **Phase 3 trials:**
+  - NCT01362530 [COMPLETED] 2011-09-13 -> 2013-03-14: A Study of the Safety and Efficacy of Aprepitant for the Prevention of Chemotherapy-Induced Nausea and Vomiting (CINV) in Pediatri
+  - NCT01594749 [COMPLETED] 2012-09-24 -> 2014-11-03: Efficacy and Safety of Fosaprepitant Dimeglumine in Preventing Chemotherapy-Induced Nausea and Vomiting (MK-0517-031)
+  - NCT01402024 [COMPLETED] 2011-08-01 -> 2013-06-30: Study to Evaluate Anti-emetic Effect of Aprepitant Versus Placebo in Children and Adolescent Receiving Chemotherapy
+  - NCT00571168 [UNKNOWN] 2005-07-01 -> 2010-12-31: Efficacy and Safety of Aprepitant in Subjects With Multiple Myeloma During and After High-dose Chemotherapy
+  - NCT02519842 [TERMINATED] 2015-09-14 -> 2017-02-24: Efficacy and Safety Study of Fosaprepitant (MK-0517) Plus Ondansetron Versus Ondansetron Alone for the Prevention of Chemotherapy-
+- **Levels:**
+  - L1 2013-03-13 (day before first Phase 3 primary completion / topline)
+  - L2 2017-05-25 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+  - L3 2019-01-08 (day after filing acceptance announced)
+    - PDUFA_DATE 2019-01-07 [filing_date] 0001193125-19-003247_d651146dex991.htm: "The FDA set a PDUFA goal date of April 30, 2019. 2 About CINVANTI (aprepitant) injectable emulsion CINVANTI, in combination with other antiemetic agents, is indicated in adults for the prevention of acute and delayed nausea and vomiting associated with initial and repeat courses of highly emetogenic"
+  - L5 2019-04-23 (7 days before PDUFA goal date 2019-04-30)
+    - PDUFA_DATE 2019-01-07 [filing_date] 0001193125-19-003247_d651146dex991.htm: "The FDA set a PDUFA goal date of April 30, 2019. 2 About CINVANTI (aprepitant) injectable emulsion CINVANTI, in combination with other antiemetic agents, is indicated in adults for the prevention of acute and delayed nausea and vomiting associated with initial and repeat courses of highly emetogenic"
+
+## PGb8def565ec: LATANOPROST / Glaucoma, Open-Angle
+
+- Sponsor Pfizer's Upjohn has merged with Mylan to form Viatris Inc.; TA ophthalmology; cohort lifecycle_holder; first P3 2002-02-01; moiety first approved 1996-06-05; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2002-12-20 (appl 020597), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** XALATAN (appl 020597); label indications: "1 INDICATIONS AND USAGE Latanoprost ophthalmic solution is indicated for the reduction of elevated intraocular pressure (IOP) in patients with open-angle glaucoma or ocular hypertension. Latanoprost ophthalmic solution is a prostaglandin F 2α analogue indicated for the reduction of elevated intraocular pressure in patients with open-angle glaucoma or ocular hypertension. ( 1 ) 1 INDICATIONS AND US"
+- **Phase 3 trials:**
+  - NCT00150267 [COMPLETED] 2002-02-01 -> nan: A 5-Year Postmarketing Safety Study Of Xalcom In Patients With Open Angle Glaucoma Or Ocular Hypertension
+  - NCT00159653 [COMPLETED] 2005-07-01 -> 2007-06-30: A 12-Week, Randomized, Double-Masked, Parallel Group Comparison Of Evening Dosing With Xalacom In Subjects With Glaucoma
+  - NCT00230763 [COMPLETED] 2005-09-01 -> 2007-10-31: Determination Of Predictive Factors Allowing To An Additional 10% Reduction Of Intra-Ocular Pressure
+  - NCT00277498 [COMPLETED] 2005-12-01 -> nan: A 12-week, Randomized, Double-masked, Parallel Group Comparison of Evening Dosing With Xalacom in Subjects With Glaucoma
+  - NCT00383019 [COMPLETED] 2006-11-14 -> 2007-10-01: A Study Comparing Xalacom And Xalatan In Patients With Primary Open Angle Glaucoma (POAG) Or Ocular Hypertension (OH).
+  - NCT00716859 [COMPLETED] 2008-07-01 -> 2009-11-30: A Phase 3 Prospective, Randomized, Double-Masked, 12-Week, Parallel Group Study In Pediatric Subjects With Glaucoma.
+  - NCT00051142 [COMPLETED] 2001-02-01 -> 2004-06-30: A Safety and Efficacy Study of Travoprost 0.004% Compared to Latanoprost 0.005% in Patients With Open-Angle Glaucoma (OAG) or Ocul
+  - NCT00219596 [COMPLETED] 2005-06-01 -> nan: Xalacom And Combination Of Unfixed Latanoprost And Timolol In Subjects With Open-Angle Glaucoma Or Ocular Hypertension
+- **Levels:**
+  - L1 2004-06-29 (day before first Phase 3 primary completion / topline)
+  - L2 2010-02-28 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG78cb54d19d: ACYCLOVIR / Herpes Genitalis
+
+- Sponsor Glaxo Wellcome; TA infectious_disease; cohort lifecycle_holder; first P3 1999-06-01; moiety first approved 1982-03-29; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2003-04-01 (appl 020550), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** VALTREX (appl 020550); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT00005663 [UNKNOWN] 1999-06-01 -> nan: A Study of Valacyclovir as Treatment for Genital Herpes Simplex Virus in HIV-Infected Patients
+  - NCT00465205 [COMPLETED] 2005-01-01 -> 2005-12-31: HSV-2 Suppression to Reduce HIV-1 Levels in HIV-1 Co-infected Persons
+  - NCT00378976 [COMPLETED] 2003-08-01 -> nan: HSV-2 Suppression to Reduce HIV-1 Levels in HIV-1, HSV-2 Co-infected Men.
+- **Levels:**
+  - L2 2006-03-31 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG40b911ee13: ibandronic acid / Osteoporosis
+
+- Sponsor Hoffmann-La Roche; TA metabolic_endocrine; cohort lifecycle_holder; first P3 2007-01-01; moiety first approved 2003-05-16; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2008-11-28 (appl 021455), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** BONIVA (appl 021455); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT00397839 [COMPLETED] 2007-01-01 -> 2008-10-31: The Effect Of Oral Ibandronate In Male Osteoporosis
+  - NCT00493623 [COMPLETED] 2007-06-01 -> 2009-12-31: BONDIR Study: A Study of Intravenous Bonviva (Ibandronate) After Recent Vertebral Osteoporotic Fracture in Patients With Osteoporo
+  - NCT00824993 [COMPLETED] 2008-12-09 -> 2017-04-07: Prevention of Osteoporosis in Bone Marrow Transplantation (BMT) Patients
+- **Levels:**
+  - L2 2017-07-06 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PGb2a11a3871: IBRUTINIB / Lymphoma, Follicular
+
+- Sponsor Janssen Research & Development, LLC; TA oncology; cohort lifecycle_holder; first P3 2014-01-31; moiety first approved 2013-11-13; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2016-05-06 (appl 205552), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** IMBRUVICA (appl 205552); label indications: "1 INDICATIONS AND USAGE IMBRUVICA is a kinase inhibitor indicated for the treatment of: Adult patients with chronic lymphocytic leukemia (CLL)/Small lymphocytic lymphoma (SLL) ( 1.1 ). Adult patients with chronic lymphocytic leukemia (CLL)/Small lymphocytic lymphoma (SLL) with 17p deletion ( 1.2 ). Adult patients with Waldenström’s macroglobulinemia (WM) ( 1.3 ). Adult and pediatric patients age 1"
+- **Phase 3 trials:**
+  - NCT01974440 [COMPLETED] 2014-01-31 -> 2022-05-30: A Study of PCI-32765 (Ibrutinib) in Combination With Either Bendamustine and Rituximab or Rituximab, Cyclophosphamide, Doxorubicin
+  - NCT02947347 [COMPLETED] 2017-01-23 -> 2024-02-21: Study of Ibrutinib and Rituximab in Treatment Naïve Follicular Lymphoma
+  - NCT02991638 [UNKNOWN] 2016-11-01 -> 2020-12-31: Efficacy and Safety of Ibrutinib in Patients With CLL and Other Indolent B-cell Lymphomas Who Are Chronic Hepatitis B Virus Carrie
+- **Levels:**
+  - L1 2022-05-29 (day before first Phase 3 primary completion / topline)
+  - L2 2024-05-21 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+  - L3 2018-11-03 (day after filing acceptance announced)
+    - PRIORITY_REVIEW 2018-11-02 [filing_date] 0001551152-18-000038_abbv-20180930xexhibit991.htm: "Food and Drug Administration (FDA) approval, under Priority Review, of IMBRUVICA (ibrutinib) plus rituximab for the treatment of adult patients with Waldenström's macroglobulinemia (WM), a rare and incurable type of non-Hodgkin's lymphoma (NHL)."
+
+## PGaefe793931: GEFITINIB / Carcinoma, Non-Small-Cell Lung
+
+- Sponsor AstraZeneca; TA oncology; cohort lifecycle_holder; first P3 2012-03-15; moiety first approved 2003-05-05; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2015-07-13 (appl 206995), source drugsfda_neworig+label / high, failure basis nan, CRLs -
+- **Approved product** IRESSA (appl 206995); label indications: "1 INDICATIONS AND USAGE IRESSA is indicated for the first-line treatment of patients with metastatic non-small cell lung cancer (NSCLC) whose tumors have epidermal growth factor receptor (EGFR) exon 19 deletions or exon 21 (L858R) substitution mutations as detected by an FDA-approved test [see Clinical Studies (14) ] . Limitation of Use: Safety and efficacy of IRESSA have not been established in p"
+- **Phase 3 trials:**
+  - NCT01544179 [COMPLETED] 2012-03-15 -> 2014-05-05: A Study of IRESSA Treatment Beyond Progression in Addition to Chemotherapy Versus Chemotherapy Alone
+  - NCT02326285 [TERMINATED] 2015-11-01 -> 2017-03-28: Induction Therapy With Intercalated Tyrosine Kinase Inhibitor (TKI) and Chemotherapy in NSCLC With Activating Epidermal Growth Fac
+  - NCT00455936 [COMPLETED] 2005-10-01 -> 2009-11-30: First-line Gefitinib Versus Chemotherapy for Lung Adenocarcinoma in Never Smoker
+  - NCT02411448 [ACTIVE_NOT_RECRUITING] 2015-05-06 -> 2019-01-23: A Study of Ramucirumab (LY3009806) in Combination With Erlotinib in Previously Untreated Participants With EGFR Mutation-Positive 
+- **Levels:**
+  - L1 2009-11-29 (day before first Phase 3 primary completion / topline)
+  - L2 2019-04-23 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG560ae46361: Rivaroxaban / Respiratory Insufficiency
+
+- Sponsor Janssen Research & Development, LLC; TA respiratory; cohort lifecycle_holder; first P3 2014-01-07; moiety first approved 2011-07-01; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2020-03-10 (appl 202439), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** XARELTO (appl 202439); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT02111564 [COMPLETED] 2014-01-07 -> 2018-03-06: A Study of Rivaroxaban (JNJ-39039039) on the Venous Thromboembolic Risk in Post-Hospital Discharge Patients
+- **Levels:**
+  - L1 2018-03-05 (day before first Phase 3 primary completion / topline)
+  - L2 2018-06-04 (Phase 3 primary completion + 90 days (no topline release found), estimated)
+
+## PG385382d713: LAMIVUDINE / Hepatitis B, Chronic
+
+- Sponsor GlaxoSmithKline; TA infectious_disease; cohort lifecycle_holder; first P3 2000-04-01; moiety first approved 1995-11-17; sample: lifecycle supplement: pipeline Y_PROG 1
+- **Label:** event 1.0, y_prog 1.0, approval 2001-08-16 (appl 021003), source drugsfda_suppl+letter / high, failure basis nan, CRLs -
+- **Approved product** EPIVIR-HBV (appl 021003); label indications: "(no label on file)"
+- **Phase 3 trials:**
+  - NCT00140725 [COMPLETED] 2000-04-01 -> nan: Lamivudine Plus Interferon Versus Lamivudine For The Treatment Of HBeAg Positive Chronic Hepatitis B Virus (HBV)
+  - NCT01095835 [COMPLETED] 2005-02-01 -> 2010-01-31: A Study of Pegylated Interferon Alfa-2a and Lamivudine in Patients With HBeAg-Negative Chronic Hepatitis B Virus (HBV)
+  - NCT00132652 [COMPLETED] 2005-02-01 -> 2006-12-31: Switching Therapy From Lamivudine to Telbivudine Versus Continued Lamivudine in Adults With Chronic Hepatitis B
+  - NCT00131742 [COMPLETED] 2004-07-01 -> 2007-01-31: Telbivudine Versus Lamivudine in Chinese Adults With Compensated Chronic Hepatitis B
+- **Levels:**
+  - L1 2006-12-30 (day before first Phase 3 primary completion / topline)
+  - L2 2010-05-01 (Phase 3 primary completion + 90 days (no topline release found), estimated)

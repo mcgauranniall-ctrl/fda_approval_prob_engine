@@ -24,6 +24,8 @@ from rapidfuzz import fuzz
 
 WINDOW_YEARS = 7                 # D1: approval within 7 years of the first Phase 3 start
 LABEL_COVERAGE = 0.5             # share of the programme's indication keywords found in the label's indications
+LETTER_COVERAGE = 0.75           # a supplement letter is specific, so most keywords must appear (gold set: one of two
+                                 # words let a CLL letter credit follicular lymphoma, an HNSCC letter prostate cancer)
 NEAR_DAYS = 45                   # a press-release approval within this many days of an FDA action is that action
 NEXT_ACTION_YEARS = 2            # an FDA action this long after a cut-off is no longer "the next action"
 LATE_LEVELS = {"L3", "L4", "L5", "L6"}
@@ -33,7 +35,7 @@ NEGATIVE_QUIET_YEARS = 2         # a failed Phase 3 with no further progress for
 TERMINAL_STATUSES = {"TERMINATED", "WITHDRAWN", "SUSPENDED"}
 OPEN_STATUSES = {"RECRUITING", "ACTIVE_NOT_RECRUITING", "NOT_YET_RECRUITING", "ENROLLING_BY_INVITATION"}
 # Original applications that can approve a new use of an already-marketed moiety.
-LIFECYCLE_ORIG_CLASSES = {"TYPE 2/3", "TYPE 3", "TYPE 3/4", "TYPE 5", "TYPE 4/5", "TYPE 6", "TYPE 9", "TYPE 9- BLA",
+LIFECYCLE_ORIG_CLASSES = {"TYPE 2", "TYPE 2/3", "TYPE 3", "TYPE 3/4", "TYPE 5", "TYPE 4/5", "TYPE 6", "TYPE 9", "TYPE 9- BLA",
                           "TYPE 10", "TYPE 10- BLA", "BIOSIMILAR"}
 FAILURE_CONFIDENCE = {"all_p3_terminated": "high", "p3_negative_no_progress": "medium", "window_closed": "medium",
                       "approved_after_window": "high"}
@@ -92,6 +94,21 @@ def best_coverage(sets: list[list[str]], label: str) -> float:
     return max((indication_coverage(kw, text) for kw in sets), default=0.0)
 
 
+_LETTER_END = re.compile(r"APPROVAL\s*&\s*LABELING|We have completed|We completed|This (supplemental )?application is "
+                         r"approved", re.IGNORECASE)
+
+
+def letter_coverage(sets: list[list[str]], provides_for: str) -> float:
+    """Best coverage of a single 'provides for' passage, cut where the letter's standard paragraphs begin (words
+    from different passages never combine)."""
+    best = 0.0
+    for passage in provides_for.split(" … "):
+        m = _LETTER_END.search(passage)
+        best = max(best, max((indication_coverage(kw, passage[:m.start()] if m else passage) for kw in sets),
+                             default=0.0))
+    return best
+
+
 # Products licensed by CBER (vaccines, blood and plasma products, allergenics, cell and gene therapies) are not in
 # Drugs@FDA; their licences come from the Purple Book (`purplebook.py`).
 _CBER = re.compile(r"vaccin|virus|toxoid|antigen|immune globulin|immunoglobulin|\bplasma\b|albumin human|fibrin|"
@@ -119,6 +136,22 @@ def label_rows(zip_path: Path) -> Iterator[dict]:
                            "boxed_warning": bool(r.get("boxed_warning"))}
 
 
+_PROVIDES = re.compile(r"\b(provides? for|proposes?|propose[sd]|provided for|new indication|indicated for|"
+                       r"approved for (the )?(use|treatment))\b", re.IGNORECASE)
+
+
+def letter_indication(text: str, window: int = 500) -> str:
+    """The passages of an approval letter that say what the supplement adds ('This supplemental new drug
+    application provides for the use of X for the treatment of ...'), joined; '' when there are none."""
+    t = " ".join((text or "").split())[:15000]
+    return " … ".join(t[m.start():m.start() + window] for m in _PROVIDES.finditer(t)
+                      if not _BOILERPLATE.match(t, m.end()))[:4000]
+
+
+# Standard paragraphs every letter carries ('... proposed introductory advertising and promotional labeling').
+_BOILERPLATE = re.compile(r"\s+(introductory advertising|promotional|to submit|post-?marketing)", re.IGNORECASE)
+
+
 # ------------------------------------------------------------------------------------------------ programme facts
 @dataclass
 class Action:
@@ -129,6 +162,8 @@ class Action:
     class_code: str
     holder_match: bool               # application holder is one of the programme's sponsors
     label_cov: float | None          # indication coverage of the application's current label (None: no label)
+    letter_cov: float | None = None  # indication coverage of this supplement's approval letter (None: no letter text)
+    subm: str = ""                   # Drugs@FDA submission number
 
 
 @dataclass
@@ -181,8 +216,21 @@ def approval(f: Facts) -> tuple[str | None, str, str, str | None]:
                                                              a.kind == "ORIG" and a.class_code in LIFECYCLE_ORIG_CLASSES)]
     else:
         acts = [a for a in f.actions if a.kind == "ORIG" or a.class_code == "EFFICACY"]
-    acts = sorted((a for a in acts if a.date >= floor and not owned_elsewhere(a)), key=lambda a: a.date)
+    pool = sorted((a for a in acts if a.date >= f.anchor), key=lambda a: a.date)
+    acts = [a for a in pool if a.date >= floor and not owned_elsewhere(a)]
     covered = [a for a in acts if a.label_cov is not None and a.label_cov >= LABEL_COVERAGE]
+    # A supplement's own approval letter names what it adds; it outranks the current label, which mentions every use
+    # approved so far (gold set: the label rule picked an earlier, unrelated supplement, and missed withdrawn uses
+    # and discontinued brands that no longer have a label). Because the letter names this indication it counts from
+    # the Phase 3 start, not the Phase 3 end (nivolumab's head-and-neck approval came before the trial completed).
+    by_letter = [a for a in pool if a.kind == "SUPPL" and a.letter_cov is not None and a.letter_cov >= LETTER_COVERAGE]
+    if not f.lifecycle:
+        # A new drug's supplement is this programme's approval only when the drug's first approval clearly covers
+        # another use; a first approval with no label on file stays ambiguous (gold set: leniolisib, lurbinectedin
+        # and rosuvastatin were credited a later pediatric or label-update supplement).
+        origs = sorted((a for a in f.actions if a.kind == "ORIG"), key=lambda a: a.date)
+        if origs and not (origs[0].label_cov is not None and origs[0].label_cov < LABEL_COVERAGE):
+            by_letter = []
     press = sorted(d for d in f.press_approvals if d >= f.anchor)
 
     # Candidates in rule order; the earliest date wins (gold set: a 2020 press-matched supplement had beaten the
@@ -193,7 +241,7 @@ def approval(f: Facts) -> tuple[str | None, str, str, str | None]:
         near = [a for a in acts if abs(_days(a.date, p)) <= NEAR_DAYS]
         if near:
             a = near[0]
-            sure = not f.lifecycle or (a.label_cov or 0) >= LABEL_COVERAGE
+            sure = not f.lifecycle or (a.label_cov or 0) >= LABEL_COVERAGE or (a.letter_cov or 0) >= LETTER_COVERAGE
             cands.append((a.date, "edgar+drugsfda", "high" if sure else "medium", a.appl))
             break
     if not f.lifecycle:
@@ -215,13 +263,28 @@ def approval(f: Facts) -> tuple[str | None, str, str, str | None]:
             a = first[0]
             cands.append((a.date, "purplebook_cber" if f.cber else "drugsfda_orig_sole_programme",
                           "medium" if f.n_rival_programmes == 0 else "low", a.appl))
-    # 4. A supplement (or new-use application) whose label covers the indication: the first such action.
-    if covered and not cands:
-        a = covered[0]
+    elif new_use := [a for a in pool if a.kind == "ORIG" and max(a.label_cov or 0, a.letter_cov or 0) >= LETTER_COVERAGE]:
+        # 3b. A new-use application filed as its own NDA (Vemlidy, tenofovir alafenamide for hepatitis B) whose
+        #     label (or letter) covers the indication competes on date with the supplements; like a letter, it counts
+        #     from the Phase 3 start, and the product's own label must match as closely as a letter.
+        a = new_use[0]
+        cands.append((a.date, "drugsfda_neworig+label", "high" if a.holder_match else "medium", a.appl))
+    # 4. A supplement whose approval letter names the indication: the first such supplement. It replaces a
+    #    press-matched supplement whose letter is about something else.
+    if by_letter:
+        a = by_letter[0]
+        cands = [c for c in cands if not (c[1] == "edgar+drugsfda" and any(
+            b.date == c[0] and b.letter_cov is not None and b.letter_cov < LETTER_COVERAGE for b in acts))]
+        cands.append((a.date, "drugsfda_suppl+letter", "high" if a.holder_match else "medium", a.appl))
+    # 5. A supplement (or new-use application) whose label covers the indication and that has no letter on file
+    #    (a supplement whose own letter is about something else is never credited: gold set, cinacalcet's pediatric
+    #    labelling update, canagliflozin's pediatric diabetes supplement).
+    elif (unlettered := [b for b in covered if b.letter_cov is None]) and not cands:
+        a = unlettered[0]
         cands.append((a.date, "drugsfda_suppl+label", "low", a.appl))
     if cands:
         return min(cands, key=lambda c: c[0])
-    # 5. A press-release approval with no FDA record behind it (about 40% precise on review: negations, boilerplate,
+    # 6. A press-release approval with no FDA record behind it (about 40% precise on review: negations, boilerplate,
     #    unresolved drug names): neither approved nor failed.
     if press:
         return None, "edgar_only_unverified", "none", None

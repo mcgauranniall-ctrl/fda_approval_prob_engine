@@ -253,7 +253,21 @@ model get `approval_timing` in `prediction.json` (6/12/24/36 months and 1 Januar
 among approved programmes is 23 months, short for Phase 3 + review; the registry often misses a drug's earliest
 Phase 3, which makes the anchor late.
 
-**Next (payer first, D9):** P6b new-indication (supplement) labels → P6c label-breadth models →
+**P6b new-indication labels (2026-11-01): `scripts/01d_approval_letters.py`, `labels.approval` rules 3b–5,
+`data/gold/findings.md` items 25–33.** New uses of approved drugs are now attributed from each efficacy supplement's
+(or new-use NDA's) **FDA approval letter** (4,762 letters; "provides for ..."), a post-decision document used as a
+label only. Rules: a letter naming the indication (75% of keywords in one passage, programme indication + seed
+trials) decides the supplement and its date, counting from the Phase 3 start; a new-use NDA (incl. type 2) whose
+letter or label covers the indication competes on date; the label decides only for supplements without a letter; a
+novel drug's later supplement needs its first approval to be clearly another use; Drugs@FDA abbreviations no longer
+break sponsor matching. Gold set extended with **40 lifecycle programmes** (252 total, 75 lifecycle): lifecycle
+Y_PROG **67.6% → 83.6%** (n=73, 95% ~75–92%; target 85%), novel unchanged at 89.5%, approval dates within 30 days
+80% → 88%. The remaining errors are mostly upstream (trial grouping, drug resolution) or need line-of-therapy
+judgement; more keyword rules would fit the gold set. Paired ablation: the fitted model is unchanged (all levels
+within ±0.0007 Brier). Script 09 now uses folds hashed by drug and 3 repeats (single runs moved a level's Brier by
+up to 0.017 between builds). Timing still calibrated in all cells.
+
+**Next (payer first, D9):** P6c label-breadth models →
 P6d live-case context features and switching the app to the fitted model → P9 payer module → P10 hardening. The
 investor module (P11) is paused until the user asks for it.
 ---

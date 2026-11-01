@@ -1,14 +1,14 @@
-<!doctype html><meta charset=utf-8><title>Data readiness</title><style>body{font-family:system-ui,sans-serif;margin:24px;color:#17140f;background:#f5f0e8}h1{font-family:Georgia,serif}table{border-collapse:collapse;font-size:13px;background:#fff}th,td{border:1px solid #ddd6c8;padding:4px 8px;text-align:left;vertical-align:top}th{background:#faf7f2}.tbl{overflow-x:auto}</style><h1>Training data readiness</h1><p>Built 2026-11-01 17:00. Novel drugs, final outcomes; L2 rows have a dated readout. Label error from the gold set (150 main-sample programmes plus the late-level supplement).</p><div class=tbl><table><tr><th>level</th><th>rows</th><th>approved</th><th>pipeline_rate</th><th>corrected_rate</th><th>corrected_rate_ci95</th><th>sensitivity</th><th>specificity</th><th>youden_J</th><th>params_epv10</th><th>params_epv20</th><th>mde_or_binary_30pct</th><th>mde_or_per_sd</th><th>usable_features</th><th>verdict</th></tr><tr><td>L1</td><td>1254</td><td>462</td><td>0.368</td><td>0.4</td><td>[0.343, 0.481]</td><td>0.868</td><td>0.965</td><td>0.833</td><td>46</td><td>23</td><td>1.43</td><td>1.18</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, n_p3_trials, p2_randomized, p2_placebo_controlled, p2_single_arm, p2_n_total, btd, fast_track, orphan, spa</td><td>ready (with label-error correction)</td></tr><tr><td>L2</td><td>345</td><td>172</td><td>0.499</td><td>0.512</td><td>[0.446, 0.577]</td><td>0.918</td><td>0.942</td><td>0.86</td><td>17</td><td>8</td><td>1.93</td><td>1.35</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, p3_results_posted, n_p3_trials, p3_primary_endpoint_met, btd, fast_track, orphan, spa</td><td>ready (with label-error correction)</td></tr><tr><td>L3</td><td>281</td><td>191</td><td>0.68</td><td>0.666</td><td>[0.568, 0.729]</td><td>0.911</td><td>0.78</td><td>0.691</td><td>9</td><td>4</td><td>2.19</td><td>1.43</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, p3_results_posted, n_p3_trials, btd, fast_track, orphan, adcom_scheduled, spa, priority_review, accelerated_pathway</td><td>ready (with label-error correction)</td></tr><tr><td>L4</td><td>23</td><td>10</td><td>0.435</td><td>nan</td><td>None</td><td>nan</td><td>nan</td><td>nan</td><td>1</td><td>0</td><td>13.09</td><td>3.25</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, sponsor_prior_crls, p3_results_posted, n_p3_trials, p2_randomized, p2_placebo_controlled, p2_single_arm, p2_n_total, adcom_yes_fraction</td><td>not modelled alone: pool with neighbouring levels</td></tr><tr><td>L5</td><td>96</td><td>62</td><td>0.646</td><td>0.532</td><td>[0.395, 0.634]</td><td>1.0</td><td>0.757</td><td>0.757</td><td>3</td><td>1</td><td>3.69</td><td>1.82</td><td>p3_n_pivotal_trials, p3_planned_n, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, p3_results_posted, n_p3_trials, btd, fast_track, orphan, adcom_scheduled, spa, priority_review</td><td>ready for a small model (≤ 3 parameters) with label-error correction</td></tr></table></div><h2>Label-error priors (data/processed/label_error.json)</h2><pre>{
+<!doctype html><meta charset=utf-8><title>Data readiness</title><style>body{font-family:system-ui,sans-serif;margin:24px;color:#17140f;background:#f5f0e8}h1{font-family:Georgia,serif}table{border-collapse:collapse;font-size:13px;background:#fff}th,td{border:1px solid #ddd6c8;padding:4px 8px;text-align:left;vertical-align:top}th{background:#faf7f2}.tbl{overflow-x:auto}</style><h1>Training data readiness</h1><p>Built 2026-11-01 18:59. Novel drugs, final outcomes; L2 rows have a dated readout. Label error from the gold set (190 main-sample programmes plus the late-level supplement).</p><div class=tbl><table><tr><th>level</th><th>rows</th><th>approved</th><th>pipeline_rate</th><th>corrected_rate</th><th>corrected_rate_ci95</th><th>sensitivity</th><th>specificity</th><th>youden_J</th><th>params_epv10</th><th>params_epv20</th><th>mde_or_binary_30pct</th><th>mde_or_per_sd</th><th>usable_features</th><th>verdict</th></tr><tr><td>L1</td><td>1254</td><td>451</td><td>0.36</td><td>0.392</td><td>[0.336, 0.475]</td><td>0.864</td><td>0.966</td><td>0.83</td><td>45</td><td>22</td><td>1.43</td><td>1.18</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, n_p3_trials, p2_randomized, p2_placebo_controlled, p2_single_arm, p2_n_total, btd, fast_track, orphan, spa</td><td>ready (with label-error correction)</td></tr><tr><td>L2</td><td>347</td><td>168</td><td>0.484</td><td>0.499</td><td>[0.434, 0.566]</td><td>0.914</td><td>0.945</td><td>0.859</td><td>16</td><td>8</td><td>1.93</td><td>1.35</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, p3_results_posted, n_p3_trials, p3_primary_endpoint_met, btd, fast_track, orphan, spa</td><td>ready (with label-error correction)</td></tr><tr><td>L3</td><td>277</td><td>186</td><td>0.671</td><td>0.65</td><td>[0.559, 0.71]</td><td>0.926</td><td>0.802</td><td>0.728</td><td>9</td><td>4</td><td>2.19</td><td>1.43</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, is_combination, p3_results_posted, n_p3_trials, p2_randomized, p2_placebo_controlled, p2_single_arm, p2_n_total, btd, fast_track, orphan, adcom_scheduled, spa, priority_review, accelerated_pathway</td><td>ready (with label-error correction)</td></tr><tr><td>L4</td><td>23</td><td>9</td><td>0.391</td><td>nan</td><td>None</td><td>nan</td><td>nan</td><td>nan</td><td>0</td><td>0</td><td>13.63</td><td>3.31</td><td>p3_n_pivotal_trials, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, sponsor_prior_crls, p3_results_posted, n_p3_trials, p2_randomized, p2_placebo_controlled, p2_single_arm, p2_n_total, adcom_yes_fraction</td><td>not modelled alone: pool with neighbouring levels</td></tr><tr><td>L5</td><td>93</td><td>60</td><td>0.645</td><td>0.559</td><td>[0.416, 0.65]</td><td>1.0</td><td>0.805</td><td>0.805</td><td>3</td><td>1</td><td>3.76</td><td>1.84</td><td>p3_n_pivotal_trials, p3_planned_n, p3_comparator, p3_double_blind, p3_dmc, p3_endpoint_class, modality, moiety_approved, sponsor_prior_crls, p3_results_posted, n_p3_trials, btd, fast_track, orphan, adcom_scheduled, spa, priority_review</td><td>ready for a small model (≤ 3 parameters) with label-error correction</td></tr></table></div><h2>Label-error priors (data/processed/label_error.json)</h2><pre>{
  &quot;L1&quot;: {
   &quot;source&quot;: &quot;main gold sample, programme-level Y_PROG (novel accuracy 0.895, n=76)&quot;,
   &quot;ppv&quot;: 0.943,
   &quot;npv&quot;: 0.917,
   &quot;n_pipeline_approved&quot;: 35,
   &quot;n_pipeline_failed&quot;: 36,
-  &quot;pipeline_rate&quot;: 0.368,
-  &quot;corrected_rate&quot;: 0.4,
-  &quot;sensitivity&quot;: 0.868,
-  &quot;specificity&quot;: 0.965,
+  &quot;pipeline_rate&quot;: 0.36,
+  &quot;corrected_rate&quot;: 0.392,
+  &quot;sensitivity&quot;: 0.864,
+  &quot;specificity&quot;: 0.966,
   &quot;ppv_beta&quot;: [
    34,
    3
@@ -18,8 +18,8 @@
    4
   ],
   &quot;corrected_rate_ci95&quot;: [
-   0.343,
-   0.481
+   0.336,
+   0.475
   ]
  },
  &quot;L2&quot;: {
@@ -28,10 +28,10 @@
   &quot;npv&quot;: 0.917,
   &quot;n_pipeline_approved&quot;: 35,
   &quot;n_pipeline_failed&quot;: 36,
-  &quot;pipeline_rate&quot;: 0.499,
-  &quot;corrected_rate&quot;: 0.512,
-  &quot;sensitivity&quot;: 0.918,
-  &quot;specificity&quot;: 0.942,
+  &quot;pipeline_rate&quot;: 0.484,
+  &quot;corrected_rate&quot;: 0.499,
+  &quot;sensitivity&quot;: 0.914,
+  &quot;specificity&quot;: 0.945,
   &quot;ppv_beta&quot;: [
    34,
    3
@@ -41,58 +41,58 @@
    4
   ],
   &quot;corrected_rate_ci95&quot;: [
-   0.446,
-   0.577
+   0.434,
+   0.566
   ]
  },
  &quot;L3&quot;: {
   &quot;source&quot;: &quot;gold Y_LEVEL at the pipeline&#x27;s cut-off (n=80, both samples)&quot;,
-  &quot;ppv&quot;: 0.892,
-  &quot;npv&quot;: 0.814,
-  &quot;n_pipeline_approved&quot;: 37,
-  &quot;n_pipeline_failed&quot;: 43,
-  &quot;pipeline_rate&quot;: 0.68,
-  &quot;corrected_rate&quot;: 0.666,
-  &quot;sensitivity&quot;: 0.911,
-  &quot;specificity&quot;: 0.78,
+  &quot;ppv&quot;: 0.897,
+  &quot;npv&quot;: 0.854,
+  &quot;n_pipeline_approved&quot;: 39,
+  &quot;n_pipeline_failed&quot;: 41,
+  &quot;pipeline_rate&quot;: 0.671,
+  &quot;corrected_rate&quot;: 0.65,
+  &quot;sensitivity&quot;: 0.926,
+  &quot;specificity&quot;: 0.802,
   &quot;ppv_beta&quot;: [
-   34,
+   36,
    5
   ],
   &quot;npv_beta&quot;: [
    36,
-   9
+   7
   ],
-  &quot;post_decision_landmarks&quot;: 0.033,
+  &quot;post_decision_landmarks&quot;: 0.022,
   &quot;filing_event_right&quot;: 0.731,
   &quot;corrected_rate_ci95&quot;: [
-   0.568,
-   0.729
+   0.559,
+   0.71
   ]
  },
  &quot;L5&quot;: {
-  &quot;source&quot;: &quot;gold Y_LEVEL at the pipeline&#x27;s cut-off (n=33, both samples)&quot;,
-  &quot;ppv&quot;: 0.824,
+  &quot;source&quot;: &quot;gold Y_LEVEL at the pipeline&#x27;s cut-off (n=31, both samples)&quot;,
+  &quot;ppv&quot;: 0.867,
   &quot;npv&quot;: 1.0,
-  &quot;n_pipeline_approved&quot;: 17,
+  &quot;n_pipeline_approved&quot;: 15,
   &quot;n_pipeline_failed&quot;: 16,
-  &quot;pipeline_rate&quot;: 0.646,
-  &quot;corrected_rate&quot;: 0.532,
+  &quot;pipeline_rate&quot;: 0.645,
+  &quot;corrected_rate&quot;: 0.559,
   &quot;sensitivity&quot;: 1.0,
-  &quot;specificity&quot;: 0.757,
+  &quot;specificity&quot;: 0.805,
   &quot;ppv_beta&quot;: [
-   15,
-   4
+   14,
+   3
   ],
   &quot;npv_beta&quot;: [
    17,
    1
   ],
-  &quot;post_decision_landmarks&quot;: 0.057,
+  &quot;post_decision_landmarks&quot;: 0.029,
   &quot;filing_event_right&quot;: null,
   &quot;corrected_rate_ci95&quot;: [
-   0.395,
-   0.634
+   0.416,
+   0.65
   ]
  },
  &quot;L4&quot;: {

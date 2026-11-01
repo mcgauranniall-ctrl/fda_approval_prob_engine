@@ -116,3 +116,34 @@ Still open (one or two cases each):
 24. **A metabolite resolved instead of the drug** makes an old drug look novel: beclomethasone dipropionate →
     beclomethasone 17-monopropionate (no approval history). Audit: 10 of 4,425 novel programmes name an ingredient
     approved before their anchor.
+
+## New-indication (lifecycle) supplement (2026-11-01, P6b, 40 programmes, `why` = "lifecycle supplement")
+
+Sampled from resolved `lifecycle_holder` programmes, half labelled approved by the pipeline. Verdicts from Drugs@FDA
+submissions and the FDA approval letters (labels only, never inputs). Lifecycle Y_PROG accuracy, all 73-75 reviewed
+lifecycle rows: 67.6% (n=34, before) → 74.7% (letters) → 83.6% (fixes below). Approval dates within 30 days:
+80% → 88%.
+
+Fixed (each with a test):
+25. **The current label decided which supplement approved a use**, so an earlier unrelated supplement got the date
+    (lacosamide, ipilimumab RCC, nivolumab H&N) and withdrawn uses / discontinued brands were lost (atezolizumab
+    urothelial, Mobic RA). Now each efficacy supplement's approval letter ("provides for ...", script 01d, 4,762
+    letters) decides; the label is a fallback only for supplements without a letter.
+26. **A letter matched on one of two indication words** (a CLL letter credited follicular lymphoma, an HNSCC letter
+    prostate cancer). Letters are matched passage by passage, cut before the standard paragraphs, at 75% coverage.
+27. **New-use original NDAs without a label on file were missed** (Mirvaso, Qnasl, Vumerity): their own letters are
+    now fetched and type 2 originals count as new-use applications; a new-use NDA counts from the Phase 3 start.
+28. **A letter-named approval before the programme's own Phase 3 completion was ignored** (nivolumab H&N accelerated
+    approval): letters count from the Phase 3 start.
+29. **Drugs@FDA abbreviations broke sponsor matching** ('TEVA BRANDED PHARM'): `company_key` strips pharm/prods.
+30. **A novel drug with an unlabelled first approval was credited a later supplement** (leniolisib, lurbinectedin,
+    rosuvastatin): the letter rule needs the first approval to be clearly another use.
+
+Still open (the 12 remaining lifecycle errors):
+31. **Trial grouping and drug resolution** cause most false approvals: a grouped-in trial of another indication or
+    drug brings its keywords (pembrolizumab prostate ← an HNSCC seed trial; ibrutinib FL ← a CLL trial; Lipitor OTC
+    with alirocumab trials; an omalizumab biosimilar with Xolair trials). Fixing grouping is upstream (script 02).
+32. **Same disease, different line or population** (rucaparib first-line vs recurrent maintenance; blinatumomab
+    first relapse vs consolidation; pregabalin): keyword matching cannot see line of therapy.
+33. **Indication wording with no shared words** (tenecteplase "thrombolysis" vs "acute ischemic stroke"; duloxetine
+    "osteoarthritis, knee" vs "chronic pain due to osteoarthritis").

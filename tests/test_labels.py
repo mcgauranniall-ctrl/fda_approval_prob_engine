@@ -174,3 +174,66 @@ def test_sole_programme_rule_needs_an_unlabelled_approval():
     chirhostim = lab.Action("2004-04-09", "021256", "ORIG", "TYPE 1", True, 0.0)   # label: pancreatic diagnostics
     f = lab.Facts("PG1", "2002-04-01", False, actions=[chirhostim])
     assert lab.programme_label(f, AS_OF)["y_prog"] == 0
+
+
+def _lifecycle(acts):
+    return lab.Facts("P", "2015-01-01", True, actions=acts, p3_end_dates=["2018-06-01"])
+
+
+def test_supplement_letter_outranks_an_earlier_label_match():
+    # The current label (covering every approved use) matches both supplements; only S-049's letter names the use.
+    acts = [lab.Action("2020-11-16", "022253", "SUPPL", "EFFICACY", True, 1.0, 0.0, "045"),
+            lab.Action("2021-10-14", "022253", "SUPPL", "EFFICACY", True, 1.0, 1.0, "049")]
+    d, source, conf, _ = lab.approval(_lifecycle(acts))
+    assert (d, source, conf) == ("2021-10-14", "drugsfda_suppl+letter", "high")
+
+
+def test_withdrawn_use_is_attributed_from_its_letter():
+    # Accelerated approval later withdrawn: today's label no longer covers the indication, the letter does.
+    acts = [lab.Action("2019-05-18", "761034", "SUPPL", "EFFICACY", True, 0.0, 1.0, "001")]
+    assert lab.approval(_lifecycle(acts))[:2] == ("2019-05-18", "drugsfda_suppl+letter")
+
+
+def test_letter_extraction_finds_the_provides_for_passage():
+    text = ("Dear Sir: Please refer to your supplemental new drug application. This supplemental new drug application "
+            "provides for the use of Vimpat (lacosamide) for the treatment of partial-onset seizures in patients 4 "
+            "years of age and older. We have completed our review.")
+    out = lab.letter_indication(text)
+    assert out.startswith("provides for the use of Vimpat") and "partial-onset seizures" in out
+    assert lab.letter_indication("Dear Sir: labeling revisions to the carton.") == ""
+
+
+def test_letter_counts_before_the_programmes_own_phase3_ends():
+    # Accelerated approval during the trial (own Phase 3 ends 2018-06-01).
+    acts = [lab.Action("2016-11-10", "125554", "SUPPL", "EFFICACY", True, 1.0, 1.0, "022")]
+    assert lab.approval(_lifecycle(acts))[:2] == ("2016-11-10", "drugsfda_suppl+letter")
+
+
+def test_new_drug_with_unlabelled_first_approval_is_not_credited_a_later_supplement():
+    acts = [lab.Action("2020-06-15", "213702", "ORIG", "TYPE 1", True, None),
+            lab.Action("2025-10-02", "213702", "SUPPL", "EFFICACY", True, 1.0, 1.0, "010")]
+    sole = lab.Facts("P", "2015-01-01", False, actions=acts)
+    assert lab.approval(sole)[:2] == ("2020-06-15", "drugsfda_orig_sole_programme")
+    shared = lab.Facts("P", "2015-01-01", False, n_rival_programmes=1, actions=acts)
+    assert lab.approval(shared)[1] != "drugsfda_suppl+letter"   # (the older label rule may still credit it)
+
+
+def test_new_use_application_competes_with_supplements():
+    acts = [lab.Action("2016-11-10", "208464", "ORIG", "TYPE 5", True, 1.0),
+            lab.Action("2024-03-27", "208464", "SUPPL", "EFFICACY", True, 1.0, 1.0, "019")]
+    assert lab.approval(_lifecycle(acts))[:2] == ("2016-11-10", "drugsfda_neworig+label")
+
+
+def test_letter_coverage_is_per_passage_and_stops_at_the_standard_paragraphs():
+    fl = indication_keywords("Lymphoma, Follicular")
+    cll = ("proposes the indication: Imbruvica is indicated for chronic lymphocytic leukemia and small lymphocytic "
+           "lymphoma. APPROVAL & LABELING We have completed our review of follicular data.")
+    assert lab.letter_coverage([fl], cll) < lab.LETTER_COVERAGE
+    joined = "provides for use in lymphoma … provides for a follicular cell assay"
+    assert lab.letter_coverage([fl], joined) < lab.LETTER_COVERAGE
+    assert lab.letter_coverage([fl], "provides for a new indication in relapsed follicular lymphoma") == 1.0
+
+
+def test_supplement_whose_letter_is_about_something_else_is_not_credited_from_the_label():
+    acts = [lab.Action("2017-05-23", "021688", "SUPPL", "EFFICACY", True, 1.0, 0.0, "023")]
+    assert lab.approval(_lifecycle(acts))[0] is None

@@ -44,6 +44,7 @@ TRUTH_COLS = ["truth_grouping_ok", "truth_drug_ok", "truth_outcome", "truth_appr
 LEVELS = ["L1", "L2", "L3", "L4", "L5"]
 LATE_SEED = 20261101
 LATE_SHARE_FAILED = 0.6                  # of the supplement, rows the pipeline labels not approved
+LIFECYCLE_SEED = 20261102
 
 
 def _era(anchor: str) -> str:
@@ -91,9 +92,25 @@ def late_sample(labels: pd.DataFrame, lm: pd.DataFrame, exclude: set[str], n: in
                                 + out["y_level"].astype(int).astype(str).values})
 
 
+def lifecycle_sample(labels: pd.DataFrame, exclude: set[str], n: int) -> pd.DataFrame:
+    """New-indication programmes of approved drugs (cohort lifecycle_holder, in the default population) with a
+    resolved Y_PROG, half labelled approved and half not by the pipeline (P6b)."""
+    pool = labels[(labels["cohort"] == "lifecycle_holder") & labels["in_cohort"] & labels["y_prog"].notna()
+                  & ~labels["programme_id"].isin(exclude)]
+    picks = [pool[pool["y_prog"] == y].sample(min(n // 2 + (n % 2) * y, int((pool["y_prog"] == y).sum())),
+                                               random_state=LIFECYCLE_SEED) for y in (0, 1)]
+    out = pd.concat(picks)
+    return pd.DataFrame({"programme_id": out["programme_id"].values,
+                         "outcome": out["event"].map(lambda e: "excluded" if pd.isna(e) else int(e)).values,
+                         "era": out["anchor_p3_start"].map(_era).values, "reached_L3": False,
+                         "why": "lifecycle supplement: pipeline Y_PROG " + out["y_prog"].astype(int).astype(str).values})
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--add-late", type=int, default=0, help="append N late-level programmes to the gold set")
+    ap.add_argument("--add-lifecycle", type=int, default=0,
+                    help="append N new-indication (lifecycle) programmes to the gold set")
     args = ap.parse_args()
     labels = pd.read_parquet(PROCESSED / "labels.parquet")
     lv = pd.read_parquet(PROCESSED / "levels.parquet")
@@ -119,6 +136,12 @@ def main() -> None:
             add = late_sample(labels, lm, set(base["programme_id"]), args.add_late)
             base = pd.concat([base, add.astype(str)], ignore_index=True)
             print(f"[gold] added {len(add)} late-level programmes")
+        if args.add_lifecycle:
+            if old["why"].str.startswith("lifecycle supplement").any():
+                raise SystemExit("[gold] the lifecycle supplement is already in the gold set")
+            add = lifecycle_sample(labels, set(base["programme_id"]), args.add_lifecycle)
+            base = pd.concat([base, add.astype(str)], ignore_index=True)
+            print(f"[gold] added {len(add)} lifecycle programmes")
     else:
         old, base = None, sample(labels, lv)
 

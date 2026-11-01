@@ -98,7 +98,8 @@ def _fda_tables(idx):
     appl_drug = {a: next(iter(ds)) for a, ds in appl_drug.items() if len(ds) == 1}
     acts_by_drug: dict[str, list[tuple]] = defaultdict(list)
     for r in subs[subs["ApplNo"].isin(appl_drug)].itertuples(index=False):
-        acts_by_drug[appl_drug[r.ApplNo]].append((r.status_date, r.ApplNo, r.SubmissionType, r.SubmissionClassCode))
+        acts_by_drug[appl_drug[r.ApplNo]].append((r.status_date, r.ApplNo, r.SubmissionType, r.SubmissionClassCode,
+                                                    str(r.SubmissionNo)))
     return apps["SponsorName"].to_dict(), apps["ApplType"].to_dict(), acts_by_drug, rx.to_dict(), appl_drug
 
 
@@ -129,11 +130,17 @@ def main(argv: list[str] | None = None) -> None:
     bla_drug = purplebook.resolved_drug_ids(blas, idx)
     cber_drug_ids = set(bla_drug.values())
     ctgov_names = pd.read_parquet(PROCESSED / "drug_names.parquet").set_index("drug_id")["ctgov_names"].to_dict()
-    print(f"[04] inputs loaded ({time.time() - t0:.0f}s); as_of {as_of}")
+    # Efficacy-supplement approval letters (script 01d): what each supplement provides for (labels only).
+    letters_path = INTERIM / "approval_letters.parquet"
+    letter_text = ({(r.ApplNo, r.SubmissionNo): lab.letter_indication(r.text)
+                    for r in pd.read_parquet(letters_path).itertuples()} if letters_path.exists() else {})
+    letter_text = {k: v for k, v in letter_text.items() if v}
+    print(f"[04] inputs loaded ({time.time() - t0:.0f}s); as_of {as_of}; {len(letter_text):,} supplement letters")
 
     stc = st.set_index("nct_id")
     p3 = pt[pt["relation"].isin(["p3_seed", "p3_linked"])]
     p3_by_prog = p3.groupby("programme_id")["nct_id"].apply(list).to_dict()
+    seed_by_prog = pt[pt["relation"] == "p3_seed"].groupby("programme_id")["nct_id"].apply(list).to_dict()
     ev_by_prog = {k: g for k, g in ev.groupby("programme_id")}
     first_orig = {d: min(a[0] for a in acts if a[2] == "ORIG") for d, acts in acts_by_drug.items()
                   if any(a[2] == "ORIG" for a in acts)}
@@ -167,18 +174,24 @@ def main(argv: list[str] | None = None) -> None:
         e = ev_by_prog.get(r.programme_id, pd.DataFrame(columns=ev.columns))
         kw_sets = lab.keyword_sets(info.keywords, [indication_keywords(first_cond[n])
                                                    for n in p3_by_prog.get(r.programme_id, []) if n in first_cond])
+        # Letters name one use precisely, so they are matched against the programme's own indication and its seed
+        # trials only (gold set: a grouped-in head-and-neck trial let an HNSCC letter credit a prostate programme).
+        letter_sets = lab.keyword_sets(info.keywords, [indication_keywords(first_cond[n])
+                                                       for n in seed_by_prog.get(r.programme_id, []) if n in first_cond])
         # A co-formulated product counts when all its other moieties are investigational in this programme's
         # Phase 3 trials (glecaprevir's trials test glecaprevir/pibrentasvir: Mavyret is its approval).
         inv = set().union(*(inv_moieties.get(n, set()) for n in p3_by_prog.get(r.programme_id, [])))
         own = set(r.drug_id.removeprefix("UNII:").split("+")) if r.drug_id.startswith("UNII:") else set()
         combos = [c for c in combo_index.get(r.drug_id, []) if own and set(c.removeprefix("UNII:").split("+")) <= inv | own]
         acts = []
-        for d, appl, kind, cls in [a for did in [r.drug_id, *combos] for a in acts_by_drug.get(did, [])]:
+        for d, appl, kind, cls, subm in [a for did in [r.drug_id, *combos] for a in acts_by_drug.get(did, [])]:
             ck = (appl, tuple(map(tuple, kw_sets)))
             if ck not in cov_cache:
                 cov_cache[ck] = lab.best_coverage(kw_sets, label_text[appl]) if label_text.get(appl) else None
+            lt = letter_text.get((appl, subm))
             acts.append(lab.Action(d, appl, kind, cls, any(tlb.same_company(holder.get(appl, ""), s)
-                                                           for s in info.sponsors), cov_cache[ck]))
+                                                           for s in info.sponsors), cov_cache[ck],
+                                   lab.letter_coverage(letter_sets, lt) if lt else None, subm))
         orig_d = first_orig.get(r.drug_id)
         # CBER products: licences from the Purple Book replace the (absent) Drugs@FDA record.
         cber_like = lab.is_cber_product(r.drug_name) or r.drug_id in cber_drug_ids
