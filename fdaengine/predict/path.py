@@ -11,7 +11,7 @@ from datetime import date
 
 from fdaengine.acquire.case_folder import Case
 from fdaengine.features.build import compute
-from fdaengine.model import provisional
+from fdaengine.model import registry
 from fdaengine.prepare.ctgov_structured import structure_trial
 from fdaengine.schema import FIELDS
 from fdaengine.timeline.levels import LEVELS, ORDER
@@ -62,7 +62,7 @@ def compute_path(case: Case) -> list[dict]:
                     continue
                 fields[name] = f
             feats, _ = compute(lv["level"], meta, structured, [e for e in timeline if e["date"] <= cutoff], fields)
-            pred = provisional.predict(lv["level"], feats)
+            pred = registry.predict(lv["level"], feats)
         path.append({"level": lv["level"], "name": LEVELS[lv["level"]], "cutoff": cutoff,
                      "p": pred["p_approval"]["median"], "ci95": pred["p_approval"]["ci95"],
                      "events": [e["event_type"] for e in timeline

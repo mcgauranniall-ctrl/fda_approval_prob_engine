@@ -7,10 +7,16 @@ Disagreements between sources are recorded as conflicts.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import date
 
 from fdaengine.acquire.case_folder import Case
 from fdaengine.features import stats_transforms as st
 from fdaengine.timeline.levels import ORDER
+
+# PubMed main-paper p-values (sources/pubmed.py) are collected but not used as features: tested 2026-11-01, they
+# were far less predictive than registry results (L1 Phase 2 AUC 0.15–0.54 vs 0.81) and worsened the fitted model's
+# cross-validated Brier score at every level.
+USE_PUBMED = False
 
 LARGE_SPONSORS = ("pfizer", "merck", "johnson", "janssen", "roche", "genentech", "novartis", "sanofi",
                   "astrazeneca", "glaxosmithkline", "gsk", "abbvie", "bristol", "eli lilly", "lilly", "amgen",
@@ -95,6 +101,12 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
             put("p2_primary_endpoint_met", "no", "timeline", events["PHASE2_NEGATIVE"]["quote"])
         elif "PHASE2_POSITIVE" in events:
             put("p2_primary_endpoint_met", "yes", "timeline", events["PHASE2_POSITIVE"]["quote"])
+    if "p2_best_pvalue" not in feats and (pr := _readout_p(timeline, "PHASE2")):
+        put("p2_best_pvalue", pr[0], "timeline", pr[1])
+    if (pub := _publication_p(p2, best=True)) and "p2_best_pvalue" not in feats:
+        put("p2_best_pvalue", pub["p_value"], "pubmed", _pub_detail(pub))
+        if "p2_primary_endpoint_met" not in feats and pub["basis"] != "first_p_value":
+            put("p2_primary_endpoint_met", "yes" if pub["p_value"] < 0.05 else "no", "pubmed", _pub_detail(pub))
     for name in ("p2_primary_endpoint_met", "p2_best_pvalue", "p2_randomized", "p2_placebo_controlled",
                  "p2_n_total", "p2_dose_response"):
         if name not in feats and cval(name) is not None:
@@ -104,6 +116,9 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
 
     # --- Phase 3 design (registered) ----------------------------------------------------------------------
     pivotal = [t for t in p3 if t["design"]["randomized"] and not t["design"]["single_arm"]]
+    starts = [t["start_date"] for t in p3 if t.get("start_date")]
+    if starts:
+        put("anchor_year", int(min(starts)[:4]), "ctgov", "year of the earliest Phase 3 start (era)")
     if p3:
         put("p3_n_pivotal_trials", len(pivotal), "ctgov", ", ".join(t["nct_id"] for t in pivotal))
         planned = sum(t["design"]["enrollment"] or 0 for t in pivotal)
@@ -113,6 +128,15 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
             comp = ("placebo" if any(t["design"]["placebo_controlled"] for t in pivotal)
                     else "active" if any(t["design"]["active_controlled"] for t in pivotal) else "mixed")
             put("p3_comparator", comp, "ctgov")
+            put("p3_double_blind", any(t["design"].get("blinding_level") == 2 for t in pivotal), "ctgov",
+                "any randomized Phase 3 double-blind or more")
+            dmc = [t["design"].get("has_dmc") for t in pivotal if t["design"].get("has_dmc") is not None]
+            if dmc:
+                put("p3_dmc", any(dmc), "ctgov", "data monitoring committee registered for a randomized Phase 3")
+        classes = [st.endpoint_class(o) for t in (pivotal or p3) for o in t["design"].get("primary_outcomes_registered", [])[:1]]
+        if classes:
+            put("p3_endpoint_class", max(sorted(set(classes)), key=classes.count), "ctgov",
+                "most common class of the Phase 3 trials' first registered primary outcome")
     for name in ("p3_n_pivotal_trials", "p3_comparator", "p3_same_endpoint_as_p2", "p3_non_inferiority", "p3_planned_n"):
         if name not in feats and cval(name) is not None:
             put(name, cval(name), "claude", claude[name].get("quote") or "")
@@ -131,10 +155,17 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
             put("p3_n_positive_pivotal", sum(k["p_value"] < 0.05 for k in keys3), "ctgov")
             put("p3_primary_endpoint_met", "yes" if all(k["p_value"] < 0.05 for k in keys3) else
                 ("mixed" if any(k["p_value"] < 0.05 for k in keys3) else "no"), "ctgov")
-        elif "PHASE3_NEGATIVE" in events:
-            put("p3_primary_endpoint_met", "no", "timeline", events["PHASE3_NEGATIVE"]["quote"])
-        elif "PHASE3_POSITIVE" in events:
-            put("p3_primary_endpoint_met", "yes", "timeline", events["PHASE3_POSITIVE"]["quote"])
+        else:
+            if "PHASE3_NEGATIVE" in events:
+                put("p3_primary_endpoint_met", "no", "timeline", events["PHASE3_NEGATIVE"]["quote"])
+            elif "PHASE3_POSITIVE" in events:
+                put("p3_primary_endpoint_met", "yes", "timeline", events["PHASE3_POSITIVE"]["quote"])
+            if pr := _readout_p(timeline, "PHASE3"):
+                put("p3_best_pvalue", pr[0], "timeline", pr[1])
+            if (pub := _publication_p(pivotal or p3, best=False)) and "p3_best_pvalue" not in feats:
+                put("p3_best_pvalue", pub["p_value"], "pubmed", _pub_detail(pub))
+                if "p3_primary_endpoint_met" not in feats and pub["basis"] != "first_p_value":
+                    put("p3_primary_endpoint_met", "yes" if pub["p_value"] < 0.05 else "no", "pubmed", _pub_detail(pub))
         safety = [t["safety"] for t in pivotal if t.get("safety")]
         rr = [s["sae_rr"] for s in safety if s.get("sae_rr")]
         if rr:
@@ -165,6 +196,12 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
             put(flag, True, "timeline", events[ev]["quote"])
         elif cval(flag) is not None:
             put(flag, cval(flag), "claude", claude[flag].get("quote") or "")
+    # Months from the cut-off to the announced PDUFA goal date (the latest announcement, which carries any extension).
+    pdufa = sorted((e for e in timeline if e["event_type"] == "PDUFA_DATE" and isinstance(e.get("value"), str)),
+                   key=lambda e: e["date"])
+    if li >= ORDER.index("L3") and pdufa and meta.get("cutoff") and pdufa[-1]["value"] > meta["cutoff"]:
+        months = (date.fromisoformat(pdufa[-1]["value"]) - date.fromisoformat(meta["cutoff"])).days / 30.44
+        put("months_to_pdufa", round(months, 1), "timeline", pdufa[-1].get("quote") or "")
     if li >= ORDER.index("L4"):
         if "ADCOM_VOTE" in events:
             yes, no = (int(x) for x in events["ADCOM_VOTE"]["value"].split("-"))
@@ -177,6 +214,41 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
         put("safety_signal", cval("safety_signal"), "claude", claude["safety_signal"].get("quote") or "")
 
     return {k: v.to_dict() for k, v in feats.items()}, conflicts
+
+
+def _publication_p(trials: list[dict], best: bool) -> dict | None:
+    """Main-paper result from PubMed (`publication_result`, attached only when public by the cut-off): the best
+    across Phase 2 trials, the worst across Phase 3 ones (as for registry results). Off while USE_PUBMED is False."""
+    if not USE_PUBMED:
+        return None
+    pubs = [t["publication_result"] for t in trials
+            if t.get("publication_result") and t["publication_result"].get("p_value") is not None]
+    if not pubs:
+        return None
+    return (min if best else max)(pubs, key=lambda r: r["p_value"])
+
+
+def _pub_detail(pub: dict) -> str:
+    return f"PMID {pub['pmid']} ({pub['available']}): {(pub.get('quote') or '')[:200]}"
+
+
+def _readout_p(timeline: list[dict], phase: str) -> tuple[float, str] | None:
+    """Primary-endpoint p-value from the press-release readouts: the worst across readouts (a negative readout
+    outranks a positive one, as for met / not met)."""
+    for kind in ("NEGATIVE", "POSITIVE"):
+        evs = [e for e in timeline if e["event_type"] == f"{phase}_{kind}"]
+        if not evs:
+            continue
+        ps = []
+        for e in evs:
+            try:
+                p = float(e.get("value") or "")
+            except (TypeError, ValueError):
+                continue
+            if 0 < p <= 1:                     # also drops NaN (empty values read back from parquet)
+                ps.append((p, e.get("quote") or ""))
+        return max(ps, key=lambda x: x[0]) if ps else None
+    return None
 
 
 def _disagree(a, b) -> bool:

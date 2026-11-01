@@ -101,3 +101,41 @@ def assurance(z_phase2: float, n_phase2: int, n_phase3: int, shrinkage: float = 
     """
     r = math.sqrt(n_phase3 / n_phase2)
     return float(stats.norm.cdf((shrinkage * z_phase2 * r - alpha_z) / math.sqrt(1 + r * r)))
+
+
+# Registered primary outcome → endpoint class (first match wins; order matters: 'progression-free survival' is a
+# time-to-event surrogate, not overall survival).
+_ENDPOINT_CLASSES = [
+    ("pk_safety", r"pharmacokinetic|\bauc\b|\bc ?max\b|bioequivalen|plasma concentration|adverse|safety|tolera|"
+                  r"treatment.emergent|\bteaes?\b|\baes?\b|solicited|reactogenicity"),
+    ("time_to_event", r"progression.free|disease.free|event.free|relapse.free|recurrence.free|metastas[ie]s.free|"
+                      r"\bpfs\b|\bdfs\b|\befs\b|\brfs\b|time to .{0,40}(progression|relapse|recurrence|treatment failure)|"
+                      r"progression event"),
+    ("survival", r"overall survival|^\s*survival|\bos\b|all.cause mortality|death from any cause|time to death"),
+    ("clinical_event", r"exacerbation|hospitali[sz]|\bmace\b|cardiovascular (death|event)|myocardial infarction|stroke|"
+                       r"fracture|bleed|thrombo|relapse rate|annuali[sz]ed|attack|seizure frequency|episodes|flare|"
+                       r"incidence of|occurrence of|time to (first|onset|intervention|observation)|mortality|death|"
+                       r"infection|ulcer|rejection|pregnanc|rates? of|transfusion|ventilation|tachycardia"),
+    ("response_rate", r"response|\borr\b|remission|responders?|cure|eradication|virologic|\bsvr\d*\b|healing|"
+                      r"clearance|success|relief|resolution|abstinen|non.use|failure|efficacy|maintaining|"
+                      r"(percentage|proportion|number) of (participants|patients|subjects)"),
+    ("biomarker", r"hba1c|a1c|glycated|ldl|cholesterol|triglyceride|blood pressure|viral load|hiv.1 rna|hemoglobin|"
+                  r"haemoglobin|bone mineral density|\bbmd\b|egfr|\bgfr\b|filtration rate|proteinuria|albumin|"
+                  r"forced expiratory|fev.?1|platelet|neutrophil|\bbody weight\b|\bweight (loss|change|gain)\b|bmi|"
+                  r"glucose|insulin|immunogenicity|immune response|seroconver|seroprotect|antibod|tit(er|re)|"
+                  r"geometric mean|occupancy|cytolog"),
+    ("scale_score", r"score|scale|questionnaire|index|pain|symptom|quality of life|acr ?\d+|pasi|easi|madrs|ham.?d|"
+                    r"panss|adas|cdr|edss|\biga\b|severity|assessment|function|frequency|change from baseline|"
+                    r"rating|duration|control|days"),
+    # Generic laboratory words, only when nothing more specific matched ('pain level' is a score).
+    ("biomarker", r"serum|plasma|\blevels?\b|concentration|\bweight\b|lesion|mri|urine|excretion"),
+]
+_ENDPOINT_RE = [(name, re.compile(pat, re.IGNORECASE)) for name, pat in _ENDPOINT_CLASSES]
+
+
+def endpoint_class(outcome: str) -> str:
+    """Coarse class of a registered primary outcome measure, for the endpoint-type feature."""
+    for name, pat in _ENDPOINT_RE:
+        if pat.search(outcome or ""):
+            return name
+    return "other"

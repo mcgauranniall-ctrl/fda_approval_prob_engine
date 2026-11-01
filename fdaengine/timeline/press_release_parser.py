@@ -88,7 +88,9 @@ RULES: list[tuple[str, re.Pattern, bool]] = [
     ("PDUFA_DATE", re.compile(rf"(PDUFA|target action date|goal date).{{0,60}}?({_MONTH_RE})\s+(\d{{1,2}},?\s+)?(\d{{4}})", re.IGNORECASE), False),
     ("PDUFA_EXTENDED", re.compile(r"(extend\w*|extension).{0,80}(PDUFA|goal date|action date|review (period|clock))|major amendment", re.IGNORECASE), True),
     ("ADCOM_NOT_PLANNED", re.compile(r"(not|no)\s+(currently\s+)?(plan\w*|intend\w*|expect\w*)\s+to\s+hold\s+an?\s+advisory committee|no advisory committee", re.IGNORECASE), False),
-    ("ADCOM_VOTE", re.compile(r"advisory committee.{0,200}?voted\s+(\d{1,2})\s*(?:to|-|–)\s*(\d{1,2})", re.IGNORECASE), True),
+    # 'The Committee voted 21 to 5', 'AMDAC voted (7-6)', 'voted favorably 14 to 1', 'voted 11 to 8 against'.
+    ("ADCOM_VOTE", re.compile(r"(?:advisory committee|committee|panel|\bODAC\b|\b[A-Z]{2,6}AC\b|adcom).{0,200}?\bvoted\b"
+                              r"[^.0-9]{0,40}?\(?\s*(\d{1,2})\s*(?:to|-|–)\s*(\d{1,2})\s*\)?", re.IGNORECASE), True),
     ("ADCOM_SCHEDULED", re.compile(r"advisory committee (meeting|will (meet|convene))|(convene|schedul\w+) an? advisory committee", re.IGNORECASE), False),
     ("CRL", re.compile(r"complete response letter|\bCRL\b", re.IGNORECASE), True),
     ("APPROVED", re.compile(r"(FDA|Food and Drug Administration)\s+(has\s+)?(approved|granted (full |traditional |accelerated |regular )?approval)|approved (in|by) the (U\.S\.|FDA|United States)", re.IGNORECASE), True),
@@ -99,6 +101,41 @@ RULES: list[tuple[str, re.Pattern, bool]] = [
     ("ACCELERATED_PATHWAY", re.compile(r"accelerated approval", re.IGNORECASE), False),
 ]
 RULES_BY_TYPE = {etype: pattern for etype, pattern, _ in RULES}
+
+# Primary-endpoint p-values reported with a readout ('met its primary endpoint (p<0.001)').
+PVALUE = re.compile(r"\bp\s*(?:-?\s*values?)?\s*(?:(?:<|=|≤|&lt;|less than|of|was)\s*)+"
+                    r"(\d(?:\.\d+)?\s*[x×]\s*10\s*[-−–]\s*\d+|\d(?:\.\d+)?e-\d+|0?\.\d+|1\.0)", re.IGNORECASE)
+PVALUE_WINDOW = 8              # sentences after the readout sentence searched for its p-value
+_NOT_PRIMARY = re.compile(r"secondary|post.?hoc|sub.?group|nominal|exploratory|pooled|meta.?analys", re.IGNORECASE)
+
+
+def _pvalue_number(raw: str) -> float | None:
+    s = re.sub(r"\s+", "", raw).replace("×", "x").replace("−", "-").replace("–", "-")
+    try:
+        if "x10" in s:
+            mant, exp = s.split("x10")
+            return float(mant) * 10 ** float(exp)
+        return float(s)
+    except ValueError:
+        return None
+
+
+def readout_pvalue(sentences: list[str], i: int, phase: str) -> str | None:
+    """Worst (largest) primary-endpoint p-value reported for the readout in sentence `i`, searched in that sentence
+    and the next PVALUE_WINDOW: a later sentence must say 'primary'. Sentences about secondary/subgroup analyses or
+    another phase, and the 'About ...' boilerplate, are skipped. `phase` is '2' or '3'."""
+    for k, s in enumerate(sentences[i:i + PVALUE_WINDOW + 1]):
+        if k and re.match(r"\s*About\b", s):
+            break
+        found = [p for p in (_pvalue_number(m.group(1)) for m in PVALUE.finditer(s)) if p is not None and 0 < p <= 1]
+        if not found or (k and not re.search(r"primary", s, re.IGNORECASE)) or _NOT_PRIMARY.search(s):
+            continue
+        phases = {(m.group(2) or m.group(1)).lower() for m in _PHASE.finditer(s)}
+        phases = {"3" if p in ("3", "iii") else "2" if p in ("2", "ii") else "1" for p in phases}
+        if (phases and phase not in phases) or (k and phases - {phase}):   # a later sentence may name only this phase
+            continue
+        return f"{max(found):g}"
+    return None
 
 
 @dataclass
@@ -264,7 +301,13 @@ def parse_document(text: str, filed: date, source_id: str, names: list[str], ind
                 if value is None:
                     continue
             if etype == "ADCOM_VOTE":
-                value = f"{m.group(1)}-{m.group(2)}"
+                yes, no = m.group(1), m.group(2)
+                if re.match(r"[\s,)]*(?:votes?\s+)?against", s[m.end():m.end() + 30], re.IGNORECASE) or \
+                        re.search(r"against", s[m.start():m.start(1)], re.IGNORECASE):
+                    yes, no = no, yes                       # 'voted 11 to 8 against' = 8 for, 11 against
+                value = f"{yes}-{no}"
+            if etype.startswith(("PHASE2", "PHASE3")):
+                value = readout_pvalue(sentences, i, etype[5])
             d, basis = _event_date(s[max(0, m.start() - DATE_WINDOW):m.end() + DATE_WINDOW], filed)
             events.append(ParsedEvent(etype, d.isoformat(), filed.isoformat(), basis, s[:600], source_id, value,
                                       "sentence" if sentence_cov >= 0.5 else "context",

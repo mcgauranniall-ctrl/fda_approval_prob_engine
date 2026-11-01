@@ -27,6 +27,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from fdaengine import config
+from fdaengine.model.landmark import training_population
 
 PROCESSED = config.DATA_DIR / "processed"
 REPORTS = config.PROJECT_ROOT / "reports"
@@ -38,11 +39,7 @@ FLAGS = {"orphan", "fast_track", "btd", "spa", "priority_review", "accelerated_p
 SKIP = {"anchor_year", "ta_prior_rate", "therapeutic_area", "sponsor_size", "sponsor_prior_approvals", "n_sponsors"}
 
 
-def population(lm: pd.DataFrame) -> pd.DataFrame:
-    d = lm[lm["in_cohort"] & lm["in_primary"] & lm["y_level"].notna()]
-    final = d["window_closed"] | d["level"].isin(["L3", "L4", "L5", "L6"])
-    d = d[final]
-    return d[(d["level"] != "L2") | ~d["cutoff_estimated"]]
+population = training_population
 
 
 def mde(n: int, p: float, q: float | None) -> float | None:

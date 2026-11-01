@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from fdaengine.acquire.case_folder import Case
-from fdaengine.model import provisional
+from fdaengine.model import registry
 from fdaengine.predict import flags as flag_rules
 
 
@@ -28,13 +28,13 @@ def predict_case(case: Case) -> dict:
     meta = case.read_json("case.json")
     feats = case.read_json("features.json")
     level, features = feats["level"], feats["features"]
-    pred = provisional.predict(level, features)
+    pred = registry.predict(level, features)
     extraction = case.read_json("extracted/fields.json") or {}
     mflags = flag_rules.model_flags(level, features)
     dflags = flag_rules.data_flags(level, features, feats["conflicts"], extraction.get("rejected", []), meta,
                                    case.read_json("manifest.json", {}))
     missing = [k for k in flag_rules.KEY_FEATURES[level] if k not in features]
-    conf, reasons = confidence(pred, len(missing), len(feats["conflicts"]), True)
+    conf, reasons = confidence(pred, len(missing), len(feats["conflicts"]), registry.is_provisional(pred))
     contribs = pred["contributions"]
     pred.update({
         "confidence": conf, "confidence_reasons": reasons,
@@ -43,5 +43,7 @@ def predict_case(case: Case) -> dict:
         "model_flags": mflags, "data_flags": dflags,
         "analyst_flags": case.read_json("extracted/analyst_flags.json", []),
     })
+    if meta.get("cutoff") and (tm := registry.approval_timing(level, features, meta["cutoff"])):
+        pred["approval_timing"] = tm
     case.write_json("prediction.json", pred)
     return pred

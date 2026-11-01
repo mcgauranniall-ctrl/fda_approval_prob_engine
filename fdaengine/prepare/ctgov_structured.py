@@ -46,6 +46,7 @@ def _design(study: dict) -> dict:
         "enrollment": d.get("enrollmentInfo", {}).get("count"),
         "enrollment_type": d.get("enrollmentInfo", {}).get("type"),
         "primary_outcomes_registered": [o.get("measure", "") for o in p.get("outcomesModule", {}).get("primaryOutcomes", [])],
+        "has_dmc": p.get("oversightModule", {}).get("oversightHasDmc"),
     }
 
 

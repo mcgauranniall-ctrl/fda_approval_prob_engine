@@ -44,3 +44,15 @@ def test_assurance_behaviour():
     # More shrinkage -> lower assurance
     assert st.assurance(3.0, 100, 300, shrinkage=0.5) < st.assurance(3.0, 100, 300, shrinkage=1.0)
     assert st.smd_to_log_or(1.0) == pytest.approx(math.pi / math.sqrt(3))
+
+
+def test_endpoint_class():
+    assert st.endpoint_class("Progression-Free Survival (PFS)") == "time_to_event"
+    assert st.endpoint_class("Overall Survival") == "survival"
+    assert st.endpoint_class("Change From Baseline in HbA1c at Week 26") == "biomarker"
+    assert st.endpoint_class("Annualized Rate of Moderate or Severe Exacerbations") == "clinical_event"
+    assert st.endpoint_class("Objective Response Rate") == "response_rate"
+    assert st.endpoint_class("Change in MADRS Total Score") == "scale_score"
+    assert st.endpoint_class("Time-weighted Sum of the Pain Intensity Difference (SPID48)") == "scale_score"
+    assert st.endpoint_class("Change in Serum Phosphate Level") == "biomarker"
+    assert st.endpoint_class("Number of Participants With Treatment-Emergent Adverse Events") == "pk_safety"

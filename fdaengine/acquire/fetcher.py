@@ -25,6 +25,8 @@ _HOST_INTERVAL = {
     "api.fda.gov": 0.25,
     "clinicaltrials.gov": 0.1,
     "rxnav.nlm.nih.gov": 0.06,
+    "eutils.ncbi.nlm.nih.gov": 0.35,     # NCBI: <= 3 requests/s without an API key
+    "www.federalregister.gov": 1.0,      # returns 429 when hit faster
 }
 _DEFAULT_UA = "fdaengine/0.1 (research tool)"
 

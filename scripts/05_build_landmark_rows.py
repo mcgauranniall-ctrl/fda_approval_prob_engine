@@ -34,10 +34,12 @@ TA_PRIOR_WEIGHT = 20             # pseudo-programmes pulling a TA's rate towards
 
 # ------------------------------------------------------------------------------------------------ trials
 _NEED: dict = {}
+_PUBS: dict = {}
 
 
-def _init(need):
+def _init(need, pubs):
     _NEED.update(need)
+    _PUBS.update(pubs)
 
 
 def _shard(path: str) -> dict[int, list[tuple[dict, str]]]:
@@ -46,7 +48,7 @@ def _shard(path: str) -> dict[int, list[tuple[dict, str]]]:
     for study in bulk.iter_jsonl_gz(Path(path)):
         nct = study.get("protocolSection", {}).get("identificationModule", {}).get("nctId")
         for row, cutoff, names in _NEED.get(nct, ()):
-            vis = lm.visible_trial(study, names, date.fromisoformat(cutoff))
+            vis = lm.visible_trial(study, names, date.fromisoformat(cutoff), _PUBS.get(nct))
             if vis:
                 out[row].append(vis)
     return out
@@ -136,7 +138,12 @@ def main(argv: list[str] | None = None) -> None:
     for i, r in rows.iterrows():
         for n in trials_by_prog.get(r.programme_id, []):
             need[n].append((i, r.cutoff, names_by_prog[r.programme_id]))
-    with Pool(args.workers, initializer=_init, initargs=(dict(need),)) as pool:
+    # PubMed main-paper results (script 01b), attached by `visible_trial` only once public by the cut-off.
+    pub_path = INTERIM / "pubmed" / "trial_results.parquet"
+    pubs = ({r["nct_id"]: {k: v for k, v in r.items() if k != "nct_id"}
+             for r in pd.read_parquet(pub_path).to_dict("records") if r["nct_id"] in need} if pub_path.exists() else {})
+    print(f"[05] PubMed main-paper results for {len(pubs):,} linked trials")
+    with Pool(args.workers, initializer=_init, initargs=(dict(need), pubs)) as pool:
         vis_by_row: dict[int, list] = defaultdict(list)
         for part in pool.imap_unordered(_shard, [str(p) for p in bulk.raw_files("ctgov")]):
             for k, v in part.items():
@@ -148,6 +155,10 @@ def main(argv: list[str] | None = None) -> None:
                          names_by_prog)
     sponsor_approvals = CompanyDates([*approvals[["SponsorName", "approval_date"]].itertuples(index=False),
                                       *((b.applicant, b.first_licensed) for b in blas)])
+    # CRLs announced in press releases (one per drug and date), never the 2025 FDA CRL database (label source only).
+    crl = ev[(ev["event_type"] == "CRL") & ~ev["source"].isin(lm.LABEL_ONLY_SOURCES)]
+    crl = crl.join(pg[["drug_id", "lead_sponsor"]], on="programme_id").drop_duplicates(["drug_id", "date"])
+    sponsor_crls = CompanyDates(crl[["lead_sponsor", "date"]].itertuples(index=False))
     con = edgar_bulk.connect()
     filers = CompanyDates(con.execute("SELECT company, MIN(file_date) FROM hits GROUP BY cik, company").fetchall())
     # A programme's outcome counts towards its TA's prior rate from the date it became knowable: the approval, the
@@ -188,6 +199,7 @@ def main(argv: list[str] | None = None) -> None:
         ctx = lm.Context(therapeutic_area=p.therapeutic_area, modality=modality.get(r.programme_id),
                          moiety_approved=bool(first_appr and first_appr <= cut),
                          sponsor_prior_approvals=sponsor_approvals.count_before(p.lead_sponsor, cut),
+                         sponsor_prior_crls=sponsor_crls.count_before(p.lead_sponsor, cut),
                          ta_prior_rate=rate, anchor_year=int(p.anchor_p3_start[:4]),
                          is_combination=bool(p.is_combination), n_sponsors=int(p.n_sponsors),
                          dates=[d for d in (first_appr if first_appr and first_appr <= cut else None, rate_date,

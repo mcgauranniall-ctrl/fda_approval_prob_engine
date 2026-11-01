@@ -31,10 +31,11 @@
 | D6 | Training data | Built from **structured sources + rule-based parsers only**: no scheduled Claude batches. An optional script lets you run Claude extraction on a sample yourself, if you choose to |
 | D7 | UI | **Streamlit**; the report is a self-contained v1-style HTML page embedded in the app |
 | D8 | Applications & build order | The **core engine is audience-neutral** and is validated on statistical grounds alone (calibration, discrimination, timing accuracy). Applications sit on top as modules: **payer module first, investor module last**. The stock-market strategy test is the final phase of the whole build |
+| D9 | Priority (user decision 2026-11-01) | **The payer use case (UnitedHealthcare-style pipeline and budget forecasting) is the main priority.** No work on stock-market capabilities (investor module, event study, market backtest) until the user asks for it. The roadmap (§14) puts what payers need first: approval timing, new-indication (supplement) labels, label breadth, then the payer module |
 
 ---
 
-## Build status (updated 2026-10-30)
+## Build status (updated 2026-11-01)
 
 **Done: the "fast first win" slice (P0, P1, P2, P7, P8), running on the provisional model.** It was tested end to
 end on suzetrigine (acute pain) in live and backtest modes at L1–L5, with 16 offline unit tests.
@@ -165,8 +166,96 @@ Deviation, decided 2026-11-01:
   counted late filers as failures (41 of 107 L3 "failures" were approved after the window, e.g. ganaxolone,
   migalastat, pacritinib). Y_PROG is kept unchanged for reference and for the programme-level analysis.
 
-**Next:** P5 (fitted Bayesian landmark model with label-error correction, replacing `model/provisional.py`; Y_NEXT and timing models;
-validation) → P9 payer module → P11 investor module.
+**New features (2026-11-01, before P5):** all rule-based (D6), shared by training and live cases, each with tests.
+- **Primary-endpoint p-values from readout press releases** (`press_release_parser.readout_pvalue`): the worst
+  p-value in the readout sentence or the next 8 that say "primary", skipping secondary/subgroup/post-hoc
+  sentences, other phases and the "About ..." boilerplate. 17/17 correct on review samples; found in ~13% of
+  readout releases. Registry results still take priority. Phase 3 |z| coverage at L2+: 2–11% → 15–28%.
+- **Phase 3 design:** double-blind, data monitoring committee, and the **endpoint class** of the registered primary
+  outcome (`stats_transforms.endpoint_class`: survival, time-to-event, response, clinical event, biomarker,
+  scale/score, PK/safety, other). Overall-survival endpoints have the *lowest* approval rate (26% at L1 vs 44%
+  biomarker), the opposite of v1's endpoint weights (mostly oncology risk).
+- **Sponsor's prior complete response letters** (press-release CRLs before the cut-off; the 2025 FDA CRL database
+  stays label-only). Raw association is positive (experience proxy); adjusted for sponsor approvals it is null.
+- **Era for live cases** (`anchor_year` from the earliest Phase 3 start).
+
+**P5 production model (2026-11-01): `scripts/09_production_model.py`, `fdaengine/model/landmark.py`,
+`models/landmark-v1/`, `reports/validation.html`.** Bayesian logistic model across L1–L5 (PyMC, sampled with
+nutpie): level intercepts with weak literature priors, effects shared across levels with stage deviations (L1 | L2 |
+L3–L5), a TA random effect, and the label as a noisy measurement (sensitivity/specificity Beta priors from
+`label_error.json`). Predictions are P(true outcome). Missing inputs contribute nothing (training-mean imputation;
+missingness is never a feature). 1,992 training rows; final fit R̂ ≤ 1.005, 0 divergences.
+
+Cross-validated (5 folds grouped by drug; scores against the observed labels on the observed-label scale):
+
+| Level | n | Brier | Best benchmark (Brier) | Provisional (app today) | Cal. slope (95% bootstrap) | AUROC | P5 target |
+|---|---|---|---|---|---|---|---|
+| L1 | 1,254 | 0.218 | 0.220 logistic, same features | 0.242 | 0.89 (0.68–1.08) | 0.65 | met |
+| L2 | 345 | 0.218 | 0.221 | 0.278 | 0.93 (0.62–1.27) | 0.68 | met |
+| L3 | 281 | 0.215 | 0.214 "endpoint met" alone | 0.261 | 0.62 (−0.12–1.41) | 0.57 | tie (Δ +0.001, CI −0.005 to +0.008) |
+| L5 | 96 | 0.214 | 0.211 "endpoint met" alone | 0.288 | 1.21 (0.34–2.27) | 0.66 | tie (Δ +0.003, CI −0.011 to +0.019) |
+
+Significantly better than the provisional model and the level base rate at every level except L3 (base rate tie);
+best Brier score overall (0.218 vs 0.221–0.255). Mean predicted P(true approval) matches the gold-set corrected
+rates (L1 43% vs 40%, L2 56% vs 51%, L3 70% vs 67%). After filing, little public pre-decision information
+predicts the outcome beyond the base rate and whether the endpoints were met: L3/L5 forecasts are calibrated but
+only weakly discriminating, and the report should say so. Strongest effects: Phase 3 met (OR 3.8 per step),
+Phase 2 |z| (2.6/SD), ≥2 pivotal trials (2.3), large sponsor (1.9), sponsor approvals (1.3/SD); AdCom scheduled
+0.56 at L3–L5.
+
+Deviations, decided during P5:
+- **Script numbering:** 08 is the data-readiness check and 09 the production model; payer analogs → 10, model card
+  → 11, market backtest → 12.
+- **Sampler: nutpie** (numba), because PyTensor's C backend needs g++, which this Windows machine lacks.
+- **Late levels (L3–L5) use only pre-registered features** (`Spec.late`: Phase 2/3 met, Phase 3 |z|, large sponsor,
+  ≥2 pivotal trials, priority review, accelerated pathway, AdCom scheduled, PDUFA extended; H7/H9/H11/H12/H15). With
+  every feature the late levels overfit (CV calibration slope 0.16 at L3, −0.02 at L5).
+- **No TA effect at L3–L5** (`TA_LATE = False`): the TA prior rate predicted worse than the level base rate there,
+  and dropping TA improved the late-level CV Brier (L3 0.217 → 0.215, L5 0.222 → 0.214). This choice was informed
+  by the validation results, so the late-level CV scores are slightly optimistic.
+- **The app still uses the provisional model by default.** `FDAENGINE_MODEL=fitted` switches cases, the probability
+  path and the report to `landmark-v1` (`model/registry.py`); L6 falls back to the provisional model. Live cases do
+  not yet compute sponsor prior approvals/CRLs, moiety-approved or TA, so those inputs count as missing (P6).
+- Not built yet: Y_NEXT model, timing (competing-risks) model, label models (§7.5); recalibration was not needed.
+
+**Data-source extensions (2026-11-01, after P5), each tested with a paired ablation** (identical rows, folds hashed
+by drug, 3 fold seeds; changing the fold assignment alone moves CV Brier by up to ~0.006, so single runs are not
+comparable across data builds):
+- **PubMed trial publications** (`sources/pubmed.py`, `scripts/01b_pubmed.py`): 38,039 Phase 2/3 trials searched by
+  NCT ID, 24,711 articles, 14,056 trials with a paper, 5,202 with a main-paper primary result (dated by electronic
+  publication; ~85% precise on review). **Not used as features** (`features.build.USE_PUBMED = False`): far less
+  predictive than registry results (L1 Phase 2 AUC 0.15–0.54 vs 0.81) and worse CV Brier at L1, L3 and L5 (overall
+  +0.0010, every seed). Live cases still save the main paper's result sentence as a source file.
+- **Federal Register AdCom meeting notices** (`sources/federal_register.py`, `scripts/01c_federal_register.py`):
+  1,969 notices 1995–2026 → 748 ADCOM_SCHEDULED events dated by publication (meeting date as value). A drug must be
+  named in an agenda sentence citing its application (name-only matching was ~45% precise; now ~65%: combination
+  products and multi-item notices remain). Net effect null (L3 +0.0008, L5 −0.0009).
+- **AdCom vote parsing widened** ('The Committee voted 21 to 5', 'AMDAC voted (7-6)', 'voted 11 to 8 against' read
+  as 8 for): 42 → 61 votes; L4 training rows 16 → 23.
+- **Not done:** sponsor investor-relations sites mostly refuse automated requests (bot protection; not
+  circumvented); newswire archives (PR Newswire allows it in robots.txt) raise a terms-of-use question for the user;
+  FDA's live site keeps AdCom minutes only from 2023 (older ones are in the FDA web archive, a separate job).
+- **Conclusion:** the public pre-decision record available without newswire or archive scraping is close to
+  exhausted for these fields; the model's late-level limits are a data-availability limit, not a modelling one.
+
+**P6a timing model (2026-11-01): `scripts/10_timing_model.py`, `fdaengine/model/timing.py`, `models/timing-v1/`,
+`reports/timing.html`.** P(approved by month h) = P(approved within the horizon) [landmark model] × G(h | approved).
+G is estimated directly as a CDF: each approved row contributes "approved by h?" at a monthly grid up to its horizon,
+fitted by one penalised logistic regression on stage-specific splines in log h, covariates × log h (large sponsor,
+BTD, orphan, priority review, accelerated pathway, AdCom scheduled, PDUFA date known) and a "PDUFA date passed by h"
+step (new shared feature `months_to_pdufa`, latest announced goal date, L3+; known for 210 late rows). Monotone in h;
+50 drug-bootstrap refits give 90% intervals. Cross-validated (folds hashed by drug): **calibrated at every level and
+horizon** (20 of 20 level × {6, 12, 24, 36}-month cells within the observed share's 95% interval; e.g. L3 12 months
+53% predicted vs 55% observed). It beats the level's empirical curve where covariates matter (L3 6 months Brier 0.201
+vs 0.218; L5 6–12 months) and ties it elsewhere: most timing information is the level itself. Cases with the fitted
+model get `approval_timing` in `prediction.json` (6/12/24/36 months and 1 January of the next two plan years) and an
+"Approval timing (payer view)" panel in the report. Check later: at L1 the median time from cut-off to approval
+among approved programmes is 23 months, short for Phase 3 + review; the registry often misses a drug's earliest
+Phase 3, which makes the anchor late.
+
+**Next (payer first, D9):** P6b new-indication (supplement) labels → P6c label-breadth models →
+P6d live-case context features and switching the app to the fitted model → P9 payer module → P10 hardening. The
+investor module (P11) is paused until the user asks for it.
 ---
 
 ## 0. What's wrong with v1 (and what v2 fixes)
@@ -319,10 +408,12 @@ Numbered, idempotent, cached scripts in `scripts/`. **No LLM calls anywhere in t
 | `05_build_landmark_rows.py` | One row per programme **per level it reached**, with features computed strictly from information ≤ that level's cut-off | `landmarks.parquet` |
 | `06_eda_and_univariate.py` | Missingness audit, distributions, univariate tests + FDR, per level | `reports/eda.html` |
 | `07_fit_models.py` | §7 models | `models/vX/` |
-| `08_validate_and_calibrate.py` | Temporal validation, calibration per level, information value per level | `reports/validation.html` |
-| `09_payer_analogs.py` | Analog launch library: approved drugs × CMS Part D/B + Medicaid spend/utilisation by year since launch; Bass-diffusion uptake fits; price per patient-year by class/indication (§8.1) | `data/processed/analogs.parquet` |
-| `10_model_card.py` | Dataset, hypothesis verdicts, effect sizes, performance per level, timing and label model accuracy | `models/vX/model_card.html` |
-| `11_market_backtest.py` | **Built last:** event study + strategy backtest (§8.2) | `reports/market_backtest.html` |
+| `08_data_readiness.py` | Label error from the gold set, statistical capacity per level (built 2026-11-01) | `reports/data_readiness.html` |
+| `09_production_model.py` | P5: fit, temporal + grouped CV validation, calibration, benchmarks | `models/landmark-v1/`, `reports/validation.html` |
+| `10_timing_model.py` | P6a: approval timing model, validation | `models/timing-v1/`, `reports/timing.html` |
+| `11_payer_analogs.py` | Analog launch library: approved drugs × CMS Part D/B + Medicaid spend/utilisation by year since launch; Bass-diffusion uptake fits; price per patient-year by class/indication (§8.1) | `data/processed/analogs.parquet` |
+| `12_model_card.py` | Dataset, hypothesis verdicts, effect sizes, performance per level, timing and label model accuracy | `models/vX/model_card.html` |
+| `13_market_backtest.py` | **Paused (D9):** event study + strategy backtest (§8.2) | `reports/market_backtest.html` |
 
 **Optional, manual only:** `scripts/claude_sample_extract.py --n 50` runs the case-extraction prompt over a sample of
 historical programmes, one `claude -p` call at a time, whenever **you** decide to run it. It's used for (a) checking
@@ -528,7 +619,7 @@ for whom, and at what cost**, with honest uncertainty.
 - Natural extensions later: biosimilar/generic entry timing (Orange Book/Purple Book exclusivity + patents), and
   label-expansion (supplement) forecasts for drugs already on formulary.
 
-### 8.2 Investor module (built last)
+### 8.2 Investor module (paused, D9: not built until the user asks)
 
 This is the **final phase of the build** (D8). It answers one question: **does the model know something before the
 market prices it in?**
@@ -819,16 +910,20 @@ fda_approval_prob_engine/
 | **P3: Historical dataset** | Scripts 01–05: programmes, timelines, labels, censoring, landmark rows | Gold-set accuracy measured for grouping, event dates and labels |
 | **P4: Statistical inference** | Scripts 06–07 (frequentist): EDA, FDR screening, GLM/Firth/GEE, competing risks, stability selection | Hypothesis table H1–H17 complete per level |
 | **P5: Production model** | Bayesian landmark model + Y_NEXT model + timing model + label models + GBM challenger; validation; calibration; benchmarks | Calibration slope 0.8–1.2 at every level; beats all benchmarks on Brier score; timing calibrated at 12/24 months |
-| **P6: Predict & explain** | Posteriors per level, probability path, approval-date curve, label probabilities, scenarios, flags, comparables, OOD | `prediction.json` complete for test cases |
+| **P6: Payer core** (re-scoped 2026-11-01, D9) | **P6a timing model:** P(approved by date d) per level, competing risks (approval vs failure), PDUFA-anchored from L3. **P6b new-indication labels:** supplement approvals for drugs already on the market (label accuracy 68% → ≥ 85% on the gold set), modelled as a second cohort. **P6c label breadth:** P(boxed warning), P(REMS), P(accelerated approval), P(label narrower than the trial population), conditional on approval. **P6d live cases:** context features (TA, sponsor history, moiety approved), switch the app to the fitted model, approval-date curve and label panel in the report | P(approved within 12/24/36 months) calibrated per level (temporal holdout); supplement labels ≥ 85% on the gold set; label models beat base rates; `prediction.json` carries timing and label outputs |
 | **P7: Report (neutral profile)** | Template, charts, memo run + number check, PDF | Renders for 6 backtest drugs (approved; P3 fail; P3 success → CRL; CRL → approval; oncology; rare disease) at every level |
 | **P8: UI** | Streamlit screens, level selector, scenarios, watchlist, model explorer | Type a drug, pick a level → report, without touching the terminal |
 | **P9: Payer module** | Analog library (script 09), pricing, Bass uptake, population, budget impact, pipeline view, payer report profile + memo, plan-year backtest | Backtested plan year: 90% budget intervals cover the actual result; P(approved by date) is calibrated |
 | **P10: Hardening** | Golden-file regression tests, one-command retrain, docs | A new model version can be retrained and swapped in with one command |
-| **P11: Investor module + market strategy test (LAST)** | Event study, edge regression (M1), strategy backtest with deflated Sharpe, implied p (if options data is bought), investor report profile, optional APEX export | M1 answered with CIs; market backtest report generated; investor panel live |
+| **P11: Investor module + market strategy test** — **paused (D9)** | Event study, edge regression (M1), strategy backtest with deflated Sharpe, implied p (if options data is bought), investor report profile, optional APEX export | Not scheduled: only if the user asks |
 
 **Fast first win:** P0 → P1 → P2 → P7 with a temporary model (literature phase-transition priors + assurance) → P8.
 That gives an end-to-end demo with the level selector early. P3–P6 then replace the temporary model without changing
-the UI. The payer module follows, and the stock-market test comes last.
+the UI.
+
+**Order from 2026-11-01 (D9, payer first):** P6a timing → P6b new-indication labels → P6c label breadth → P6d live
+cases and app switch → P9 payer module (analog pricing, uptake, eligible population, budget impact, pipeline view,
+plan-year backtest) → P10 hardening. The investor module (P11) is paused.
 
 ---
 

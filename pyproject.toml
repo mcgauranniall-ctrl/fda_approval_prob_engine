@@ -33,6 +33,7 @@ research = [
     "duckdb>=1.0",
     "pyarrow>=16",
     "ijson>=3.3",
+    "nutpie>=0.16.11",
 ]
 
 [dependency-groups]

@@ -16,7 +16,7 @@ from fdaengine.acquire.fetcher import FetchError, default_fetcher
 from fdaengine.prepare import pdf_text
 from fdaengine.prepare.ctgov_structured import structure_trial
 from fdaengine.resolve.programme import Resolution, indication_keywords
-from fdaengine.sources import ctgov, edgar
+from fdaengine.sources import ctgov, edgar, pubmed
 from fdaengine.timeline import events as tl_events
 from fdaengine.timeline import levels as tl_levels
 from fdaengine.timeline.press_release_parser import parse_document, parse_filing_date
@@ -26,6 +26,25 @@ Progress = Callable[[str], None]
 
 def _noop(_: str) -> None:
     pass
+
+
+def _attach_publications(case: Case, structured: list[dict], cutoff: date, progress: Progress) -> None:
+    """PubMed main-paper results (as in training, script 01b), for trials whose main paper was public by the
+    cut-off. The cited sentence is saved as a source file."""
+    fetcher = default_fetcher()
+    progress("Searching PubMed for the trials' publications…")
+    try:
+        pubs = pubmed.fetch(fetcher, pubmed.search_by_nct(fetcher, [t["nct_id"] for t in structured]))
+    except FetchError:
+        return
+    for t in structured:
+        r = pubmed.trial_result([p for p in pubs if t["nct_id"] in p.ncts])
+        if not r or r["available"] > cutoff.isoformat():
+            continue
+        t["publication_result"] = r
+        case.add_file(f"raw/pubmed/{r['pmid']}.txt", f"{r['title']}\n\nResults: {r['quote']}\n",
+                      url=f"https://pubmed.ncbi.nlm.nih.gov/{r['pmid']}/", source="pubmed",
+                      source_date=r["available"], within_cutoff=True, note=f"main paper of {t['nct_id']}")
 
 
 @dataclass
@@ -142,6 +161,7 @@ def acquire(prog: Programme, level: str, as_of: date, mode: str, progress: Progr
         case.add_file(f"text/edgar_{f.file_date}_{f.doc_id}.txt", text, url=f.url, source="sec_edgar",
                       source_date=f.file_date, within_cutoff=True)
 
+    _attach_publications(case, structured, cutoff, progress)
     timeline = prog.timeline.until(cutoff)
     case.write_json("timeline.json", timeline.to_list())
     case.write_json("extracted/structured.json", {"cutoff": cutoff.isoformat(), "trials": structured})

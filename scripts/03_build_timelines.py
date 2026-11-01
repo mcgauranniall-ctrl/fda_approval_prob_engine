@@ -34,6 +34,7 @@ from fdaengine.acquire import fetcher as fetcher_mod
 from fdaengine.acquire.fetcher import Fetcher
 from fdaengine.dataset import bulk, drugs, drugsfda, edgar_bulk
 from fdaengine.dataset import timelines as tlb
+from fdaengine.sources import federal_register as fr
 from fdaengine.timeline import events as tl_events
 from fdaengine.timeline import levels as tl_levels
 from fdaengine.timeline import press_release_parser
@@ -149,6 +150,41 @@ def _crl_events(key_to_drug, progs_by_drug, appl_drug: dict[str, str]) -> list[d
     return out
 
 
+def _adcom_notice_events(key_to_drug, progs_by_drug, appl_drug: dict[str, str]) -> list[dict]:
+    """Federal Register advisory-committee meeting notices (script 01c) → ADCOM_SCHEDULED events dated by the
+    notice's publication date (when the meeting became public), the meeting date as the value.
+
+    A drug attaches to a programme only when it is named in an agenda sentence citing an application that is the
+    drug's in Drugs@FDA or not in Drugs@FDA at all (an unapproved application), and the agenda section covers the
+    programme's indication keywords (as for press releases). Name-only matching was ~45% precise on review
+    (class discussions, biosimilar reference products, paediatric safety reviews).
+    """
+    path = INTERIM / "federal_register" / "adcom_notices.parquet"
+    if not path.exists():
+        return []
+    out = []
+    for n in pd.read_parquet(path).itertuples(index=False):
+        dates = fr.meeting_dates(n.text)
+        for pos, seg in fr.agenda_segments(n.text):
+            meeting = fr.meeting_date_near(dates, pos)
+            # Class discussions, paediatric safety reviews and passing mentions cite no application for the drug:
+            # it must be named in a sentence that cites an application that is its own or not in Drugs@FDA.
+            subjects = set()
+            for sent, apps in fr.application_sentences(seg):
+                app_drugs = {appl_drug.get(a) for a in apps}
+                subjects |= {did for did in tlb.drugs_mentioned(sent, key_to_drug)
+                             if did in app_drugs or None in app_drugs}
+            for did in subjects:
+                for p in progs_by_drug.get(did, []):
+                    if _keyword_coverage(seg, p.keywords) < 0.5:
+                        continue
+                    out.append({"programme_id": p.programme_id, "date": n.publication_date,
+                                "value": meeting.isoformat() if meeting else None,
+                                "detail": n.title[:120], "source_id": n.document_number,
+                                "quote": " ".join(seg.split())[:600]})
+    return out
+
+
 def _fda_apps(idx) -> dict[str, list[tuple[str, str, list[dict]]]]:
     """drug id → [(ApplNo, ApplType, submissions)] for NDA/BLA applications whose products are exactly that drug."""
     t = drugsfda.load(bulk.raw_files("drugsfda")[0])
@@ -211,6 +247,8 @@ def stage_build(as_of: date, workers: int) -> None:
     apps_by_drug = _fda_apps(idx)
     appl_drug = {appl: did for did, apps in apps_by_drug.items() for appl, _t, _s in apps}
     crl = pd.DataFrame(_crl_events(key_to_drug, progs_by_drug, appl_drug))
+    adcom = pd.DataFrame(_adcom_notice_events(key_to_drug, progs_by_drug, appl_drug))
+    print(f"[build] {len(adcom):,} AdCom meeting notices matched to programmes (Federal Register)", flush=True)
 
     # Assemble each programme's timeline with the live-case code. Phase 2 trials join only on an exact
     # indication match (they set the L1 cut-off).
@@ -238,6 +276,7 @@ def stage_build(as_of: date, workers: int) -> None:
         accepted = pd.DataFrame(kept, columns=accepted.columns)
     ev_by_prog = dict(iter(accepted.groupby("programme_id"))) if len(accepted) else {}
     crl_by_prog = dict(iter(crl.groupby("programme_id"))) if len(crl) else {}
+    adcom_by_prog = dict(iter(adcom.groupby("programme_id"))) if len(adcom) else {}
     pe_fields = list(ParsedEvent.__dataclass_fields__)
     tl_rows, lv_rows, dec_rows = [], [], []
     for r in pg.itertuples(index=False):
@@ -263,6 +302,12 @@ def stage_build(as_of: date, workers: int) -> None:
                     continue
                 tl.events.append(tl_events.Event("CRL", c["date"], "fda_crl", detail=c["detail"] or "",
                                                  source_id=c["source_id"]))
+        if r.programme_id in adcom_by_prog:
+            for a in adcom_by_prog[r.programme_id].drop_duplicates("source_id").to_dict("records"):
+                if anchor and a["date"] < anchor:
+                    continue
+                tl.events.append(tl_events.Event("ADCOM_SCHEDULED", a["date"], "federal_register", detail=a["detail"],
+                                                 value=a["value"], quote=a["quote"], source_id=a["source_id"]))
         tl_rows += [{"programme_id": r.programme_id, **e} for e in tl.to_list()]
         lv_rows += [{"programme_id": r.programme_id, **lv.to_dict()} for lv in tl_levels.compute(tl, as_of)]
         outcome, decided = tl_levels.decision(tl)
@@ -278,7 +323,7 @@ def stage_build(as_of: date, workers: int) -> None:
         "built_at": bulk.now_iso(), "as_of": as_of.isoformat(), "n_programmes": len(pg), "edgar_docs": int(n_docs),
         "parsed_events": len(ev),
         "parsed_events_by_filer_basis": ev["filer_basis"].value_counts().to_dict() if len(ev) else {},
-        "crl_db_events": len(crl),
+        "crl_db_events": len(crl), "adcom_notice_events": len(adcom),
         "timeline_events_by_type": tlf["event_type"].value_counts().to_dict(),
         "levels_reached": lv[lv["reached"]].groupby("level").size().to_dict(),
         "levels_estimated": lv[lv["reached"] & lv["estimated"]].groupby("level").size().to_dict(),

@@ -81,6 +81,22 @@
   </div>
 </div>
 
+{% if pred.approval_timing %}
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Approval Timing (payer view)</div>
+    <div class="penalty-note">Probability the drug is approved for this indication by each date, counted from the information cut-off ({{ meta.cutoff }}). 90% intervals.</div>
+    {% for r in pred.approval_timing.by_plan_year %}
+      <div class="penalty-row"><div><div class="penalty-name">By {{ r.date }} (plan year {{ r.date[:4] }})</div></div>
+        <span class="penalty-value">{{ r.p | pct }} <span class="penalty-note">({{ r.ci90[0] | pct }}–{{ r.ci90[1] | pct }})</span></span></div>
+    {% endfor %}
+    {% for r in pred.approval_timing.by_months %}
+      <div class="penalty-row"><div><div class="penalty-name">Within {{ r.months | int }} months</div></div>
+        <span class="penalty-value">{{ r.p | pct }} <span class="penalty-note">({{ r.ci90[0] | pct }}–{{ r.ci90[1] | pct }})</span></span></div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <div class="result-grid">
   <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Risk Flags</div>
     {% for f in pred.model_flags %}<div class="flag-item {{ f.severity }}">{{ f.text }}{% if f.basis %}<span class="basis">{{ f.basis }}</span>{% endif %}</div>{% endfor %}

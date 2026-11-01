@@ -30,9 +30,11 @@ class LeakageError(AssertionError):
     pass
 
 
-def visible_trial(study: dict, names: list[str], cutoff: date) -> tuple[dict, str] | None:
+def visible_trial(study: dict, names: list[str], cutoff: date, publication: dict | None = None
+                  ) -> tuple[dict, str] | None:
     """(structured record, availability date) of a trial as it could be known at `cutoff`, or None if it was
-    not yet registered."""
+    not yet registered. `publication` is the trial's PubMed main-paper result (script 01b); it is attached only if
+    the paper was public by the cut-off."""
     s = ctgov.summarise(study)
     if not s.first_post_date or s.first_post_date > cutoff:
         return None
@@ -40,6 +42,9 @@ def visible_trial(study: dict, names: list[str], cutoff: date) -> tuple[dict, st
     available = s.first_post_date.isoformat()
     if rec["results_status"] == "available" and s.results_first_post_date:
         available = max(available, s.results_first_post_date.isoformat())
+    if publication and publication["available"] <= cutoff.isoformat():
+        rec["publication_result"] = publication
+        available = max(available, publication["available"])
     design = rec["design"]
     if design.get("enrollment_type") == "ACTUAL" and (not s.primary_completion_date
                                                       or s.primary_completion_date > cutoff):
@@ -58,6 +63,7 @@ class Context:
     modality: str | None = None                       # 'biologic' | 'small_molecule' (registered intervention type)
     moiety_approved: bool | None = None               # moiety already FDA-approved (another use) by the cut-off
     sponsor_prior_approvals: int | None = None        # sponsor's NDA/BLA original approvals before the cut-off
+    sponsor_prior_crls: int | None = None             # complete response letters the sponsor announced before it
     ta_prior_rate: float | None = None                # smoothed approval rate of TA programmes resolved before it
     anchor_year: int | None = None
     is_combination: bool | None = None
@@ -67,7 +73,8 @@ class Context:
 
 def context_features(ctx: Context) -> dict:
     out = {}
-    for name in ("therapeutic_area", "modality", "moiety_approved", "sponsor_prior_approvals", "ta_prior_rate",
+    for name in ("therapeutic_area", "modality", "moiety_approved", "sponsor_prior_approvals", "sponsor_prior_crls",
+                 "ta_prior_rate",
                  "anchor_year", "is_combination", "n_sponsors"):
         v = getattr(ctx, name)
         if v is not None:
@@ -82,7 +89,7 @@ def build_row(level: str, cutoff: str, meta: dict, trials: list[tuple[dict, str]
     dates = list(ctx.dates) + [available for _, available in trials]
     tl = visible_events(events, cutoff)
     dates += [e["date"] for e in tl]
-    feats, _ = compute(level, {"level": level, **meta}, structured, tl, {})
+    feats, _ = compute(level, {"level": level, "cutoff": cutoff, **meta}, structured, tl, {})
     feats.update(context_features(ctx))
     feats.update(_extra(level, cutoff, structured, tl))
     return feats, max(dates, default="0000-00-00")

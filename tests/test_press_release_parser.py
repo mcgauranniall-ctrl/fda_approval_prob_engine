@@ -126,3 +126,28 @@ def test_fda_accepting_a_concept_is_not_a_filing():
     assert "NDA_ACCEPTED" not in parse("The FDA accepted the notion of moderate to severe acute pain after surgery as an "
                                        "appropriate population for the suzetrigine application.")
     assert "NDA_ACCEPTED" in parse("The FDA accepted the NDA for suzetrigine in moderate to severe acute pain.")
+
+
+def test_readout_p_value_is_the_worst_primary_one():
+    ev = parse("Vertex announced that the Phase 3 trial of suzetrigine in acute pain met its primary endpoint. "
+               "Suzetrigine met both co-primary endpoints in acute pain versus placebo (p<0.0001 and p=0.0021). "
+               "A secondary endpoint in acute pain was also met (p=0.04).")
+    assert ev["PHASE3_POSITIVE"].value == "0.0021"
+
+
+def test_readout_p_value_skips_other_phases_and_boilerplate():
+    ev = parse("Vertex announced that the Phase 3 trial of suzetrigine in acute pain met its primary endpoint. "
+               "In the earlier Phase 2 trial in acute pain, the primary endpoint was met (p=0.003). "
+               "About suzetrigine: in acute pain the primary endpoint was met (p=0.01).")
+    assert ev["PHASE3_POSITIVE"].value is None
+
+
+def test_adcom_vote_phrasings_and_direction():
+    for text, value in (
+        ("The Committee voted 21 to 5 that the data support approval of suzetrigine in acute pain.", "21-5"),
+        ("The FDA Anesthetic Drugs Advisory Committee (AADPAC) voted (7-6) that suzetrigine benefits outweigh risks "
+         "in acute pain.", "7-6"),
+        ("The advisory committee voted 11 to 8 against approval of suzetrigine for acute pain.", "8-11"),
+        ("The panel voted favorably 14 to 1 that suzetrigine is effective in acute pain.", "14-1"),
+    ):
+        assert parse(text)["ADCOM_VOTE"].value == value, text
