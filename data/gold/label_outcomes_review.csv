@@ -1,0 +1,48 @@
+programme_id,outcome,parsed,verdict,sample,note
+PG422e0840a0,narrow,1,correct,"holdout (fresh, current rules)",label limited to CYP2D6 EM/IM/PM by an FDA-cleared test; trials had no such restriction
+PG7dd4e7d783,narrow,1,wrong,"holdout (fresh, current rules)",upstream grouping: tralokinumab asthma trials attached to the atopic dermatitis approval
+PG2363b8cf11,narrow,1,wrong,"holdout (fresh, current rules)",trials enrolled patients refractory to conventional therapy; trial-side rule missed it
+PG067987ef3e,narrow,1,wrong,"holdout (fresh, current rules)","trials enrolled insulin users not at HbA1c target, the label population"
+PGd0b339b90e,narrow,1,wrong,"holdout (fresh, current rules)",upstream grouping: juvenile arthritis trials attached to the RA approval
+PG79ba6cf3ab,narrow,1,correct,"holdout (fresh, current rules)",label from age 8 (F) / 10 (M); Phase 3 from age 4
+PG806b3a3e8e,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16"
+PG5ef7084337,narrow,1,wrong,"holdout (fresh, current rules)",trials required NNRTI resistance; 'resistance' wording missed by the trial-side rule
+PG3e8e0b4924,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16"
+PGb6d2ff9b6c,narrow,1,wrong,"holdout (fresh, current rules)",registry minimum age 12 but inclusion criteria required >= 18
+PGae14c8b42c,narrow,1,wrong,"holdout (fresh, current rules)",upstream grouping: glabellar-line trials attached to the blepharospasm/cervical dystonia approval
+PG630ffa115c,narrow,1,correct,"holdout (fresh, current rules)",label after inadequate response to surgery or surgery not an option; PATHFNDR-2 enrolled medically naive patients
+PG9df3ed434f,narrow,1,wrong,"holdout (fresh, current rules)",trials enrolled moderate-to-severe psoriasis; 'mild' came from scale definitions
+PG92dc3b1fe5,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16"
+PGf18bba4d03,narrow,1,correct,"holdout (fresh, current rules)",opioid class restriction (alternatives inadequate) absent from trial entry criteria
+PGabfc846758,narrow,1,wrong,"holdout (fresh, current rules)",label covers patients with and without prior prophylaxis
+PG132b67b1ea,narrow,1,wrong,"holdout (fresh, current rules)",upstream grouping: the pivotal pretreated trial (EGF100151) is not among the seed trials
+PG1cfcb5465a,narrow,1,correct,"holdout (fresh, current rules)",adult label; LUNA 3 enrolled adolescents
+PGb388c5ee2c,narrow,1,correct,"holdout (fresh, current rules)",label treatment-experienced only; MERIT enrolled treatment-naive patients
+PG54b701603b,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16"
+PG6787e67a0a,narrow,1,wrong,"holdout (fresh, current rules)",upstream attribution: Crohn's programme credited with the ulcerative colitis approval
+PG15e2cf801e,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16"
+PGb0ffa7b943,narrow,1,correct,"holdout (fresh, current rules)","minor: adult label, trials from 16 (Tanner 5)"
+PGf5deb77f06,narrow,1,correct,"holdout (fresh, current rules)",adult label; CAPELLA enrolled adolescents from 12
+PG89d147b0ce,narrow,1,wrong,"holdout (fresh, current rules)",upstream attribution: RA programme credited with the Crohn's disease approval
+PG90942b26ee,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG6a9574ec6e,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGa3ecf5660b,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG23392f0ac4,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG33b85a7832,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG7fb8c86cff,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG4128e20f30,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGb538671063,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG17948c3d1e,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG9207afa33b,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG4be2303132,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGa750dde6e2,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGbc8bd129aa,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG93cb0fd431,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG469eb539ee,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG2396740825,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGf38282443a,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG364997fceb,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG8ab27432e8,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PG0f0055e29f,rems,1,correct,"holdout (fresh, current rules)",letter states a REMS is necessary or approves the proposed REMS
+PGba805f5f21,rems,0,correct,development (rule fixed on it),letter: 'a REMS is not necessary' (Benlysta); proposed REMS declined
+PGc6a15ba066,rems,0,correct,development (rule fixed on it),letter: 'a REMS is not necessary' (Mepsevii); proposed REMS declined

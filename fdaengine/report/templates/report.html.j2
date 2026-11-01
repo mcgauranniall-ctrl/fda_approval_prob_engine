@@ -97,6 +97,21 @@
 </div>
 {% endif %}
 
+{% if pred.label_outcomes %}
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Expected Label If Approved (payer view)</div>
+    <div class="penalty-note">Probability of each label feature <strong>if</strong> the drug is approved for this indication, from information public at the cut-off. "Typical" is the share among approved new drugs at this stage in the training data. Where the drug-specific model did not beat the typical share in validation (cross-validation and a test on the most recent programmes), the typical share is shown and the model's figure is given only for reference.</div>
+    {% for k, r in pred.label_outcomes.outcomes.items() %}
+      <div class="penalty-row"><div><div class="penalty-name">{{ r.label }}</div>
+        {% if r.beats_base_rate %}<div class="penalty-note">drug-specific estimate, 90% interval · typical {{ r.training_rate | pct }}</div>
+        {% else %}<div class="penalty-note">typical share · drug-specific model {{ r.p | pct }} ({{ r.ci90[0] | pct }}–{{ r.ci90[1] | pct }}) did not beat it in validation</div>{% endif %}</div>
+        {% if r.beats_base_rate %}<span class="penalty-value">{{ r.p | pct }} <span class="penalty-note">({{ r.ci90[0] | pct }}–{{ r.ci90[1] | pct }})</span></span>
+        {% else %}<span class="penalty-value">{{ r.training_rate | pct }}</span>{% endif %}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <div class="result-grid">
   <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Risk Flags</div>
     {% for f in pred.model_flags %}<div class="flag-item {{ f.severity }}">{{ f.text }}{% if f.basis %}<span class="basis">{{ f.basis }}</span>{% endif %}</div>{% endfor %}

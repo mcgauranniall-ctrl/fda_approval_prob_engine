@@ -267,9 +267,62 @@ judgement; more keyword rules would fit the gold set. Paired ablation: the fitte
 within ±0.0007 Brier). Script 09 now uses folds hashed by drug and 3 repeats (single runs moved a level's Brier by
 up to 0.017 between builds). Timing still calibrated in all cells.
 
-**Next (payer first, D9):** P6c label-breadth models →
-P6d live-case context features and switching the app to the fitted model → P9 payer module → P10 hardening. The
-investor module (P11) is paused until the user asks for it.
+**P6c label outcomes given approval (2026-11-01): `scripts/01e_approval_documents.py`,
+`dataset/label_outcomes.py`, `scripts/11_label_models.py`, `model/label_model.py`, `models/label-v1/`,
+`reports/label_outcomes.html`, `data/gold/findings.md` items 34–37.** Labels come from documents the FDA released at
+approval (labels only, D2): the approving submission's **approval letter** and **label as approved** (Drugs@FDA
+ApplicationDocs, 1,288 submissions; 92% of approved programmes have each) and **FDA's list of CDER accelerated
+approvals** (350 entries; fda.gov/media/151146). Among 1,021 approved novel drugs: accelerated approval 13.0%,
+boxed warning at approval 30.6%, REMS 12.0% from 2008 but 6.8% from 2012 (4.8% with elements to assure safe use).
+Parser checks: the accelerated approval list beat the letter wording in all 12 disagreements; the label as approved
+beat today's openFDA label (boxes are added and removed after approval); REMS 20/20 correct on a fresh sample.
+
+Model: one penalised logistic regression per outcome on 989 approved landmark rows (596 programmes, 485 drugs,
+L1–L5; an open 7-year window is fine because the outcome is known once approved), stage intercepts
+(L1 | L2 | L3–L5), the landmark inputs cut off at the level, era as cumulative steps of the Phase 3 start year, penalty
+chosen by grouped cross-validation, 50 drug-bootstrap refits for 90% intervals. Validated with folds hashed by drug
+(3 repeats) and a temporal holdout (latest 20% of cut-offs):
+
+| Outcome given approval | Stage | n (events) | Brier | vs stage base rate (Δ, 95% CI) | vs TA base rate | AUROC | Cal. slope | Temporal holdout (model vs stage rate) | Shown as |
+|---|---|---|---|---|---|---|---|---|---|
+| Accelerated approval | L3–L5 | 244 (42) | 0.112 | −0.030 (−0.051 to −0.012) | −0.013 (−0.033 to +0.005) | 0.83 | 1.09 | 0.152 vs 0.186 | drug-specific |
+| Accelerated approval | L1 / L2 | 506 / 201 | 0.064 / 0.062 | +0.002 / +0.003 (ties) | ties | 0.66 / 0.72 | 0.51 / 0.61 | 0.147 vs 0.157 / 0.144 vs 0.156 | typical share |
+| Boxed warning | L1 / L3–L5 | 499 / 240 | 0.213 / 0.205 | −0.012 / −0.016 (CIs exclude 0) | −0.013 / −0.018 | 0.62 / 0.61 | 0.96 / 0.95 | 0.196 vs 0.194 / 0.206 vs 0.194 (worse) | typical share |
+| REMS (approvals from 2012) | all | 765 (51) | 0.061 | −0.002 (−0.006 to +0.003) | −0.002 | 0.68 | 0.81 | 0.058 vs 0.061 | typical share |
+
+- **Accelerated approval is predictable once the filing is known** (reported accelerated pathway OR ≈ 5, oncology
+  OR ≈ 2.6, progression-free / survival endpoints). It is conservative at the extremes (oncology drugs on a reported
+  accelerated pathway: 9 of 9 got it; the model says 50–80%) and under-predicts the recent rise (temporal holdout
+  15% predicted vs 23% observed after filing). Before filing it is no better than the typical share.
+- **Boxed warning: weak.** Cross-validation beats both base rates (psychiatry, combinations, larger trials, earlier
+  eras raise it; AUROC 0.61), but it does not beat the base rate on the most recent programmes (and predicts 19%
+  where 25% were boxed), so reports show the typical share.
+- **REMS: no skill beyond the typical share.** Its apparent skill on 2008–2012 approvals was the Medication-Guide-REMS
+  era (39% of approvals then). A linear era term extrapolated it to a 1% REMS rate in the temporal holdout; era is now
+  stepwise and REMS is trained on approvals from 2012.
+- **Label narrower than the trial population: not built.** The rule-based label (approved indication restricted by
+  prior therapy, no alternatives, a companion test, severity or age, against the registered inclusion criteria of
+  Phase 3s completed before approval) was right for 13 of 25 flagged programmes on a fresh sample; half the errors
+  are upstream trial grouping and approval attribution (findings 31, 37). The column stays in `label_outcomes.parquet`.
+
+`prediction.json` gets `label_outcomes` (fitted model only) and the report an "Expected Label If Approved (payer view)"
+panel: the drug-specific probability where the model beat the stage's typical share in both cross-validation and the
+temporal holdout (today: accelerated approval after filing), otherwise the typical share with the model's figure for
+reference. Novel drugs only; lifecycle (new-indication) programmes inherit most label features from the drug's existing
+label and are not modelled yet.
+
+Deviations, decided during P6c:
+- **Script numbering:** 11 is the label models; model card → 12, market backtest → 13.
+- **Separate penalised logistic models with bootstrap intervals** instead of PLAN §7.5's multivariate Bayesian model
+  with a shared random effect (as for timing: simpler, validated, and each outcome is shown on its own).
+- **Narrow label dropped** from the outputs (measured precision ~50%).
+- **Rebuild order:** 03 → 04 → 05 → gold_build → gold_score → 06 → 07 → 08 → 09 → 10 → 01e → 11. Script 01e reads
+  script 04's approvals despite its number (downloads are cached, so a rerun only re-reads the PDFs; the first run took
+  12 minutes).
+
+**Next (payer first, D9):** P6d live-case context features (TA, sponsor history, moiety approved; the label panel also
+needs TA) and switching the app to the fitted model → P9 payer module → P10 hardening. The investor module (P11) is
+paused until the user asks for it.
 ---
 
 ## 0. What's wrong with v1 (and what v2 fixes)
@@ -895,7 +948,7 @@ fda_approval_prob_engine/
 │   ├── market/                 # (built last) event_study.py, edge_regression.py, strategy_backtest.py, implied_prob.py
 │   ├── predict/                # predictor.py, explain.py, path.py, scenarios.py, comparables.py, ood.py, flags.py
 │   └── report/                 # render.py, charts.py, numbers_check.py, templates/report.html.j2, static/report.css
-├── scripts/                    # 01…11 (§5), run_case.py (CLI equivalent of the UI), run_pipeline.py (payer portfolio), claude_sample_extract.py (optional, manual)
+├── scripts/                    # 01…13 (§5; 09 landmark, 10 timing, 11 label outcomes), run_case.py (CLI equivalent of the UI), run_pipeline.py (payer portfolio), claude_sample_extract.py (optional, manual)
 ├── notebooks/
 ├── data/  models/  cases/  exports/  logs/      (data/cases/logs git-ignored)
 └── tests/                      # parsers, stat transforms, cut-off enforcement, golden-file cases
@@ -924,7 +977,7 @@ fda_approval_prob_engine/
 | **P3: Historical dataset** | Scripts 01–05: programmes, timelines, labels, censoring, landmark rows | Gold-set accuracy measured for grouping, event dates and labels |
 | **P4: Statistical inference** | Scripts 06–07 (frequentist): EDA, FDR screening, GLM/Firth/GEE, competing risks, stability selection | Hypothesis table H1–H17 complete per level |
 | **P5: Production model** | Bayesian landmark model + Y_NEXT model + timing model + label models + GBM challenger; validation; calibration; benchmarks | Calibration slope 0.8–1.2 at every level; beats all benchmarks on Brier score; timing calibrated at 12/24 months |
-| **P6: Payer core** (re-scoped 2026-11-01, D9) | **P6a timing model:** P(approved by date d) per level, competing risks (approval vs failure), PDUFA-anchored from L3. **P6b new-indication labels:** supplement approvals for drugs already on the market (label accuracy 68% → ≥ 85% on the gold set), modelled as a second cohort. **P6c label breadth:** P(boxed warning), P(REMS), P(accelerated approval), P(label narrower than the trial population), conditional on approval. **P6d live cases:** context features (TA, sponsor history, moiety approved), switch the app to the fitted model, approval-date curve and label panel in the report | P(approved within 12/24/36 months) calibrated per level (temporal holdout); supplement labels ≥ 85% on the gold set; label models beat base rates; `prediction.json` carries timing and label outputs |
+| **P6: Payer core** (re-scoped 2026-11-01, D9; P6a–P6c done, see Build status) | **P6a timing model:** P(approved by date d) per level, competing risks (approval vs failure), PDUFA-anchored from L3. **P6b new-indication labels:** supplement approvals for drugs already on the market (label accuracy 68% → ≥ 85% on the gold set), modelled as a second cohort. **P6c label breadth:** P(boxed warning), P(REMS), P(accelerated approval), P(label narrower than the trial population), conditional on approval. **P6d live cases:** context features (TA, sponsor history, moiety approved), switch the app to the fitted model, approval-date curve and label panel in the report | P(approved within 12/24/36 months) calibrated per level (temporal holdout); supplement labels ≥ 85% on the gold set; label models beat base rates; `prediction.json` carries timing and label outputs |
 | **P7: Report (neutral profile)** | Template, charts, memo run + number check, PDF | Renders for 6 backtest drugs (approved; P3 fail; P3 success → CRL; CRL → approval; oncology; rare disease) at every level |
 | **P8: UI** | Streamlit screens, level selector, scenarios, watchlist, model explorer | Type a drug, pick a level → report, without touching the terminal |
 | **P9: Payer module** | Analog library (script 09), pricing, Bass uptake, population, budget impact, pipeline view, payer report profile + memo, plan-year backtest | Backtested plan year: 90% budget intervals cover the actual result; P(approved by date) is calibrated |

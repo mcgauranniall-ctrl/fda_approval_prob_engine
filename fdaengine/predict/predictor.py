@@ -45,5 +45,7 @@ def predict_case(case: Case) -> dict:
     })
     if meta.get("cutoff") and (tm := registry.approval_timing(level, features, meta["cutoff"])):
         pred["approval_timing"] = tm
+    if lab := registry.label_outcomes(level, features):
+        pred["label_outcomes"] = lab
     case.write_json("prediction.json", pred)
     return pred

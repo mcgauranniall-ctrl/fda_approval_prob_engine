@@ -147,3 +147,26 @@ Still open (the 12 remaining lifecycle errors):
     first relapse vs consolidation; pregabalin): keyword matching cannot see line of therapy.
 33. **Indication wording with no shared words** (tenecteplase "thrombolysis" vs "acute ischemic stroke"; duloxetine
     "osteoarthritis, knee" vs "chronic pain due to osteoarthritis").
+
+## Label outcomes given approval (2026-11-01, P6c, `data/gold/label_outcomes_review.csv`)
+
+Parsers in `dataset/label_outcomes.py`, labels only (approval letters, labels as approved, FDA's accelerated
+approval list). Claude-reviewed, not yet spot-checked by a person.
+
+34. **Accelerated approval: FDA's list is the label.** The letter wording disagreed with the list on 12 of 911 novel
+    approvals; the list was right every time. The letter rule had read Subpart H *restricted distribution*
+    (21 CFR 314.520: Xyrem, Revlimid, Letairis) as accelerated approval, plus promotional-materials boilerplate and
+    another application's commitments. The list (dated 2026-06-30) misses later approvals, where the letter decides.
+35. **Boxed warning: today's openFDA label is the wrong source.** Against the label as approved, all 12 "boxed at
+    approval, not today" cases were real boxes later removed (LABA asthma deaths, Yervoy, Forteo osteosarcoma), and
+    most "boxed today, not at approval" cases were added later (hepatitis C drugs' HBV reactivation, Uloric,
+    Leqembi, Tykerb). The parser missed 'WARNING: BLEEDING RISK' boxes without the "complete boxed warning" phrase
+    (Brilinta, Trodelvy, Exforge HCT) and old-format 'USE IN PREGNANCY' boxes: fixed.
+36. **REMS: a proposed REMS is not a REMS.** "Your proposed REMS" matched letters in which FDA answered "a REMS is
+    not necessary" (Benlysta, Mepsevii): fixed. Fresh sample afterwards: 20/20 "REMS" letters correct.
+37. **Narrower label: 13/25 correct on a fresh sample, not modelled.** Half the errors are upstream: trials of
+    another indication grouped into the programme (tralokinumab asthma trials with the atopic dermatitis approval,
+    juvenile arthritis trials with Actemra's RA approval, glabellar-line trials with Xeomin's blepharospasm label)
+    or the wrong approval credited (a Crohn's programme of mirikizumab credited with the ulcerative colitis
+    approval; a certolizumab RA programme with the Crohn's approval, see item 31). The rest are rule limits
+    (trial-side wording, "or" alternatives). Most true cases are minor (adult label, trials admitting 16–17-year-olds).
