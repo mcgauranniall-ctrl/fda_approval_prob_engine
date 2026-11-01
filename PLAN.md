@@ -186,18 +186,24 @@ L3–L5), a TA random effect, and the label as a noisy measurement (sensitivity/
 `label_error.json`). Predictions are P(true outcome). Missing inputs contribute nothing (training-mean imputation;
 missingness is never a feature). 1,992 training rows; final fit R̂ ≤ 1.005, 0 divergences.
 
-Cross-validated (5 folds grouped by drug; scores against the observed labels on the observed-label scale):
+Cross-validated (5 folds hashed by drug, 3 repeats; scores against the observed labels on the observed-label scale).
+Figures from the current build (updated 2026-11-01 after the P6b rebuild; the first P5 run's figures were
+L1 0.218 / L2 0.218 / L3 0.215 / L5 0.214):
 
-| Level | n | Brier | Best benchmark (Brier) | Provisional (app today) | Cal. slope (95% bootstrap) | AUROC | P5 target |
+| Level | n | Brier | Level base rate | Best other model (Brier) | Provisional | Cal. slope | AUROC |
 |---|---|---|---|---|---|---|---|
-| L1 | 1,254 | 0.218 | 0.220 logistic, same features | 0.242 | 0.89 (0.68–1.08) | 0.65 | met |
-| L2 | 345 | 0.218 | 0.221 | 0.278 | 0.93 (0.62–1.27) | 0.68 | met |
-| L3 | 281 | 0.215 | 0.214 "endpoint met" alone | 0.261 | 0.62 (−0.12–1.41) | 0.57 | tie (Δ +0.001, CI −0.005 to +0.008) |
-| L5 | 96 | 0.214 | 0.211 "endpoint met" alone | 0.288 | 1.21 (0.34–2.27) | 0.66 | tie (Δ +0.003, CI −0.011 to +0.019) |
+| L1 | 1,254 | 0.216 | 0.231 | 0.215 LightGBM challenger (tie) | 0.243 | 0.86 | 0.65 |
+| L2 | 347 | 0.222 | 0.252 | 0.220 logistic, same features (tie) | 0.287 | 0.90 | 0.67 |
+| L3 | 277 | 0.219 | 0.223 | 0.219 "endpoint met" alone (tie) | 0.269 | 0.54 | 0.57 |
+| L5 | 93 | 0.220 | 0.236 | 0.220 "endpoint met" alone (tie) | 0.290 | 0.92 | 0.64 |
+| All | 1,994 | 0.218 | 0.234 | 0.220 LightGBM challenger | 0.259 | 0.87 | 0.70 |
 
-Significantly better than the provisional model and the level base rate at every level except L3 (base rate tie);
-best Brier score overall (0.218 vs 0.221–0.255). Mean predicted P(true approval) matches the gold-set corrected
-rates (L1 43% vs 40%, L2 56% vs 51%, L3 70% vs 67%). After filing, little public pre-decision information
+Better than the provisional model and the level base rate at every level, and the best Brier score overall, but
+level with the best single alternative at each level: the P5 target "beats all benchmarks" is not met per level.
+Calibration slope 0.54 at L3 in cross-validation (filed-stage differences overstated), while the temporal holdout
+(cut-offs from 2020-09-13, 399 rows) shows slopes of 1.5–1.9 at every level (recent forecasts too cautious; L3 1.87,
+n=99): small samples pointing in opposite directions, so treat large L3 departures from the base rate with caution.
+Mean predicted P(true approval) matches the gold-set corrected rates (L1 43% vs 40%, L2 54% vs 51%, L3 69% vs 67%). After filing, little public pre-decision information
 predicts the outcome beyond the base rate and whether the endpoints were met: L3/L5 forecasts are calibrated but
 only weakly discriminating, and the report should say so. Strongest effects: Phase 3 met (OR 3.8 per step),
 Phase 2 |z| (2.6/SD), ≥2 pivotal trials (2.3), large sponsor (1.9), sponsor approvals (1.3/SD); AdCom scheduled
