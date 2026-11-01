@@ -1,0 +1,562 @@
+{
+ "n_programmes": 150,
+ "n_detached": 2,
+ "truth_source": {
+  "claude": 149,
+  "reviewer": 1
+ },
+ "verified": {
+  "yes": 144,
+  "no": 6
+ },
+ "grouping_ok": {
+  "n": 150,
+  "correct": 133,
+  "rate": 0.887
+ },
+ "drug_resolution_ok": {
+  "n": 144,
+  "correct": 132,
+  "rate": 0.917
+ },
+ "y_prog": {
+  "n_both_known": 110,
+  "accuracy": 0.827,
+  "approved_precision": 0.836,
+  "approved_recall": 0.821,
+  "failed_precision": 0.818,
+  "truth_known_but_pipeline_excluded_or_censored": 13,
+  "verified_only": {
+   "n": 110,
+   "accuracy": 0.827
+  },
+  "unverified_only": {
+   "n": 0,
+   "accuracy": null
+  },
+  "novel_verified_only": {
+   "n": 76,
+   "accuracy": 0.895
+  },
+  "novel_pipeline_approved": {
+   "n": 35,
+   "truth_approved": 33
+  },
+  "novel_pipeline_failed": {
+   "n": 36,
+   "truth_failed": 33
+  },
+  "excluding_outside_trial_approvals": {
+   "n": 109,
+   "accuracy": 0.826
+  },
+  "n_outside_trial_approvals": 6,
+  "by_cohort": {
+   "lifecycle": {
+    "n": 34,
+    "accuracy": 0.676
+   },
+   "novel": {
+    "n": 76,
+    "accuracy": 0.895
+   }
+  },
+  "by_era": {
+   "2009-2015": {
+    "n": 36,
+    "accuracy": 0.806
+   },
+   "2016+": {
+    "n": 38,
+    "accuracy": 0.842
+   },
+   "<2009": {
+    "n": 36,
+    "accuracy": 0.833
+   }
+  },
+  "by_sample_stratum": {
+   "0": {
+    "n": 1,
+    "accuracy": 1.0
+   },
+   "1": {
+    "n": 52,
+    "accuracy": 0.846
+   },
+   "2": {
+    "n": 54,
+    "accuracy": 0.815
+   },
+   "excluded": {
+    "n": 3,
+    "accuracy": 0.667
+   }
+  },
+  "by_truth_outcome": {
+   "approved": {
+    "n": 56,
+    "accuracy": 0.821
+   },
+   "censored": {
+    "n": 0,
+    "accuracy": null
+   },
+   "failed": {
+    "n": 54,
+    "accuracy": 0.833
+   },
+   "unknown": {
+    "n": 0,
+    "accuracy": null
+   }
+  },
+  "by_reached_L3": {
+   "False": {
+    "n": 55,
+    "accuracy": 0.836
+   },
+   "True": {
+    "n": 55,
+    "accuracy": 0.818
+   }
+  },
+  "by_label_source": {
+   "ambiguous_unlabelled_approval": {
+    "n": 0,
+    "accuracy": null
+   },
+   "drugsfda_orig+label": {
+    "n": 26,
+    "accuracy": 0.962
+   },
+   "drugsfda_orig_sole_programme": {
+    "n": 5,
+    "accuracy": 1.0
+   },
+   "drugsfda_orig_unlabelled_earlier": {
+    "n": 1,
+    "accuracy": 1.0
+   },
+   "drugsfda_suppl+label": {
+    "n": 20,
+    "accuracy": 0.7
+   },
+   "edgar+drugsfda": {
+    "n": 7,
+    "accuracy": 0.714
+   },
+   "edgar_only_unverified": {
+    "n": 0,
+    "accuracy": null
+   },
+   "no_approval_found": {
+    "n": 49,
+    "accuracy": 0.796
+   },
+   "purplebook_cber": {
+    "n": 2,
+    "accuracy": 1.0
+   }
+  },
+  "by_label_confidence": {
+   "high": {
+    "n": 41,
+    "accuracy": 0.927
+   },
+   "low": {
+    "n": 21,
+    "accuracy": 0.714
+   },
+   "medium": {
+    "n": 48,
+    "accuracy": 0.792
+   },
+   "none": {
+    "n": 0,
+    "accuracy": null
+   }
+  }
+ },
+ "resolution_flags": {
+  "n_flagged": 5,
+  "truth_drug_ok_by_flag": {
+   "clean": {
+    "": 6,
+    "n": 7,
+    "y": 132
+   },
+   "flagged": {
+    "": 0,
+    "n": 5,
+    "y": 0
+   }
+  },
+  "y_prog_unflagged": {
+   "n": 105,
+   "accuracy": 0.848
+  },
+  "y_prog_novel_unflagged": {
+   "n": 71,
+   "accuracy": 0.93
+  },
+  "y_prog_flagged": {
+   "n": 5,
+   "accuracy": 0.4
+  },
+  "approved_share_novel_all": {
+   "n": 76,
+   "pipeline": 0.461,
+   "truth": 0.513
+  },
+  "approved_share_novel_unflagged": {
+   "n": 71,
+   "pipeline": 0.493,
+   "truth": 0.507
+  }
+ },
+ "outcome_confusion_truth_by_pipeline": {
+  "approved": {
+   "approved": 46,
+   "censored": 2,
+   "failed": 9,
+   "unknown": 3
+  },
+  "censored": {
+   "approved": 2,
+   "censored": 18,
+   "failed": 0,
+   "unknown": 0
+  },
+  "excluded": {
+   "approved": 9,
+   "censored": 1,
+   "failed": 2,
+   "unknown": 1
+  },
+  "failed": {
+   "approved": 10,
+   "censored": 0,
+   "failed": 45,
+   "unknown": 2
+  }
+ },
+ "approval_date": {
+  "n": 46,
+  "within_30_days": 37,
+  "median_abs_days": 0.0,
+  "verified_n": 46,
+  "verified_within_30_days": 37
+ },
+ "level_events": {
+  "L2": {
+   "n": 45,
+   "correct": 31,
+   "rate": 0.689,
+   "late": 15,
+   "removed_wrong": 2,
+   "removed_right": 0,
+   "changed_unreviewed": 2,
+   "new_unreviewed": 0
+  },
+  "L3": {
+   "n": 39,
+   "correct": 29,
+   "rate": 0.744,
+   "late": 5,
+   "removed_wrong": 27,
+   "removed_right": 2,
+   "changed_unreviewed": 5,
+   "new_unreviewed": 0
+  },
+  "L5": {
+   "n": 16,
+   "correct": 12,
+   "rate": 0.75,
+   "late": 0,
+   "removed_wrong": 13,
+   "removed_right": 0,
+   "changed_unreviewed": 0,
+   "new_unreviewed": 0
+  }
+ },
+ "level_date_error": {
+  "L2": {
+   "n": 16,
+   "median_abs_days": 12.5,
+   "within_14_days": 0.5,
+   "within_30_days": 0.562,
+   "share_before_truth": 0.125,
+   "n_before_truth": 2,
+   "before_truth": [
+    "PGae00f0edfd",
+    "PGe4c8ab0426"
+   ],
+   "pipeline_level_but_event_never_happened": 1
+  },
+  "L3": {
+   "n": 23,
+   "median_abs_days": 0.0,
+   "within_14_days": 0.783,
+   "within_30_days": 0.826,
+   "share_before_truth": 0.087,
+   "n_before_truth": 2,
+   "before_truth": [
+    "PG133a0bfef1",
+    "PG64f178ec28"
+   ],
+   "pipeline_level_but_event_never_happened": 4
+  },
+  "L5": {
+   "n": 13,
+   "median_abs_days": 0.0,
+   "within_14_days": 0.846,
+   "within_30_days": 0.846,
+   "share_before_truth": 0.154,
+   "n_before_truth": 2,
+   "before_truth": [
+    "PG13f824009c",
+    "PG7fb8c86cff"
+   ],
+   "pipeline_level_but_event_never_happened": 2
+  }
+ },
+ "y_next": {
+  "L3": {
+   "n_truth": 47,
+   "n_both_known": 39,
+   "status_accuracy": 0.692,
+   "status_and_date_exact": 25,
+   "y_next_binary_n": 22,
+   "y_next_binary_accuracy": 0.955,
+   "pipeline_pending": 3,
+   "confusion_truth_by_pipeline": {
+    "": {
+     "approved": 4,
+     "crl": 0,
+     "none_within_2y": 3,
+     "unknown": 1
+    },
+    "approved": {
+     "approved": 16,
+     "crl": 0,
+     "none_within_2y": 0,
+     "unknown": 0
+    },
+    "crl": {
+     "approved": 1,
+     "crl": 5,
+     "none_within_2y": 1,
+     "unknown": 0
+    },
+    "none_within_2y": {
+     "approved": 4,
+     "crl": 6,
+     "none_within_2y": 6,
+     "unknown": 2
+    },
+    "pending": {
+     "approved": 1,
+     "crl": 0,
+     "none_within_2y": 0,
+     "unknown": 2
+    }
+   }
+  },
+  "L5": {
+   "n_truth": 18,
+   "n_both_known": 16,
+   "status_accuracy": 0.938,
+   "status_and_date_exact": 15,
+   "y_next_binary_n": 11,
+   "y_next_binary_accuracy": 1.0,
+   "pipeline_pending": 0,
+   "confusion_truth_by_pipeline": {
+    "": {
+     "approved": 1,
+     "crl": 0,
+     "none_within_2y": 1,
+     "unknown": 1
+    },
+    "approved": {
+     "approved": 9,
+     "crl": 0,
+     "none_within_2y": 0,
+     "unknown": 0
+    },
+    "crl": {
+     "approved": 0,
+     "crl": 2,
+     "none_within_2y": 0,
+     "unknown": 0
+    },
+    "none_within_2y": {
+     "approved": 0,
+     "crl": 1,
+     "none_within_2y": 4,
+     "unknown": 0
+    }
+   }
+  }
+ },
+ "y_level": {
+  "L3": {
+   "n_rows": 92,
+   "post_decision_landmarks": {
+    "x": 3,
+    "n": 92,
+    "rate": 0.033,
+    "ci95": [
+     0.011,
+     0.092
+    ]
+   },
+   "n_both_known": 80,
+   "agreement": 0.85,
+   "by_sample": {
+    "late": {
+     "n": 47,
+     "agreement": 0.872
+    },
+    "main": {
+     "n": 33,
+     "agreement": 0.818
+    }
+   },
+   "confusion_truth_by_pipeline": {
+    "0.0": {
+     "0": 35,
+     "1": 8
+    },
+    "1.0": {
+     "0": 4,
+     "1": 33
+    }
+   },
+   "ppv_pipeline_approved": {
+    "x": 33,
+    "n": 37,
+    "rate": 0.892,
+    "ci95": [
+     0.753,
+     0.957
+    ]
+   },
+   "npv_pipeline_not_approved": {
+    "x": 35,
+    "n": 43,
+    "rate": 0.814,
+    "ci95": [
+     0.674,
+     0.903
+    ]
+   },
+   "training_share_pipeline_approved": 0.68,
+   "filing_event_right": {
+    "n": 78,
+    "correct": 57,
+    "rate": 0.731
+   },
+   "corrected_approval_rate": 0.666,
+   "sensitivity": 0.911,
+   "specificity": 0.78
+  },
+  "L5": {
+   "n_rows": 35,
+   "post_decision_landmarks": {
+    "x": 2,
+    "n": 35,
+    "rate": 0.057,
+    "ci95": [
+     0.016,
+     0.186
+    ]
+   },
+   "n_both_known": 33,
+   "agreement": 0.909,
+   "by_sample": {
+    "late": {
+     "n": 19,
+     "agreement": 0.947
+    },
+    "main": {
+     "n": 14,
+     "agreement": 0.857
+    }
+   },
+   "confusion_truth_by_pipeline": {
+    "0.0": {
+     "0": 16,
+     "1": 0
+    },
+    "1.0": {
+     "0": 3,
+     "1": 14
+    }
+   },
+   "ppv_pipeline_approved": {
+    "x": 14,
+    "n": 17,
+    "rate": 0.824,
+    "ci95": [
+     0.59,
+     0.938
+    ]
+   },
+   "npv_pipeline_not_approved": {
+    "x": 16,
+    "n": 16,
+    "rate": 1.0,
+    "ci95": [
+     0.806,
+     1.0
+    ]
+   },
+   "training_share_pipeline_approved": 0.646,
+   "filing_event_right": null,
+   "corrected_approval_rate": 0.532,
+   "sensitivity": 1.0,
+   "specificity": 0.757
+  }
+ },
+ "late_supplement": {
+  "n": 60,
+  "filing_event_right": {
+   "n": 60,
+   "correct": 40,
+   "rate": 0.667
+  },
+  "drug_resolution_ok": {
+   "n": 59,
+   "correct": 59,
+   "rate": 1.0
+  }
+ },
+ "suzetrigine_acute_pain": {
+  "L1": {
+   "pipeline": "2023-08-24",
+   "truth": "2023-08-24",
+   "exact": true
+  },
+  "L2": {
+   "pipeline": "2024-02-06",
+   "truth": "2024-02-06",
+   "exact": true
+  },
+  "L3": {
+   "pipeline": "2024-08-02",
+   "truth": "2024-08-02",
+   "exact": true
+  },
+  "L5": {
+   "pipeline": "2025-01-23",
+   "truth": "2025-01-23",
+   "exact": true
+  },
+  "approval": {
+   "pipeline": "2025-01-30",
+   "truth": "2025-01-30",
+   "exact": true
+  }
+ }
+}

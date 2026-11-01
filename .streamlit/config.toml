@@ -1,0 +1,25 @@
+# UI theme pinned to the v1 report palette. Pinning `base = "light"` stops Streamlit switching to dark mode with
+# the OS setting, which made text unreadable against the custom background.
+[theme]
+base = "light"
+primaryColor = "#c8401a"
+backgroundColor = "#f5f0e8"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0f0f0f"
+linkColor = "#1a4fc8"
+borderColor = "#ddd8cc"
+showWidgetBorder = true
+dataframeHeaderBackgroundColor = "#faf7f2"
+baseRadius = "none"
+buttonRadius = "none"
+font = "'DM Sans', sans-serif"
+headingFont = "'Playfair Display', serif"
+codeFont = "'DM Mono', monospace"
+
+[theme.sidebar]
+backgroundColor = "#ebe4d6"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0f0f0f"
+
+[browser]
+gatherUsageStats = false

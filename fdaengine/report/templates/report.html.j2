@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{# The report quotes downloaded documents and Claude output; autoescape handles them, and this blocks any script. #}
+<meta http-equiv="Content-Security-Policy" content="script-src 'none'; object-src 'none'; base-uri 'none'">
+<title>{{ meta.drug }} — FDA Approval Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>{{ css }}</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<header>
+  <div>
+    <span class="header-tag">Quantitative Regulatory Analysis</span>
+    <span class="header-tag">v2 · {{ meta.level }}</span>
+    <span class="header-tag">{{ meta.mode }}</span>
+  </div>
+  <h1>FDA Approval<br><span>Probability Report</span></h1>
+  <p class="subtitle">Information cut-off {{ meta.cutoff }} · {{ meta.sponsor or "sponsor unknown" }}{% if meta.ticker %} ({{ meta.ticker }}){% endif %}</p>
+</header>
+
+{% if "provisional" in pred.model_version %}
+<div class="provisional-banner">
+  <strong>Provisional model.</strong> These probabilities come from literature-informed priors combined with this
+  programme's evidence. They are not yet fitted to historical FDA outcomes, so treat the interval as "how unsure
+  the priors are", not as a calibrated forecast. The trained model (PLAN.md P3–P5) will replace it.
+</div>
+{% endif %}
+
+<div class="result-header">
+  <div class="result-header-top">
+    <div>
+      <div class="result-drug">{{ meta.drug }}</div>
+      <div class="result-indication">{{ meta.indication }} · {{ meta.level }} {{ meta.level_name }}</div>
+      <div class="level-strip">
+        {% for lv in order %}
+          {% set r = reached.get(lv) %}
+          <span class="level-chip {% if lv == meta.level %}on{% elif r and r.reached and order.index(lv) < order.index(meta.level) %}done{% endif %}">{{ lv }} {{ levels[lv] }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="prob-display">
+      <div class="prob-number {{ prob_class }}">{{ (pred.p_approval.median * 100) | round | int }}%</div>
+      <div class="prob-label">P(Phase 3 programme → FDA approval)</div>
+      <div class="result-ci">95% interval: {{ pred.p_approval.ci95[0] | pct(1) }} – {{ pred.p_approval.ci95[1] | pct(1) }}</div>
+      <div class="confidence-badge">
+        <span class="confidence-dot" style="background:{{ {'High':'#6ee89a','Medium':'#f5c842','Low':'#ff6b4a'}[pred.confidence] }}"></span>
+        <span>{{ pred.confidence }}</span> confidence
+      </div>
+      <div class="sub-probs">
+        {% if pred.p_next_action %}<div class="sub-prob"><b>{{ pred.p_next_action.median | pct }}</b>approval at next FDA action</div>{% endif %}
+        <div class="sub-prob"><b>{{ pred.base_rate | pct }}</b>base rate at this level</div>
+      </div>
+    </div>
+  </div>
+  <div class="conf-bar-wrap">
+    <div class="conf-bar-track">
+      <div class="conf-bar-fill" style="width:{{ pred.p_approval.median * 100 }}%"></div>
+      <div class="conf-bar-marker" style="left:{{ pred.p_approval.median * 100 }}%"></div>
+    </div>
+  </div>
+</div>
+
+{% if outcome %}
+<div class="outcome-box"><strong>Backtest:</strong> the actual outcome was <strong>{{ outcome.outcome }}</strong> on {{ outcome.date }}. It was not available to the model.</div>
+{% endif %}
+
+<div class="result-grid">
+  <div class="result-cell"><div class="result-cell-title">Key Positive Drivers</div>
+    {% for d in pred.drivers_positive %}
+      <div class="driver-item"><div class="driver-icon" style="color:#1a6e3a">✓</div><div class="driver-text"><div class="driver-label">{{ d.label }}</div><div class="driver-expl">{{ "%+.2f" | format(d.logit) }} log-odds{% if d.detail %} · {{ d.detail }}{% endif %}</div></div></div>
+    {% else %}<div class="small-note">No strong positive drivers identified</div>{% endfor %}
+  </div>
+  <div class="result-cell"><div class="result-cell-title">Key Risk Factors</div>
+    {% for d in pred.drivers_negative %}
+      <div class="driver-item"><div class="driver-icon" style="color:#c8401a">✗</div><div class="driver-text"><div class="driver-label">{{ d.label }}</div><div class="driver-expl">{{ "%+.2f" | format(d.logit) }} log-odds{% if d.detail %} · {{ d.detail }}{% endif %}</div></div></div>
+    {% else %}<div class="small-note">No major risk factors identified</div>{% endfor %}
+  </div>
+</div>
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1"><div class="result-cell-title">Risk Flags</div>
+    {% for f in pred.model_flags %}<div class="flag-item {{ f.severity }}">{{ f.text }}{% if f.basis %}<span class="basis">{{ f.basis }}</span>{% endif %}</div>{% endfor %}
+    {% for f in pred.analyst_flags %}<div class="flag-item {{ f.severity }}"><strong>Analyst (qualitative, not in model):</strong> {{ f.flag }}<span class="basis">{{ f.explanation }} — “{{ f.quote }}” ({{ f.source_file }})</span></div>{% endfor %}
+    {% for f in pred.data_flags %}<div class="flag-item info"><strong>Data:</strong> {{ f.text }}</div>{% endfor %}
+    {% if not (pred.model_flags or pred.analyst_flags or pred.data_flags) %}<div class="flag-item">No risk flags triggered</div>{% endif %}
+  </div>
+</div>
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Contribution Breakdown (log-odds vs {{ pred.base_rate | pct }} base rate)</div>
+    {% for c in pred.contributions %}
+      {% set pct = [c.logit | abs / max_logit * 50, 50] | min %}
+      <div class="penalty-row">
+        <div><div class="penalty-name">{{ c.label }}</div><div class="penalty-note">{{ c.detail }}{% if c.sd %} · prior sd {{ "%.2g" | format(c.sd) }}{% endif %}</div></div>
+        <span class="penalty-tag {{ 'asym' if c.kind == 'asymmetric' else 'no-text' if c.kind == 'missing' else 'active' }}">{{ c.kind | upper }}</span>
+        <div class="penalty-bar-wrap"><div class="penalty-bar-zero"></div>
+          <div class="penalty-bar-fill {{ 'neg' if c.logit < 0 else '' }}" style="{% if c.logit < 0 %}right:50%;left:auto;width:{{ pct }}%{% else %}left:50%;width:{{ pct }}%{% endif %}"></div></div>
+        <div class="penalty-value {{ 'pos' if c.logit > 0.005 else 'neg' if c.logit < -0.005 else 'neu' }}">{{ "%+.2f" | format(c.logit) }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if path | length > 1 %}
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Probability Path Across Levels</div>
+    {{ path_svg }}
+    <div class="small-note">Each point re-scores the programme using only information public at that level's cut-off. The band is the 95% interval.</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Distribution of Simulated Probabilities</div>
+    {{ hist_svg }}
+    <div class="small-note">4,000 Monte Carlo draws over the prior uncertainty of the base rate and every effect. The red line is the median.</div>
+  </div>
+</div>
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Evidence Used by the Model</div>
+    <table class="evidence-table">
+      <tr><th>Input</th><th>Value</th><th>Source</th><th>Evidence</th></tr>
+      {% for name, f in feats.items() %}
+        {% set cf = extraction.fields.get(name) if extraction.fields else None %}
+        <tr>
+          <td>{{ name | replace('_', ' ') }}</td>
+          <td>{% if f.value is number and f.value is not sameas true and f.value is not sameas false and f.value < 1 and f.value > 0 %}{{ "%.3g" | format(f.value) }}{% else %}{{ f.value }}{% endif %}</td>
+          <td><span class="src-tag {{ f.source }}">{{ f.source }}</span></td>
+          <td class="q">{% if f.source == 'claude' and cf %}“{{ cf.quote or 'general knowledge' }}”{% if cf.source_file %} — <a href="../{{ cf.source_file }}">{{ cf.source_file.split('/')[-1][:48] }}</a>{% endif %}{% else %}{{ f.detail[:220] }}{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Programme Timeline (to cut-off)</div>
+    {% for e in timeline %}
+      <div class="timeline-row"><span class="d">{{ e.date }}</span><span class="t">{{ e.event_type | replace('_', ' ') }}{% if e.value %} · {{ e.value }}{% endif %}</span><span class="x">{{ (e.quote or e.detail or '')[:160] }}</span></div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if extraction.summary %}
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Evidence Summary (Claude extraction, quotes verified)</div>
+    <div class="memo-box" style="white-space:normal;font-family:var(--sans);font-size:13px">{{ extraction.summary }}</div>
+    <div class="small-note" style="margin-top:6px">{{ extraction.fields | length }} fields kept · {{ extraction.rejected | length }} discarded · model {{ extraction.model }}{% if extraction.cost_usd %} · ≈${{ "%.2f" | format(extraction.cost_usd) }} equivalent{% endif %}</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="result-grid">
+  <div class="result-cell" style="grid-column:1/-1">
+    <div class="result-cell-title">Assessment Memo</div>
+    <div class="memo-box">{{ memo }}</div>
+  </div>
+</div>
+
+<div class="code-section">
+  <div class="code-section-title">Model</div>
+  <div class="small-note">{{ pred.model_version }} · confidence: {{ pred.confidence_reasons | join('; ') }}<br>
+  Not investment, actuarial or medical advice. Probabilities are estimates from public information up to the cut-off date.</div>
+</div>
+
+</div>
+</body>
+</html>
