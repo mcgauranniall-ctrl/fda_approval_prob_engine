@@ -11,6 +11,7 @@ from datetime import date
 
 from fdaengine.acquire.case_folder import Case
 from fdaengine.features.build import compute
+from fdaengine.features.context import live_context
 from fdaengine.model import registry
 from fdaengine.prepare.ctgov_structured import structure_trial
 from fdaengine.schema import FIELDS
@@ -39,12 +40,13 @@ def compute_path(case: Case) -> list[dict]:
             continue
         cutoff = meta["cutoff"] if lv["level"] == meta["level"] else lv["cutoff"]
         cut = date.fromisoformat(cutoff)
-        structured = []
+        structured, visible = [], []
         for s in studies:
             nct = s["protocolSection"]["identificationModule"]["nctId"]
             reg = registered.get(nct, {}).get("source_date")
             if reg and reg <= cutoff:
                 structured.append(structure_trial(s, meta["names"], cut))
+                visible.append(s)
         if lv["level"] == meta["level"]:
             pred = case.read_json("prediction.json")      # the headline prediction is this level's point
         else:
@@ -61,7 +63,8 @@ def compute_path(case: Case) -> list[dict]:
                 if (sdate is None and f.get("quote_verified")) or (sdate and sdate > cutoff):
                     continue
                 fields[name] = f
-            feats, _ = compute(lv["level"], meta, structured, [e for e in timeline if e["date"] <= cutoff], fields)
+            feats, _ = compute(lv["level"], meta, structured, [e for e in timeline if e["date"] <= cutoff], fields,
+                               live_context(meta, visible, cutoff))
             pred = registry.predict(lv["level"], feats)
         path.append({"level": lv["level"], "name": LEVELS[lv["level"]], "cutoff": cutoff,
                      "p": pred["p_approval"]["median"], "ci95": pred["p_approval"]["ci95"],

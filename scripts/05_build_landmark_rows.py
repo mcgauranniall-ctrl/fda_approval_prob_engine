@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from fdaengine import config
 from fdaengine.dataset import bulk, drugs, edgar_bulk, purplebook
 from fdaengine.dataset import landmarks as lm
-from fdaengine.dataset import timelines as tlb
+from fdaengine.features import context as ctx_mod
 
 INTERIM = config.DATA_DIR / "interim"
 PROCESSED = config.DATA_DIR / "processed"
@@ -55,53 +55,19 @@ def _shard(path: str) -> dict[int, list[tuple[dict, str]]]:
 
 
 # ------------------------------------------------------------------------------------------------ as-of lookups
-class CompanyDates:
-    """Company name → sorted dates (filings or approvals), matched with `timelines.same_company`."""
-
-    def __init__(self, pairs):
-        self.by_first: dict[str, list[tuple[str, list[str]]]] = defaultdict(list)
-        grouped: dict[str, list[str]] = defaultdict(list)
-        for name, d in pairs:
-            if name and isinstance(d, str) and d:
-                grouped[name].append(d)
-        for name, ds in grouped.items():
-            k = tlb.company_key(name)
-            if k:
-                self.by_first[k.split()[0]].append((name, sorted(ds)))
-        self._cache: dict[str, list[str]] = {}
-
-    def dates(self, sponsor: str) -> list[str]:
-        if sponsor not in self._cache:
-            k = tlb.company_key(sponsor or "")
-            cands = self.by_first.get(k.split()[0], []) if k else []
-            self._cache[sponsor] = sorted(d for name, ds in cands if tlb.same_company(name, sponsor) for d in ds)
-        return self._cache[sponsor]
-
-    def count_before(self, sponsor: str, cutoff: str) -> int:
-        return bisect.bisect_left(self.dates(sponsor), cutoff)
-
-    def first(self, sponsor: str) -> str | None:
-        ds = self.dates(sponsor)
-        return ds[0] if ds else None
+# Shared with live cases (`features.context`), so training and case context use one definition.
+CompanyDates = ctx_mod.CompanyDates
 
 
 def _modality(pt_p3: dict, iv: pd.DataFrame, names_by_prog: dict) -> dict[str, str]:
     """'biologic' if the drug's registered intervention type in its Phase 3 trials is BIOLOGICAL/GENETIC."""
-    iv = iv.assign(k=iv["name"].map(drugs.key))
-    by_nct = {n: g for n, g in iv.groupby("nct_id")}
+    by_nct = {n: g.to_dict("records") for n, g in iv.groupby("nct_id")}
     out = {}
     for pid, ncts in pt_p3.items():
         keys = {drugs.key(n) for n in names_by_prog[pid]}
-        types = set()
-        for n in ncts:
-            g = by_nct.get(n)
-            if g is not None:
-                hit = g[g["k"].isin(keys)]
-                types |= set(hit["type"] if len(hit) else g.loc[g["arm_types"].str.contains("EXPERIMENTAL"), "type"])
-        if types & {"BIOLOGICAL", "GENETIC"}:
-            out[pid] = "biologic"
-        elif "DRUG" in types:
-            out[pid] = "small_molecule"
+        types = set().union(*(ctx_mod.trial_types(by_nct[n], keys) for n in ncts if n in by_nct))
+        if m := ctx_mod.modality(types):
+            out[pid] = m
     return out
 
 
@@ -153,12 +119,9 @@ def main(argv: list[str] | None = None) -> None:
     # As-of context.
     modality = _modality(p3_by_prog, iv[iv["nct_id"].isin({n for ns in p3_by_prog.values() for n in ns})],
                          names_by_prog)
-    sponsor_approvals = CompanyDates([*approvals[["SponsorName", "approval_date"]].itertuples(index=False),
-                                      *((b.applicant, b.first_licensed) for b in blas)])
+    sponsor_approvals = CompanyDates(ctx_mod.sponsor_approval_pairs(approvals, blas))
     # CRLs announced in press releases (one per drug and date), never the 2025 FDA CRL database (label source only).
-    crl = ev[(ev["event_type"] == "CRL") & ~ev["source"].isin(lm.LABEL_ONLY_SOURCES)]
-    crl = crl.join(pg[["drug_id", "lead_sponsor"]], on="programme_id").drop_duplicates(["drug_id", "date"])
-    sponsor_crls = CompanyDates(crl[["lead_sponsor", "date"]].itertuples(index=False))
+    sponsor_crls = CompanyDates(ctx_mod.sponsor_crl_pairs(ev, pg))
     con = edgar_bulk.connect()
     filers = CompanyDates(con.execute("SELECT company, MIN(file_date) FROM hits GROUP BY cik, company").fetchall())
     # A programme's outcome counts towards its TA's prior rate from the date it became knowable: the approval, the

@@ -320,9 +320,28 @@ Deviations, decided during P6c:
   script 04's approvals despite its number (downloads are cached, so a rerun only re-reads the PDFs; the first run took
   12 minutes).
 
-**Next (payer first, D9):** P6d live-case context features (TA, sponsor history, moiety approved; the label panel also
-needs TA) and switching the app to the fitted model → P9 payer module → P10 hardening. The investor module (P11) is
-paused until the user asks for it.
+**P6d live-case context (2026-11-01): `features/context.py`, `features/build.py`, `predict/path.py`,
+`tests/test_context.py`.** Live cases now compute the context inputs the fitted models were trained on, with the
+training definitions (script 05 imports the same `CompanyDates`, sponsor approval/CRL tables and modality rule;
+recomputing modality and both sponsor counts for all 10,584 landmark rows reproduces the stored values exactly):
+therapeutic area (each Phase 3's primary MeSH condition through the leaf → ancestor map learned from all trials,
+replacing Claude's free-text area), modality, active ingredient already approved, sponsor's prior approvals and
+announced CRLs, combination product. Source `reference`, each with a detail line; the probability path recomputes
+them at each level's cut-off. On 300 random training rows run through the live code: sponsor counts, modality and
+combination 100% identical, TA 99% (live cases also use linked Phase 3s), moiety approved 98.5% (4 salt/ester display
+names resolve to the parent ingredient). The reference tables load once per process (~17 s).
+- **A case's own approval is never "already approved".** The case's own applications are excluded (bepirovirsen's
+  NDA 221276 was approved on 2026-10-20, nine days before its live L3 cut-off). When the own application is approved by
+  the cut-off, a data flag says the outcome is already known.
+- At L3–L5 the landmark model uses none of these inputs (by design, P5), so filed-stage probabilities do not move;
+  L1–L2 probabilities and the label panel (therapeutic area) do.
+- Found, not fixed: the live timeline attributed momelotinib's Phase 3 news from GSK's multi-drug pipeline releases
+  to bepirovirsen (a "Phase 3 not met" event), which sets its L3 forecast to 54%. The press-release parser's drug
+  proximity rule fails on pipeline tables.
+- Not done yet: switching the app's default to the fitted model (waiting for the user's go-ahead).
+
+**Next (payer first, D9):** switch the app to the fitted model (user decision) → P9 payer module → P10 hardening.
+The investor module (P11) is paused until the user asks for it.
 ---
 
 ## 0. What's wrong with v1 (and what v2 fixes)

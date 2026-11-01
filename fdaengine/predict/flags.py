@@ -104,6 +104,11 @@ def data_flags(level: str, features: dict, conflicts: list[dict], rejected: list
     if removed:
         out.append({"severity": "info", "text": f"{len(removed)} trial result sets were posted after the cut-off and "
                     "were excluded."})
+    own = features.get("own_application_approved")
+    if own:
+        out.append({"severity": "warning", "text": f"This drug's own application was approved on {own['value']}, "
+                    "before the cut-off: the outcome is already known, so this forecast describes what the model "
+                    "would have said, not an open question. Re-run at a later level or as a backtest."})
     lv = case_meta.get("level_info")
     if lv and lv.get("estimated"):
         out.append({"severity": "warning", "text": f"The {level} cut-off date is estimated ({lv['basis']})."})

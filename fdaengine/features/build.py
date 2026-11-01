@@ -10,6 +10,7 @@ from dataclasses import asdict, dataclass
 from datetime import date
 
 from fdaengine.acquire.case_folder import Case
+from fdaengine.features import context
 from fdaengine.features import stats_transforms as st
 from fdaengine.timeline.levels import ORDER
 
@@ -27,7 +28,7 @@ LARGE_SPONSORS = ("pfizer", "merck", "johnson", "janssen", "roche", "genentech",
 @dataclass
 class Feature:
     value: object
-    source: str            # 'ctgov' | 'timeline' | 'claude' | 'derived' | 'heuristic'
+    source: str            # 'ctgov' | 'timeline' | 'claude' | 'derived' | 'heuristic' | 'reference'
     detail: str = ""
 
     def to_dict(self) -> dict:
@@ -40,12 +41,21 @@ def _yes_no_from_p(p: float | None) -> str | None:
     return "yes" if p < 0.05 else "no"
 
 
+def case_studies(case: Case, nct_ids: list[str]) -> list[dict]:
+    """Raw ClinicalTrials.gov records of these trials from the case folder."""
+    import json
+    paths = [case.root / "raw" / "ctgov" / f"{n}.json" for n in nct_ids]
+    return [json.loads(p.read_text(encoding="utf-8")) for p in paths if p.exists()]
+
+
 def build(case: Case) -> dict:
     meta = case.read_json("case.json")
     structured = case.read_json("extracted/structured.json", {"trials": []})["trials"]
     timeline = case.read_json("timeline.json", [])
     claude = (case.read_json("extracted/fields.json") or {}).get("fields", {})
-    feats, conflicts = compute(meta["level"], meta, structured, timeline, claude)
+    ctx = (context.live_context(meta, case_studies(case, [t["nct_id"] for t in structured]), meta["cutoff"])
+           if meta.get("cutoff") else {})
+    feats, conflicts = compute(meta["level"], meta, structured, timeline, claude, ctx)
     out = {"level": meta["level"], "features": feats, "conflicts": conflicts}
     case.write_json("features.json", out)
     case.write_json("extracted/conflicts.json", conflicts)
@@ -53,8 +63,9 @@ def build(case: Case) -> dict:
 
 
 def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict],
-            claude: dict) -> tuple[dict, list[dict]]:
-    """Pure feature computation, so the same case can be re-scored at earlier levels (probability path)."""
+            claude: dict, ctx: dict | None = None) -> tuple[dict, list[dict]]:
+    """Pure feature computation, so the same case can be re-scored at earlier levels (probability path).
+    `ctx`: as-of context {name: (value, detail)} from `features.context.live_context` at this cut-off."""
     li = ORDER.index(level)
     feats: dict[str, Feature] = {}
     conflicts: list[dict] = []
@@ -75,8 +86,13 @@ def compute(level: str, meta: dict, structured: list[dict], timeline: list[dict]
     events = {e["event_type"]: e for e in sorted(timeline, key=lambda e: e["date"], reverse=True)}
 
     # --- context --------------------------------------------------------------------------------------
+    # Reference-data context (the training definitions) first; Claude's free-text therapeutic area and modality are
+    # used only when it is missing, and are not compared with it (free text never matches the category names).
+    for name, (value, detail) in (ctx or {}).items():
+        if value is not None:
+            feats[name] = Feature(value, "reference", detail)
     for name in ("therapeutic_area", "modality", "first_in_class", "approved_other_indication", "mechanism"):
-        if cval(name) is not None:
+        if name not in feats and cval(name) is not None:
             put(name, cval(name), "claude", claude[name].get("quote") or "general knowledge")
     sponsor = (meta.get("sponsor") or "").lower()
     size = "large" if any(s in sponsor for s in LARGE_SPONSORS) else ("public" if meta.get("cik") else "private/unknown")

@@ -19,10 +19,10 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from fdaengine.features.build import compute
+from fdaengine.features.context import LABEL_ONLY_SOURCES
 from fdaengine.prepare.ctgov_structured import structure_trial
 from fdaengine.sources import ctgov
 
-LABEL_ONLY_SOURCES = {"fda_crl"}              # published after the decisions they describe
 STRUCTURED_RELATIONS = {"p3_seed", "p3_linked", "p2"}
 
 
