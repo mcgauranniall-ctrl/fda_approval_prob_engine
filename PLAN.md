@@ -213,8 +213,8 @@ Deviations, decided during P5:
 - **No TA effect at L3–L5** (`TA_LATE = False`): the TA prior rate predicted worse than the level base rate there,
   and dropping TA improved the late-level CV Brier (L3 0.217 → 0.215, L5 0.222 → 0.214). This choice was informed
   by the validation results, so the late-level CV scores are slightly optimistic.
-- **The app still uses the provisional model by default.** `FDAENGINE_MODEL=fitted` switches cases, the probability
-  path and the report to `landmark-v1` (`model/registry.py`); L6 falls back to the provisional model. Live cases do
+- **The app used the provisional model by default until P6d** (now the fitted model; `model/registry.py`); L6 falls
+  back to the provisional model. Live cases do
   not yet compute sponsor prior approvals/CRLs, moiety-approved or TA, so those inputs count as missing (P6).
 - Not built yet: Y_NEXT model, timing (competing-risks) model, label models (§7.5); recalibration was not needed.
 
@@ -338,9 +338,10 @@ names resolve to the parent ingredient). The reference tables load once per proc
 - Found, not fixed: the live timeline attributed momelotinib's Phase 3 news from GSK's multi-drug pipeline releases
   to bepirovirsen (a "Phase 3 not met" event), which sets its L3 forecast to 54%. The press-release parser's drug
   proximity rule fails on pipeline tables.
-- Not done yet: switching the app's default to the fitted model (waiting for the user's go-ahead).
+- **The app now uses the fitted model by default** (user decision 2026-11-01): landmark-v1 + timing-v1 + label-v1.
+  `FDAENGINE_MODEL=provisional` restores the prior-only model; L6 still falls back to it.
 
-**Next (payer first, D9):** switch the app to the fitted model (user decision) → P9 payer module → P10 hardening.
+**Next (payer first, D9):** P9 payer module → P10 hardening.
 The investor module (P11) is paused until the user asks for it.
 ---
 

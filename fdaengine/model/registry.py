@@ -1,8 +1,9 @@
-"""Which model scores cases: the provisional prior-only model (default) or the fitted landmark model.
+"""Which model scores cases: the fitted landmark model (default since 2026-11-01, user decision) or the provisional
+prior-only model.
 
-Set FDAENGINE_MODEL=fitted to use `models/landmark-v1` (scripts/09_production_model.py), with approval timing
-(`timing-v1`, script 10) and label outcomes (`label-v1`, script 11). Levels the fitted model does not cover (L6), or
-a missing model directory, fall back to the provisional model.
+The default is `models/landmark-v1` (scripts/09_production_model.py), with approval timing (`timing-v1`, script 10)
+and label outcomes (`label-v1`, script 11). Set FDAENGINE_MODEL=provisional for the old prior-only model. Levels the
+fitted model does not cover (L6), or a missing model directory, fall back to the provisional model.
 """
 
 from __future__ import annotations
@@ -25,7 +26,7 @@ def _fitted() -> landmark.FittedModel | None:
 
 
 def use_fitted() -> bool:
-    return os.environ.get("FDAENGINE_MODEL", "provisional").lower() == "fitted" and _fitted() is not None
+    return os.environ.get("FDAENGINE_MODEL", "fitted").lower() == "fitted" and _fitted() is not None
 
 
 def predict(level: str, features: dict) -> dict:
