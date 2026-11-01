@@ -347,8 +347,141 @@ names resolve to the parent ingredient). The reference tables load once per proc
 - **The app now uses the fitted model by default** (user decision 2026-11-01): landmark-v1 + timing-v1 + label-v1.
   `FDAENGINE_MODEL=provisional` restores the prior-only model; L6 still falls back to it.
 
-**Next (payer first, D9):** P9 payer module → P10 hardening.
+**Next (payer first, D9):** work through the improvement backlog below in its order of work: P6e (data quality and
+recalibration) → P9 payer module with the spend backtest → P9b new indications and the portfolio view → the rest.
 The investor module (P11) is paused until the user asks for it.
+
+## Review findings and improvement backlog (2026-11-01)
+
+An honest review after P6, written up for the user's head of actuary (demo page: "Pipeline Pricing Forecasts").
+Summary: the method is sound (no hindsight, out-of-sample validation, label error modelled, auditable sources),
+timing is calibrated, and accelerated approval after filing is predictable. But the edge over simple rules is small,
+the cost side is unbuilt, the live data pipeline still makes visible errors, and the plan-year backtest is about 15%
+optimistic. Each item below has the measured problem, the fix and a test for "done". IDs are stable; tick them off
+here as they land.
+
+**Order of work.** P6e: B1–B4, Q1–Q6, C1–C3 (they change every forecast, and the demo drugs showed them) → P9: V1–V3
+(the cost side and the spend backtest are the real test for payers) → P9b: E1, V4–V5 → then A1–A3, E2–E5, O1–O4.
+
+### A. Predictive edge
+- **A1. Edge over the best simple alternative is not significant.** Current CV Brier ties the best single alternative
+  at every level (L1 0.216 vs LightGBM 0.215; L2 0.222 vs logistic 0.220; L3/L5 vs "endpoint met" alone). AUROC
+  0.57–0.70. *Fix:* new pre-decision features with real signal (see A2, E4), then a stacked ensemble of the Bayesian
+  model and the LightGBM challenger, judged with the paired ablation. *Done when:* the paired difference against the
+  best alternative excludes 0 at L1 and L2 (3 seeds), with calibration slope 0.8–1.2.
+- **A2. Little public information separates filed drugs.** *Fix:* add features knowable before the decision: the FDA's
+  archived AdCom minutes and briefing documents (pre-2023 in the FDA web archive), the sponsor's and the drug class's
+  CRL history from FDA's published CRLs (dated by publication; never the drug's own), inspection findings (Form 483,
+  where public before the cut-off), the review division, and how many same-mechanism drugs were already approved.
+  *Done when:* L3–L5 AUROC ≥ 0.65 out of sample with no loss of calibration.
+- **A3. Effect sizes and safety are rarely known in training rows** (Phase 3 |z| coverage 15–28%, safety 2–17%).
+  *Fix:* newswire press releases (user decision pending on PR Newswire's terms of use), the publication route (PubMed is
+  parked: it worsened the model, so only with the main-paper filter improved). *Done when:* Phase 3 |z| coverage at
+  L2+ ≥ 50%.
+
+### B. Calibration and the plan-year backtest
+- **B1. Plan-year approvals are about 15% optimistic** (actual-to-expected 0.85 by year end over 2008–2024; 0.98
+  outside 2021–23, 0.57 within). In 2021–23, 31 of 41 drugs not approved by their plan-year end have never been
+  approved (other years: 25 of 74 approved later), so this is outright failure, not COVID-era review delay alone.
+  *Fix:* diagnose with FDA's published CRL letters for those drugs (a label-only use: they explain outcomes, never
+  inputs) and sponsor size/funding era; then recalibrate per plan year. *Done when:* A/E 0.9–1.1 over all 17 years,
+  ≥ 15 of 17 years inside the 90% range, and the 2021–23 cause written up in `data/gold/findings.md`.
+- **B2. Calibration after filing is unstable:** CV slope 0.54 at L3 (spread overstated), temporal holdout (cut-offs from
+  2020-09-13) 1.5–1.9 at every level (too cautious on recent programmes). *Fix:* rolling-origin validation by year,
+  investigate era drift (time-weighted training or an era-by-stage term), and a per-stage recalibration layer fitted
+  only on time-ordered held-out data. *Done when:* slope 0.8–1.2 at every level in both CV and the temporal holdout.
+- **B3. Drugs past their goal date, or with an announced CRL, are scored as if still on their first cycle.** 31
+  drug-years in the backtest had a public CRL before the rate-setting date. *Fix:* fit L6 (resubmission after a CRL),
+  and add "goal date passed with no approval announced" as an input from L5 on. *Done when:* L6 is fitted and
+  validated like L1–L5, and the backtest with these drugs included keeps A/E 0.9–1.1.
+- **B4. The plan-year backtest lives only in the session scratchpad.** *Fix:* `scripts/12_plan_year_backtest.py`
+  (out-of-fold landmark p × per-fold timing curve, conditioned on "not approved by the rate-setting date"; expected vs
+  actual by 1 January and 31 December; Poisson-binomial ranges; drug-level calibration bins; a CRL-known variant),
+  output `reports/plan_year_backtest.html`. Model card renumbers to 13, market backtest to 14. *Done when:* it runs in
+  the rebuild order and reproduces the 2026-11-01 figures (108.3 vs 92; 66.1 vs 58).
+- **B5. The backtest covers only drugs whose filing was detected** (3–27 a year, against roughly 40–55 FDA novel
+  approvals a year). *Fix:* better filing detection (Q1, A3; sponsor investor-relations pages where robots.txt allows)
+  and report coverage against FDA's yearly novel-approval lists. *Done when:* ≥ 70% of each year's CDER novel approvals
+  had a detected L3 row before approval.
+
+### C. Uncertainty ranges
+- **C1. Ranges are wide after filing** (povetacicept: 88%, 95% range 69–97%; the accelerated-pathway effect alone
+  accounts for most of the width). *Fix:* more filed-stage rows (pool lifecycle programmes into the fitted model with
+  their own cohort intercept, extend earlier eras, better filing detection); published phase-transition evidence as
+  priors for designation effects, documented and not double-counted. *Done when:* median L3 95% width falls by ≥ 25%
+  with CV and temporal calibration unchanged.
+- **C2. The label-error correction adds width at every level, and its priors rest on AI-assisted verdicts.** *Fix:*
+  human spot-check of 15–20 gold rows, then enlarge the L3–L5 gold sample. *Done when:* a person has reviewed ≥ 40 gold
+  rows and the L3 specificity posterior sd is ≤ 0.04 (now 0.064).
+- **C3. The confidence rating and data flags still use provisional-model semantics** (the flag says missing inputs
+  "widen the interval"; in the fitted model they are set to the average and do not). *Fix:* reword the flag; base the
+  rating on interval width, stage calibration and data quality. *Done when:* report wording matches the fitted model,
+  with a test.
+
+### Q. Data quality in live cases
+- **Q1. Multi-drug and multi-disease press releases attach events to the wrong programme:** bepirovirsen got
+  momelotinib's Phase 3 news from GSK pipeline tables (L3 forecast 54% instead of a positive-readout forecast);
+  povetacicept's "Phase 3 met" quote was its membranous nephropathy result, not IgA nephropathy. *Fix:* parse pipeline
+  tables row by row (drug, indication and event in the same row), require the programme's indication near readout
+  events, and down-weight events from documents naming several drugs. *Done when:* both cases are regression tests,
+  and a 50-event sample from multi-drug documents is ≥ 90% correctly attributed.
+- **Q2. Modality comes from the registry's intervention type,** which lists fusion proteins such as povetacicept as
+  "DRUG". *Fix:* use the GSRS substance class (protein, nucleic acid, polymer) first, the registry type as a fallback,
+  in training (script 05) and live cases alike. *Done when:* povetacicept resolves to biologic, and a paired ablation
+  shows no loss.
+- **Q3. Salt and ester names resolve to the parent ingredient** (fluticasone furoate → fluticasone; 4 of 300 rows
+  in the live-vs-training check). *Fix:* prefer the exact-name GSRS match over the moiety for "already approved".
+  *Done when:* the 300-row check agrees ≥ 99.5%.
+- **Q4. Trial grouping errors** (findings 31, 37: trials of another indication grouped into a programme) remain the
+  largest source of label errors. *Fix:* group by primary condition and population within the drug, with
+  line-of-therapy terms. *Done when:* gold-set grouping accuracy ≥ 95% (now 89%).
+- **Q5. Live cases that are already decided are not caught early** (bepirovirsen was approved 9 days before its live
+  L3 cut-off; only a data flag says so). *Fix:* check Drugs@FDA for the case's own applications at Step 2 and offer the
+  post-decision view. *Done when:* the app warns before the analysis runs.
+- **Q6. The indication text must match the registry's wording** ("IgA nephropathy" found no trials; "immunoglobulin A
+  nephropathy" did). *Fix:* expand the indication with MeSH synonyms and common abbreviations before matching.
+  *Done when:* a list of 30 common abbreviations (IgAN, NSCLC, MDD, RA, ...) matches the registry terms.
+
+### E. Coverage
+- **E1. New indications for drugs already on formulary are not forecast** (labels 84% correct, P6b), though label
+  expansions drive much payer spend. *Fix:* fit the lifecycle cohort, pooled with novel drugs, with its own intercepts
+  and supplement timing. *Done when:* calibrated out of sample at L2–L5 and shown in the report.
+- **E2. "Label narrower than the trial population" is not built** (rule-based label right for 13 of 25). *Fix:* after
+  Q4, compare line of therapy, biomarker and age restrictions with the pivotal trials completed before approval only.
+  *Done when:* ≥ 80% precision on a fresh reviewed sample, then model it as in P6c.
+- **E3. Boxed warning and REMS are no better than their typical rates.** *Fix:* add class information known before
+  the decision: whether approved drugs with the same mechanism carry a boxed warning or REMS, Phase 3 safety signals
+  (A3), and the review division. *Done when:* each beats the stage base rate in CV and the temporal holdout (the
+  P6c rule).
+- **E4. Mechanism and class are not inputs at all.** *Fix:* map drugs to mechanism classes (GSRS / RxNorm / the
+  registry's intervention MeSH) for A2, E3 and the class correlation in V2.
+- **E5. Biosimilar and generic entry timing is not forecast.** *Fix:* Orange Book patents and exclusivities, Purple
+  Book reference-product exclusivity, and patent-litigation outcomes where public. *Done when:* a backtest of first
+  generic or biosimilar entry dates is within 6 months for ≥ 70% of drugs.
+
+### V. Payer value
+- **V1. The cost side is not built** (P9): analog pricing from CMS Part D/B spending, Bass uptake fitted to analog
+  launches, eligible population from prevalence × trial criteria. *Done when:* P9's criterion is met (below).
+- **V2. Exhibit 2's simulation treats drugs as independent.** *Fix:* a shared class effect (E4) in the portfolio
+  simulation. *Done when:* the plan-year spend backtest's 90% ranges cover the actual result in ≥ 85% of
+  years × therapeutic areas.
+- **V3. Spend has never been backtested.** *Fix:* freeze the engine at past rate-setting dates and compare forecast
+  spend with actual CMS spend for the plan year. *Done when:* in `scripts/` and reported with A/E and coverage.
+- **V4. Portfolio view, watch triggers and automatic re-runs do not exist** (forecasts are re-run by hand). *Fix:*
+  a pipeline list in the app, scheduled re-scoring when new events arrive, alerts above a set move.
+- **V5. Value over existing pipeline intelligence is unproven.** Payers already receive pipeline reports from their
+  pharmacy benefit managers and clinical pharmacy teams. *Fix:* the watch-list test: score the team's current
+  watch-list and compare with the launch assumptions in the last rate filing; record where the engine disagrees and
+  who was right a year later. *Done when:* one full plan year compared.
+
+### O. Operations
+- **O1. Retraining is a long manual chain** (03 takes about 25 minutes; the rebuild order runs through 11 steps).
+  *Fix:* P10's one-command retrain with versioned model directories and a validation gate.
+- **O2. Live extraction depends on the local Claude CLI** and its usage limits. *Fix:* a structured-data-only path
+  that degrades gracefully (already partly there) and caching of extraction results per document hash.
+- **O3. Reference data take about 17 seconds to load per process.** *Fix:* a prebuilt compact index under `models/`.
+- **O4. No drift monitoring.** *Fix:* a quarterly job scoring newly resolved programmes and recording Brier, slope
+  and plan-year A/E, and alerting when they leave their validated range.
 ---
 
 ## 0. What's wrong with v1 (and what v2 fixes)
@@ -1006,8 +1139,10 @@ fda_approval_prob_engine/
 | **P6: Payer core** (re-scoped 2026-11-01, D9; P6a–P6c done, see Build status) | **P6a timing model:** P(approved by date d) per level, competing risks (approval vs failure), PDUFA-anchored from L3. **P6b new-indication labels:** supplement approvals for drugs already on the market (label accuracy 68% → ≥ 85% on the gold set), modelled as a second cohort. **P6c label breadth:** P(boxed warning), P(REMS), P(accelerated approval), P(label narrower than the trial population), conditional on approval. **P6d live cases:** context features (TA, sponsor history, moiety approved), switch the app to the fitted model, approval-date curve and label panel in the report | P(approved within 12/24/36 months) calibrated per level (temporal holdout); supplement labels ≥ 85% on the gold set; label models beat base rates; `prediction.json` carries timing and label outputs |
 | **P7: Report (neutral profile)** | Template, charts, memo run + number check, PDF | Renders for 6 backtest drugs (approved; P3 fail; P3 success → CRL; CRL → approval; oncology; rare disease) at every level |
 | **P8: UI** | Streamlit screens, level selector, scenarios, watchlist, model explorer | Type a drug, pick a level → report, without touching the terminal |
-| **P9: Payer module** | Analog library (script 09), pricing, Bass uptake, population, budget impact, pipeline view, payer report profile + memo, plan-year backtest | Backtested plan year: 90% budget intervals cover the actual result; P(approved by date) is calibrated |
-| **P10: Hardening** | Golden-file regression tests, one-command retrain, docs | A new model version can be retrained and swapped in with one command |
+| **P6e: Data quality and recalibration** (added 2026-11-01) | Backlog items B1–B4, Q1–Q6, C1–C3 (see "Review findings and improvement backlog") | Each item's "done when" test passes; plan-year A/E 0.9–1.1 |
+| **P9: Payer module** | Analog library, pricing, Bass uptake, population, budget impact, payer report profile + memo, plan-year spend backtest (backlog V1–V3) | Backtested plan year: 90% budget intervals cover the actual result; P(approved by date) is calibrated |
+| **P9b: Coverage and portfolio** (added 2026-11-01) | New-indication forecasts for drugs on formulary, portfolio view with class correlation, watch triggers and automatic re-runs, the watch-list test (backlog E1, V4, V5) | New-indication forecasts calibrated out of sample; one plan year compared with the team's filing assumptions |
+| **P10: Hardening** | Golden-file regression tests, one-command retrain, docs, drift monitoring, compact reference index (backlog O1–O4), then the remaining backlog items A1–A3 and E2–E5 | A new model version can be retrained and swapped in with one command |
 | **P11: Investor module + market strategy test** — **paused (D9)** | Event study, edge regression (M1), strategy backtest with deflated Sharpe, implied p (if options data is bought), investor report profile, optional APEX export | Not scheduled: only if the user asks |
 
 **Fast first win:** P0 → P1 → P2 → P7 with a temporary model (literature phase-transition priors + assurance) → P8.
@@ -1015,8 +1150,9 @@ That gives an end-to-end demo with the level selector early. P3–P6 then replac
 the UI.
 
 **Order from 2026-11-01 (D9, payer first):** P6a timing → P6b new-indication labels → P6c label breadth → P6d live
-cases and app switch → P9 payer module (analog pricing, uptake, eligible population, budget impact, pipeline view,
-plan-year backtest) → P10 hardening. The investor module (P11) is paused.
+cases and app switch (all done) → P6e data quality and recalibration → P9 payer module (analog pricing, uptake,
+eligible population, budget impact, spend backtest) → P9b new indications, portfolio view, watch-list test → P10
+hardening and the remaining backlog. The investor module (P11) is paused.
 
 ---
 
